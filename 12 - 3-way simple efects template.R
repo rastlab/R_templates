@@ -104,9 +104,10 @@ etasqiv1.h_l <- (moderation1[2,3]) / ((moderation1[2,3]) + (moderation1[5,3])) #
 etasqiv1.l_h <- (moderation1[3,3]) / ((moderation1[3,3]) + (moderation1[5,3])) # eta-squared iv2-l, iv3-h, across iv3
 etasqiv1.h_h <- (moderation1[4,3]) / ((moderation1[4,3]) + (moderation1[5,3])) # eta-squared iv2-h, iv3-h, across iv3
 
-
-
-
+etasqiv1.l_l
+etasqiv1.h_l
+etasqiv1.l_h
+etasqiv1.h_h
 
 ############################################################################
 ########### Simple effects of IV2 at different IV1 & IV3 levels ############
@@ -120,8 +121,10 @@ etasqiv2.l_h <- (moderation2[2,3]) / ((moderation2[2,3]) + (moderation2[5,3])) #
 etasqiv2.h_l <- (moderation2[3,3]) / ((moderation2[3,3]) + (moderation2[5,3])) # eta-squared iv1-l, iv3-h, across iv2
 etasqiv2.h_h <- (moderation2[4,3]) / ((moderation2[4,3]) + (moderation2[5,3])) # eta-squared iv1-h, iv3-h, across iv2
 
-
-
+etasqiv2.l_l
+etasqiv2.h_l
+etasqiv2.l_h
+etasqiv2.h_h
 
 
 ############################################################################
@@ -136,8 +139,10 @@ etasqiv3.h_l <- (moderation3[2,3]) / ((moderation3[2,3]) + (moderation3[5,3])) #
 etasqiv3.l_h <- (moderation3[3,3]) / ((moderation3[3,3]) + (moderation3[5,3])) # eta-squared iv1-l, iv3-h, across iv2
 etasqiv3.h_h <- (moderation3[4,3]) / ((moderation3[4,3]) + (moderation3[5,3])) # eta-squared iv1-h, iv3-h, across iv2
 
-
-
+etasqiv3.l_l
+etasqiv3.h_l
+etasqiv3.l_h
+etasqiv3.h_h
 
 
 ###############################################

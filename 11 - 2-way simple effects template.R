@@ -104,6 +104,8 @@ moderation1 <- testInteractions(modinter, fixed = c("iv2"), across="iv1", adjust
 etasqiv1.l <- (moderation1[1,3]) / ((moderation1[1,3]) + (moderation1[3,3])) # eta-squared iv2-l, across iv1
 etasqiv1.h <- (moderation1[2,3]) / ((moderation1[2,3]) + (moderation1[3,3])) # eta-squared iv2-h, across iv1
 
+etasqiv1.l
+etasqiv1.h
 
 ############################################################################
 ############# Simple effects of IV2 at different IV1 levels ################
@@ -116,6 +118,8 @@ moderation2 <- testInteractions(modinter, fixed = c("iv1"), across="iv2", adjust
 etasqiv2.l <- (moderation2[1,3]) / ((moderation2[1,3]) + (moderation2[3,3])) # eta-squared iv1-l, across iv2
 etasqiv2.h <- (moderation2[2,3]) / ((moderation2[2,3]) + (moderation2[3,3])) # eta-squared iv1-h, across iv2
 
+etasqiv2.l
+etasqiv2.h
 
 ###############################################
 ######### Plotting 2-way interaction ##########
