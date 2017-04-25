@@ -96,6 +96,8 @@ dat$iv2 = factor(dat$iv2, levels=c(1, 2), labels=c("Low", "High"), exclude = NA)
 dat$gender = factor(dat$gender, levels=c(1, 2), labels=c("Male", "Female"), exclude = NA) 
 dat$year = factor(dat$year, levels=c(1, 2, 3, 4, 5), 
                   labels=c("First","Second", "Third","Fourth", "GradStudent"), exclude = NA) 
+
+# revise this to match your data
 dat$ethnicity = factor(dat$ethnicity, levels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), 
                        labels=c("Canadian","American", "British", "Chinese", "Dutch","French", 
                                 "German", "Irish", "Italian", "Native","Ukrainian", "Other"), 
