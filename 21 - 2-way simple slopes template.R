@@ -59,7 +59,7 @@ glimpse(dat)
 # note: na.omit() removes any NAs contained within each of the IVs
 
 dat1 = na.omit(select(dat, iv1, iv2, dv))
-summarydat1 <- describeBy(dat1)
+summarydat1 <- describe(dat1)
 
 summarydat1
 
@@ -69,7 +69,7 @@ dat$c.iv1 <- dat$iv1 - mean(dat$iv1, na.rm=T)
 dat$c.iv2 <- dat$iv2 - mean(dat$iv2, na.rm=T)
 
 dat2 <- na.omit(select(dat, c.iv1, c.iv2, dv))
-summarydat2 <- describeBy(dat2)
+summarydat2 <- describe(dat2)
 
 # verify centering
 summarydat2
