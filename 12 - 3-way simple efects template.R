@@ -60,11 +60,17 @@ glimpse(dat)
 options(contrasts = c("contr.helmert", "contr.poly"))
 
 ## R way of Anova using 'car' package
-Anova(lm(dv ~ iv1 * iv2 * iv3, data=dat), type = 3)
+# create ANOVA model
+model1 <- lm(dv ~ iv1 * iv2 * iv3, data=dat)
 
-# calculate 95% confidence interval 
+# run ANOVA, rounded to 3 decimals
+round(Anova(model1, type = 3), 3)
 
-confint(lm(dv ~ iv1 * iv2 * iv3, data=dat))
+# eta-squared, rounded to 3 decimals
+round(etasq(model1), 3)
+
+# calculate 95% confidence interval, rounded to 3 decimals
+round(confint(model1), 3)
 
 ## descriptives based on condition 
 # note: na.omit() removes any NAs contained within each of the IVs
@@ -215,7 +221,7 @@ save(dat, file = "./data/12_three_way_anova.RData")
 load("./data/12_three_way_anova.Rdata")
 
 # save R data file as CSV
-write.csv(dat, file = "./data/12_three_way_anova.csv")
+write_csv(dat, "./data/12_three_way_anova.csv")
 
 # save R data file as SAV SPSS file
 write_sav(dat, "./data/12_three_way_anova.sav")

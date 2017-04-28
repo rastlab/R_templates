@@ -17,7 +17,7 @@
 # rm(list = ls())
 update.packages(ask=FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, tidyverse, haven, psych, car, apaTables, jmv, phia)
+pacman::p_load(parallel, tidyverse, haven, psych, car, heplots, phia, jmv, apaTables)
 
 
 ## load data
@@ -60,11 +60,17 @@ glimpse(dat)
 options(contrasts = c("contr.helmert", "contr.poly"))
 
 ## R way of Anova using 'car' package
-Anova(lm(dv ~ iv1 * iv2, data=dat), type = 3)
+# create ANOVA model
+model1 <- lm(dv ~ iv1 * iv2, data=dat)
 
-# calculate 95% confidence interval 
+# run ANOVA, rounded to 3 decimals
+round(Anova(model1, type = 3), 3)
 
-confint(lm(dv ~ iv1 * iv2, data=dat))
+# eta-squared, rounded to 3 decimals
+round(etasq(model1), 3)
+
+# calculate 95% confidence interval, rounded to 3 decimals
+round(confint(model1), 3)
 
 ## descriptives based on condition 
 # note: na.omit() removes any NAs contained within each of the IVs
@@ -77,7 +83,7 @@ summarydat <- na.omit(dat %>%
 summarydat
 
 # new way of Anova using 'jmv' package, closer to SPSS output
-# gives partial eta-squared and omega effect sizes
+# gives partial eta-squared and omega effect sizes in a nice table
 # also gives a nice descriptive table
 
 anova(data = dat,
@@ -191,7 +197,7 @@ save(dat, file = "./data/11_two_way_anova.RData")
 load("./data/11_two_way_anova.Rdata")
 
 # save R data file as CSV
-write.csv(dat, file = "./data/11_two_way_anova.csv")
+write_csv(dat, "./data/11_two_way_anova.csv")
 
 # save R data file as SAV SPSS file
 write_sav(dat, "./data/11_two_way_anova.sav")
