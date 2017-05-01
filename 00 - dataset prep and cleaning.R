@@ -17,6 +17,7 @@
 # rm(list = ls())
 update.packages(ask=FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
+library('pacman')
 pacman::p_load(parallel, tidyverse, haven, psych, lubridate)
 
 
