@@ -17,8 +17,7 @@
 # rm(list = ls())
 update.packages(ask=FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-library('pacman')
-pacman::p_load(parallel, tidyverse, haven, psych, car, heplots, phia, jmv, apaTables)
+pacman::p_load(parallel, tidyverse, haven, psych, car, lsr, phia, apaTables)
 
 
 ## load data
@@ -68,7 +67,7 @@ model1 <- lm(dv ~ iv1 * iv2, data=dat)
 round(Anova(model1, type = 3), 3)
 
 # eta-squared, rounded to 3 decimals
-round(etasq(model1), 3)
+round(etaSquared(model1, type=3), 3)
 
 # calculate 95% confidence interval, rounded to 3 decimals
 round(confint(model1), 3)
@@ -87,12 +86,15 @@ summarydat
 # gives partial eta-squared and omega effect sizes in a nice table
 # also gives a nice descriptive table
 
+pacman::p_load(jmv)
+
 anova(data = dat,
       dep = "dv",
       factors = c("iv1", "iv2"),
       effectSize = c("partEta", "omega"),
       descStats = TRUE)
 
+pacman::p_unload(jmv) # jmv package can conflict with other ANOVA packages. need to load/unload it ony for htis analysis
 
 ############################################################################
 ############# Simple effects of IV1 at different IV2 levels ################
@@ -101,11 +103,13 @@ anova(data = dat,
 # quickly examine simple effects
 # see https://cran.r-project.org/web/packages/phia/vignettes/phia.pdf
 
-# create interaction model 
+# create interaction model of interest
 modinter <- na.omit(lm(dv~ iv1 * iv2, data=dat))
 
 # examine simple effects
 moderation1 <- testInteractions(modinter, fixed = c("iv2"), across="iv1", adjustment="none")
+
+moderation1
 
 # eta-squared for different levels of iv2
 etasqiv1.l <- (moderation1[1,3]) / ((moderation1[1,3]) + (moderation1[3,3])) # eta-squared iv2-l, across iv1
@@ -120,6 +124,8 @@ etasqiv1.h
 
 # examine simple effects
 moderation2 <- testInteractions(modinter, fixed = c("iv1"), across="iv2", adjustment="none")
+
+moderation2
 
 # eta-squared for different levels of iv2
 etasqiv2.l <- (moderation2[1,3]) / ((moderation2[1,3]) + (moderation2[3,3])) # eta-squared iv1-l, across iv2

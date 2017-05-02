@@ -17,8 +17,7 @@
 # rm(list = ls())
 update.packages(ask=FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-library('pacman')
-pacman::p_load(parallel, tidyverse, haven, psych, car, apaTables, jmv, phia)
+pacman::p_load(parallel, tidyverse, haven, psych, car, lsr, phia, apaTables)
 
 
 ## load data
@@ -68,7 +67,7 @@ model1 <- lm(dv ~ iv1 * iv2 * iv3, data=dat)
 round(Anova(model1, type = 3), 3)
 
 # eta-squared, rounded to 3 decimals
-round(etasq(model1), 3)
+round(etaSquared(model1, type=3), 3)
 
 # calculate 95% confidence interval, rounded to 3 decimals
 round(confint(model1), 3)
@@ -85,6 +84,7 @@ summarydat
 # new way of Anova using 'jmv' package, closer to SPSS output
 # gives partial eta-squared and omega effect sizes
 # also gives a nice descriptive table
+pacman::p_load(jmv)
 
 anova(data = dat,
       dep = "dv",
@@ -92,6 +92,7 @@ anova(data = dat,
       effectSize = c("partEta", "omega"),
       descStats = TRUE)
 
+pacman::p_unload(jmv) # jmv package can conflict with other ANOVA packages. need to load/unload it ony for htis analysis
 
 ############################################################################
 ########### Simple effects of IV1 at different IV2 & IV3 levels ############
@@ -100,11 +101,13 @@ anova(data = dat,
 # quickly examine simple effects
 # see https://cran.r-project.org/web/packages/phia/vignettes/phia.pdf
 
-# create interaction model 
+# create interaction model of interest
 modinter <- na.omit(lm(dv~ iv1 * iv2 * iv3, data=dat))
 
 # examine simple effects
 moderation1 <- testInteractions(modinter, fixed = c("iv2", "iv3"), across="iv1", adjustment="none")
+
+moderation1
 
 etasqiv1.l_l <- (moderation1[1,3]) / ((moderation1[1,3]) + (moderation1[5,3])) # eta-squared iv2-l, iv3-l, across iv3
 etasqiv1.h_l <- (moderation1[2,3]) / ((moderation1[2,3]) + (moderation1[5,3])) # eta-squared iv2-h, iv3-l, across iv3
@@ -123,6 +126,8 @@ etasqiv1.h_h
 # examine simple effects
 moderation2 <- testInteractions(modinter, fixed = c("iv1", "iv3"), across="iv2", adjustment="none")
 
+moderation2
+
 etasqiv2.l_l <- (moderation2[1,3]) / ((moderation2[1,3]) + (moderation2[5,3])) # eta-squared iv1-l, iv3-l, across iv2
 etasqiv2.l_h <- (moderation2[2,3]) / ((moderation2[2,3]) + (moderation2[5,3])) # eta-squared iv1-h, iv3-l, across iv2
 etasqiv2.h_l <- (moderation2[3,3]) / ((moderation2[3,3]) + (moderation2[5,3])) # eta-squared iv1-l, iv3-h, across iv2
@@ -140,6 +145,8 @@ etasqiv2.h_h
 
 # examine simple effects
 moderation3 <- testInteractions(modinter, fixed = c("iv1", "iv3"), across="iv2", adjustment="none")
+
+moderation3
 
 etasqiv3.l_l <- (moderation3[1,3]) / ((moderation3[1,3]) + (moderation3[5,3])) # eta-squared iv1-l, iv3-l, across iv2
 etasqiv3.h_l <- (moderation3[2,3]) / ((moderation3[2,3]) + (moderation3[5,3])) # eta-squared iv1-h, iv3-l, across iv2
