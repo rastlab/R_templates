@@ -102,8 +102,9 @@ summary(step1.1)
 summary(step2.1)
 summary(step3.1)
 
-# F-change statistic from here
-anova(step1.1, step2.1, step3.1) 
+# F-change and Delta R-Squared statistics from here
+modelCompare(step1.1, step2.1)
+modelCompare(step2.1, step3.1)
 
 # 95% confidence intervals (defaults to 95%), rounded to 3 decimal places
 round(confint(step1.1), 3)
