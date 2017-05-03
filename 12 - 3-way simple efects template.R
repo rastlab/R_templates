@@ -17,6 +17,7 @@
 # rm(list = ls())
 update.packages(ask=FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
+if(!require(jmv)){install.packages("jmv")}
 pacman::p_load(parallel, tidyverse, haven, psych, car, lsr, phia, apaTables)
 
 
@@ -84,15 +85,12 @@ summarydat
 # new way of Anova using 'jmv' package, closer to SPSS output
 # gives partial eta-squared and omega effect sizes
 # also gives a nice descriptive table
-pacman::p_load(jmv)
 
-anova(data = dat,
+jmv::anova(data = dat,
       dep = "dv",
       factors = c("iv1", "iv2", "iv3"),
       effectSize = c("partEta", "omega"),
       descStats = TRUE)
-
-pacman::p_unload(jmv) # jmv package can conflict with other ANOVA packages. need to load/unload it ony for htis analysis
 
 ############################################################################
 ########### Simple effects of IV1 at different IV2 & IV3 levels ############
