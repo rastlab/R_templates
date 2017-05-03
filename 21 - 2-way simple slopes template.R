@@ -65,8 +65,8 @@ summarydat1
 
 ####### center IVs
 
-dat$c.iv1 <- dat$iv1 - mean(dat$iv1, na.rm=T)
-dat$c.iv2 <- dat$iv2 - mean(dat$iv2, na.rm=T)
+dat$c.iv1 <- scale(dat$iv1, center=TRUE)
+dat$c.iv2 <- scale(dat$iv2, center=TRUE)
 
 dat2 <- na.omit(select(dat, c.iv1, c.iv2, dv))
 summarydat2 <- describe(dat2)
@@ -75,7 +75,6 @@ summarydat2 <- describe(dat2)
 summarydat2
 
 ####### test 2-way regression interaction
-options(contrasts = c("contr.helmert", "contr.poly"))
 
 ### linear regression
 step1.1 <- lm(dv ~ c.iv1 + c.iv2, data=dat)
@@ -88,10 +87,13 @@ summary(step2.1)
 # F-change statistic from here
 anova(step1.1, step2.1) 
 
-# 95% confidence intervals (defaults to 95%)
-confint(step1.1)
-confint(step2.1)
+# 95% confidence intervals (defaults to 95%), rounded to 3 decimal places
+round(confint(step1.1), 3)
+round(confint(step2.1), 3)
 
+# Betas, rounded to 3 decimal places
+round(lm.beta(step1.1), 3)
+round(lm.beta(step2.1), 3)
 
 ### could also achive this differently by doing:
 
