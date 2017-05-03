@@ -189,9 +189,23 @@ ggsave('./figures/figure1.png', width=6, height=6, unit='in', dpi=300)
 dat2 = na.omit(select(dat, c(iv1, iv2, dv)))
 
 # can make multiple tables by changing 'table.number = X
-apa.2way.table(iv1, iv2, dv, data = dat2, landscape = TRUE, table.number = 1, filename="./tables/table1.doc")
+apa.2way.table(iv1, iv2, dv, data = dat2, landscape = TRUE, table.number = 1, filename="./tables/anova_table.doc")
 
-apa.aov.table(modinter, table.number = 2, conf.level = 0.9, type = 3, filename="./tables/table2.doc")
+apa.aov.table(modinter, conf.level = 0.9, type = 3,  table.number = 2, filename="./tables/anovasummary_table.doc")
+
+# correlation matrix
+
+dat3 = na.omit(dat %>% 
+                 select(iv1_num, iv2, dv) %>% 
+                 rename(NEW_NAME_IV1 = iv1_num, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
+                        NEW_NAME_IV2 = iv2, 
+                        NEW_NAME_DV = dv))
+
+dat3$NEW_NAME_IV1 <- as.numeric(dat3$NEW_NAME_IV1) # must change experimental variables (factors) into numeric values (intergers)
+dat3$NEW_NAME_IV2 <- as.numeric(dat3$NEW_NAME_IV2) # must change experimental variables (factors) into numeric values (intergers)
+
+apa.cor.table(dat3, show.conf.interval = FALSE, landscape = TRUE, table.number = 3, 
+              filename = "./tables/correlation_table.doc")
 
 #######################################
 ###### Saving Data and Workspace ######

@@ -97,10 +97,8 @@ round(lm.beta(step2.1), 3)
 
 ### could also achive this differently by doing:
 
-## iv1 as slope, iv2 as moderator
-model1 <- na.omit(lmres(dv ~ iv1 * iv2, 
-                        centered=c("iv1", "iv2"),
-                        data=dat))
+### linear regression
+model1 <- na.omit(lmres(dv ~ c.iv1 * c.iv2, data=dat))
 
 # regression summaries for each step
 summary(model1$StepI) 
@@ -120,6 +118,7 @@ model1$beta.Stepfin
 
 ##### simple slopes 
 
+## iv1 as slope, iv2 as moderator
 s_slopes1 <- na.omit(simpleSlope(model1, pred="iv1",mod1="iv2"))
 summary(s_slopes1)
 

@@ -216,7 +216,23 @@ dat2 = na.omit(select(dat, c(iv1, iv2, iv3, dv)))
 
 # can make multiple tables by changing 'table.number = X
 
-#****NEED TO UPDATE****
+apa.aov.table(modinter, conf.level = 0.9, type = 3,  table.number = 1, filename="./tables/anovasummary_table.doc")
+
+# correlation matrix
+
+dat3 = na.omit(dat %>% 
+                 select(iv1_num, iv2, iv3, dv) %>% 
+                 rename(NEW_NAME_IV1 = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
+                        NEW_NAME_IV2 = iv2, 
+                        NEW_NAME_IV3 = iv3, 
+                        NEW_NAME_DV = dv))
+
+dat3$NEW_NAME_IV1 <- as.numeric(dat3$NEW_NAME_IV1) # must change experimental variables (factors) into numeric values (intergers)
+dat3$NEW_NAME_IV2 <- as.numeric(dat3$NEW_NAME_IV2) # must change experimental variables (factors) into numeric values (intergers)
+dat3$NEW_NAME_IV3 <- as.numeric(dat3$NEW_NAME_IV3) # must change experimental variables (factors) into numeric values (intergers)
+
+apa.cor.table(dat3, show.conf.interval = FALSE, landscape = TRUE, table.number = 2, 
+              filename = "./tables/correlation_table2.doc")
 
 #######################################
 ###### Saving Data and Workspace ######

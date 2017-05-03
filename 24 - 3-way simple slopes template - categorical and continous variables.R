@@ -51,6 +51,19 @@ View(dat)
 # list variables in dataset
 glimpse(dat)
 
+###############################
+########## Data Prep ##########
+###############################
+
+# if you a dichotomous/trichotomous X continous IVs (opposed a full survey design with only continuous variables)
+# then you must turn your dichotomous/trichotomous factor into a numeric variable
+# NB: this is how SPSS treats data, but R handles factors differently!
+# repeat this for each dichotomous/trichotomous variable, as needed
+# R and SPSS output will be different if the experimental variable is not changed into a numeric value here. 
+
+dat$iv1_num <- as.numeric(dat$iv1) # iv1 should be replaced with the name of your dichotomous/trichotomous variable
+
+
 ################################
 ###### Summary Statistics ######
 ################################
@@ -64,8 +77,10 @@ summarydat1 <- describe(dat1)
 summarydat1
 
 ####### center IVs
+# replace iv2 and iv3 names as appropriate if they were previously factors but turned in to numeric variables above
+# e.g., iv2/iv3 changed to iv2_num/iv3_num if neccessary 
 
-dat$c.iv1 <- scale(dat$iv1, center=TRUE)
+dat$c.iv1 <- scale(dat$iv1_num, center=TRUE) 
 dat$c.iv2 <- scale(dat$iv2, center=TRUE)
 dat$c.iv3 <- scale(dat$iv3, center=TRUE)
 
@@ -102,10 +117,8 @@ round(lm.beta(step3.1), 3)
 
 ### could also achive this differently by doing:
 
-## iv1 as slope, iv2 as moderator
-model1 <- na.omit(lmres(dv ~ iv1 * iv2 * iv3, 
-                        centered=c("iv1", "iv2", "iv3"),
-                        data=dat))
+### linear regression
+model1 <- na.omit(lmres(dv ~ c.iv1 * c.iv2 * c.iv3, data=dat))
 
 # regression summaries for each step
 summary(model1$StepI)
@@ -346,8 +359,8 @@ dev.print(png, './figures/figure6.png', width = 480, height = 480)
 # we'll also remove NA values to make this simpler
 
 dat3 = na.omit(dat %>% 
-                 select(iv1, iv2, iv3, dv) %>% 
-                 rename(NEW_NAME_IV1 = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
+                 select(iv1_num, iv2, iv3, dv) %>% 
+                 rename(NEW_NAME_IV1 = iv1_num, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         NEW_NAME_IV2 = iv2, 
                         NEW_NAME_IV2 = iv3,
                         NEW_NAME_DV = dv))
