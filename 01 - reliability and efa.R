@@ -18,32 +18,19 @@
 # rm(list = ls())
 update.packages(ask=FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, tidyverse, haven, car, psych, jmv)
+pacman::p_load(parallel, rio, tidyverse, car, psych, jmv)
 
 
 ## load data
 
-# select the approprate manner of importing your data 
-# depends on whether you are opening a CSV, or SPSS file on Windows or OSX
 # RData files work the best in R. 
 # Try to only open RData files to avoid any issues.
 # CSV works the next best in R. 
 # Try to only save and open CSV files to avoid any issue if you cannot load RData files.
 # SPSS files can be buggy to import, especially factors and labels
-# only run one of the following commands
-# running any of these commands opens a dialog box so you can selet your data file
 
-# use this command if opening a RData file *** least likely to have import/export issues***
-load(file.choose())
-
-# use this command if opening a CSV file on Windows or OSX *** next least likely to have import/export issues***
-dat <- read.csv(file.choose(), stringsAsFactors = TRUE)
-
-# use this command if opening an SPSS SAV file on OSX
-dat <- read_spss(file.choose())
-
-# use this command if opening an SPSS SAV file on Windows
-dat <- read_spss(choose.files())
+# the following command will open a dialog box and allow you to select the file you wish to laod
+dat <- import(file.choose())
 
 setwd("./PROJECT_NAME/")       # change PROJECT_NAME to your project's name
 
