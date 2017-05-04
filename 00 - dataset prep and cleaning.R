@@ -8,6 +8,8 @@
 # Description: PROJECT DISCRIPTION
 # Version of R used: CURRENT VERSION OF R
 
+TEST
+
 #####################################
 ### Import data & load libraries ####
 #####################################
