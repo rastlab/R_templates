@@ -203,7 +203,7 @@ save(dat, file = "./data/11_two_way_anova.RData")
 load("./data/11_two_way_anova.Rdata")
 
 # save R data file as CSV
-write_csv(dat, "./data/11_two_way_anova.csv")
+export(dat, "./data/11_two_way_anova.csv")
 
 # save R data file as SAV SPSS file
 export(dat, "./data/11_two_way_anova.sav")

@@ -271,7 +271,7 @@ save(dat, file = "./data/21_two_way_regression.RData")
 load("./data/21_two_way_regression.Rdata")
 
 # save R data file as CSV
-write.csv(dat, file = "./data/21_two_way_regression.csv")
+export(dat, file = "./data/21_two_way_regression.csv")
 
 # save R data file as SAV SPSS file
 export(dat, "./data/21_two_way_regression.sav")
