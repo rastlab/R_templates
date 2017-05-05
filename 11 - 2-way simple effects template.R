@@ -206,5 +206,5 @@ load("./data/11_two_way_anova.Rdata")
 write_csv(dat, "./data/11_two_way_anova.csv")
 
 # save R data file as SAV SPSS file
-write_sav(dat, "./data/11_two_way_anova.sav")
+export(dat, "./data/11_two_way_anova.sav")
 

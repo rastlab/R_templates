@@ -186,4 +186,4 @@ load("./data/00_data_cleaned.Rdata")
 write.csv(dat, file = "./data/00_data_cleaned.csv")
 
 # save R data file as SAV SPSS file
-write_sav(dat, "./data/00_data_cleaned.sav")
+export(dat, "./data/00_data_cleaned.sav")

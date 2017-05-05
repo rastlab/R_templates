@@ -286,4 +286,4 @@ load("./data/21_two_way_regression.Rdata")
 write.csv(dat, file = "./data/21_two_way_regression.csv")
 
 # save R data file as SAV SPSS file
-write_sav(dat, "./data/21_two_way_regression.sav")
+export(dat, "./data/21_two_way_regression.sav")

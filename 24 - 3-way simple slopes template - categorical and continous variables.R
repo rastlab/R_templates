@@ -376,5 +376,5 @@ load("./data/22_three_way_regression.Rdata")
 write.csv(dat, file = "./data/22_three_way_regression.csv")
 
 # save R data file as SAV SPSS file
-write_sav(dat, "./data/22_three_way_regression.sav")
+export(dat, "./data/22_three_way_regression.sav")
 

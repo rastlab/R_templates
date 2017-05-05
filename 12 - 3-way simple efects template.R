@@ -233,4 +233,4 @@ load("./data/12_three_way_anova.Rdata")
 write_csv(dat, "./data/12_three_way_anova.csv")
 
 # save R data file as SAV SPSS file
-write_sav(dat, "./data/12_three_way_anova.sav")
+export(dat, "./data/12_three_way_anova.sav")
