@@ -243,6 +243,7 @@ plot(c(-1, 1), c((s_slopes1$Points[3, 1]), (s_slopes1$Points[3, 2])), type='b', 
 axis(1, at=c(-1, 1), labels=c("iv1-low", "iv1-high"))
 axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv2", c("iv2-low (-1SD)", "iv2-high (+1SD)"), lty=1:2, cex=.90)
+title(main="Panel B: iv3 (low -1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
 dev.print(png, './figures/figure1.png', width = 480, height = 480)
 
@@ -258,6 +259,7 @@ plot(c(-1, 1), c((s_slopes1$Points[4, 1]), (s_slopes1$Points[4, 2])), type='b', 
 axis(1, at=c(-1, 1), labels=c("iv1-low", "iv1-high"))
 axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv2", c("iv2-low (-1SD)", "iv2-high (+1SD)"), lty=1:2, cex=.90)
+title(main="Panel B: iv3 (high +1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
 dev.print(png, './figures/figure2.png', width = 480, height = 480)
 
@@ -273,6 +275,7 @@ plot(c(-1, 1), c((s_slopes2$Points[3, 1]), (s_slopes2$Points[3, 2])), type='b', 
 axis(1, at=c(-1, 1), labels=c("iv2-low", "iv2-high"))
 axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv1", c("iv1-low (-1SD)", "iv1-high (+1SD)"), lty=1:2, cex=.90)
+title(main="Panel B: iv3 (low -1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
 dev.print(png, './figures/figure3.png', width = 480, height = 480)
 
@@ -288,6 +291,7 @@ plot(c(-1, 1), c((s_slopes2$Points[4, 1]), (s_slopes2$Points[4, 2])), type='b', 
 axis(1, at=c(-1, 1), labels=c("iv2-low", "iv2-high"))
 axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv1", c("iv1-low (-1SD)", "iv1-high (+1SD)"), lty=1:2, cex=.90)
+title(main="Panel B: iv3 (high +1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
 dev.print(png, './figures/figure4.png', width = 480, height = 480)
 
@@ -303,6 +307,7 @@ plot(c(-1, 1), c((s_slopes3$Points[3, 1]), (s_slopes3$Points[3, 2])), type='b', 
 axis(1, at=c(-1, 1), labels=c("iv3-low", "iv3-high"))
 axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv1", c("iv1-low (-1SD)", "iv1-high (+1SD)"), lty=1:2, cex=.90)
+title(main="Panel B: iv2 (low -1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
 dev.print(png, './figures/figure5.png', width = 480, height = 480)
 
@@ -318,6 +323,7 @@ plot(c(-1, 1), c((s_slopes2$Points[4, 1]), (s_slopes2$Points[4, 2])), type='b', 
 axis(1, at=c(-1, 1), labels=c("iv3-low", "iv3-high"))
 axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv1", c("iv1-low (-1SD)", "iv1-high (+1SD)"), lty=1:2, cex=.90)
+title(main="Panel B: iv2 (high +1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
 dev.print(png, './figures/figure6.png', width = 480, height = 480)
 
