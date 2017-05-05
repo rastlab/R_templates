@@ -367,14 +367,14 @@ apa.cor.table(dat3, filename = "./tables/correlation_table.doc", table.number = 
 ###### Saving Data and Workspace ######
 #######################################
 # Save current workspace: 
-save(dat, file = "./data/22_three_way_regression.RData")
+save(dat, file = "./data/24_three_way_regression.RData")
 
 # Load saved workspace: 
-load("./data/22_three_way_regression.Rdata")
+load("./data/24_three_way_regression.Rdata")
 
 # save R data file as CSV
-export(dat, file = "./data/22_three_way_regression.csv")
+export(dat, file = "./data/24_three_way_regression.csv")
 
 # save R data file as SAV SPSS file
-export(dat, "./data/22_three_way_regression.sav")
+export(dat, "./data/24_three_way_regression.sav")
 
