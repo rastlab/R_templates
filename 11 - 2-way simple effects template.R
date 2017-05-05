@@ -197,10 +197,7 @@ apa.cor.table(dat3, show.conf.interval = FALSE, landscape = TRUE, table.number =
 #######################################
 
 # Save current workspace: 
-save(dat, file = "./data/11_two_way_anova.RData")
-
-# Load saved workspace: 
-load("./data/11_two_way_anova.Rdata")
+export(dat, "./data/11_two_way_anova.RData")
 
 # save R data file as CSV
 export(dat, "./data/11_two_way_anova.csv")

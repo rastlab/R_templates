@@ -177,13 +177,10 @@ dir.create("./figures")   # this is where we will save our figures
 dir.create("./tables")    # this is where we will save our tables
 
 # Save current workspace: 
-save(dat, file = "./data/00_data_cleaned.RData")
-
-# Load saved workspace: 
-load("./data/00_data_cleaned.Rdata")
+export(dat, "./data/00_data_cleaned.RData")
 
 # save R data file as CSV
-export(dat, file = "./data/00_data_cleaned.csv")
+export(dat, "./data/00_data_cleaned.csv")
 
 # save R data file as SAV SPSS file
 export(dat, "./data/00_data_cleaned.sav")
