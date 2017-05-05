@@ -268,8 +268,12 @@ dat3 = na.omit(dat %>%
                         NEW_NAME_IV2 = iv2, 
                         NEW_NAME_DV = dv))
 
+# correlation table
 apa.cor.table(dat3, filename = "./tables/correlation_table.doc", table.number = 1,
               show.conf.interval = FALSE, landscape = TRUE)
+
+# regression table
+apa.reg.table(step1.1, step2.1, filename = "./tables/regression_table.doc", table.number = 2)
 
 
 #######################################
