@@ -45,15 +45,13 @@ glimpse(dat)
 
 ## Recode IV1 levels....high = 2, low = 1
 
-dat$iv1_high = dat$iv1_high * 2
-dat$iv1 <- rowSums((dat[, c('iv1_high', 'iv1_low')]), na.rm = T)
+dat$iv1 <- with(dat, rowSums(cbind((iv1_high * 2), iv1_low), na.rm = T))
 dat$iv1[dat$iv1 == 0] <- NA
 dat$iv1
 
 ## Recode IV2 levels....high = 2, low = 1
 
-dat$iv2_high = dat$iv2_high * 2
-dat$iv2 <- rowSums((dat[, c('iv2_high', 'iv2_low')]), na.rm = T)
+dat$iv2 <- with(dat, rowSums(cbind((iv2_high * 2), iv2_low), na.rm = T))
 dat$iv2[dat$iv2 == 0] <- NA
 dat$iv2
 
@@ -71,18 +69,14 @@ sum(!is.na(dat$iv2_low))
 sum(!is.na(dat$iv1))
 sum(!is.na(dat$iv2))
 
+describe(select(dat, iv1_high, iv1_low, iv1, iv2_high, iv2_low, iv2))
 
 ##################################################################
 ###### Ensuring R Generates the Same ANOVA F-values as SPSS ######
 ##################################################################
 
-### for ANOVA output to be the same as SPSS, we have to:
-# 1) change IVs to categorical factors
-# 2) provide label for new factors
-# 3) change the default contrast used in R so it's the same one used in SPSS
-# from: https://www.r-bloggers.com/ensuring-r-generates-the-same-anova-f-values-as-spss/
-
-# Set the variables to factors
+# Set the variables to factors and labels, if experimental manipulations
+# if no conditions (e.g., a survey), then create labels and factor levels as need for ethnicity, year in school, etc.
 
 dat$iv1 = factor(dat$iv1, levels=c(1, 2), labels=c("Low", "High"), exclude = NA)
 dat$iv2 = factor(dat$iv2, levels=c(1, 2), labels=c("Low", "High"), exclude = NA)
@@ -97,8 +91,8 @@ dat$ethnicity = factor(dat$ethnicity, levels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
                        exclude = NA)
 
 
-## check IVs to ensure recoding worked correct
-describe(select(dat, c(iv1, iv2)))
+## check IVs to ensure recoding worked corrected for manipulations
+describe(select(dat, iv1, iv2))
 
 
 #########################################
@@ -106,16 +100,16 @@ describe(select(dat, c(iv1, iv2)))
 #########################################
 
 # again, based on Qualtrics data, assume page timings were obtained
-## Recode manipulation timings
+## Recode manipulation timings based on default Qualtrics variable naming scheme
 
-dat$iv1_timing <- rowSums(dat[, c('iv1_1_3', 'iv1_2_3')], 
-                          na.rm = T)
-dat$iv2_timing <- rowSums(dat[, c('iv2_1_3', 'iv2_2_3')], 
-                          na.rm = T)
+dat$iv1_timing <- with(dat, rowSums(cbind(iv1_1_3, iv1_2_3), 
+                                    na.rm = T))
+
+dat$iv3_timing <- with(dat, rowSums(cbind(iv1_1_3, iv1_2_3), 
+                                    na.rm = T))
 
 # summary of page timings
-describe(select(dat, c(iv1_timing, iv2_timing)))
-
+describe(select(dat, iv1_timing, iv2_timing))
 
 
 ##########################
@@ -123,11 +117,10 @@ describe(select(dat, c(iv1_timing, iv2_timing)))
 ##########################
 
 ## Create DVs
-dat$avg_dv1 <- rowMeans(dat[, c('dv1_1', 'dv1_2', 'dv1_3', 'dv1_4')], 
-                          na.rm = T)
-
-dat$avg_dv2 <- rowMeans(dat[, c('dv2_1', 'dv2_2', 'dv2_3', 'dv2_4')], 
-                    na.rm = T)
+dat$avg_dv1 <- with(dat, rowMeans(cbind(dv1_1, dv1_2, dv1_3, dv1_4), 
+                                  na.rm = T))
+dat$avg_dv3 <- with(dat, rowMeans(cbind(dv2_1, dv2_2, dv2_3, dv2_4), 
+                                  na.rm = T))
 
 # if difference score is needed:
 dat$diff = with(dat, avg_dv1 - avg_dv2)
@@ -156,7 +149,7 @@ table(dat$gender, dat$ethnicity)
 
 # descriptives of IVs and DVs
 
-describe(select(dat, c(iv1, iv2, avg_dv1, avg_dv2)))
+describe(select(dat, iv1, iv2, avg_dv1, avg_dv2))
 
 ########################################################################
 ###### Create Project Folder System and Saving Data and Workspace ######
