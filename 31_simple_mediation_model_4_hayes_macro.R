@@ -15,7 +15,7 @@
 # rm(list = ls())
 update.packages(ask=FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, rio, lavaan)
+pacman::p_load(parallel, rio, tidyverse, lavaan)
 
 ## load data
 
@@ -42,6 +42,7 @@ glimpse(dat)
 
 # Hayes' template with all models can be found here:
 # http://afhayes.com/public/templates.pdf
+# this script is modified from: https://nickmichalak.blogspot.ca/2016/07/reproducing-hayess-process-models.html
 
 # going to run Hayes's PROCESS Model 4: "classic" mediation
 # x -> m -> y
@@ -59,11 +60,12 @@ dat1 = na.omit(dat %>%
                         m = iv2, 
                         y = dv))
 
+# dat1$x <- as.numeric(dat1$x) # if IV is categorical run this
 dat1$cen_x <- scale(dat1$x, center=TRUE)
 dat1$cen_m <- scale(dat1$m, center=TRUE)
 
 # check dataset1 
-glimspe(dat1)
+glimpse(dat1)
 
 # run mediation analysis ----
 
@@ -83,6 +85,7 @@ hayes4 <- ' # direct effect
               total := c + (a*b)'
 
 # fit model
+# might take a minute or two to run depending on amount of resamples
 sem <- sem(model = hayes4,
             data = dat1,
             se = "bootstrap",
@@ -96,7 +99,7 @@ summary(sem,
         rsquare = TRUE)
 
 # if you want bootstrapped parameter estimates
-# pay attention to lines 1, 2, 3 and 13, 14, 15
+# pay attention to lines 7, 8, 9 (direct, indirect, total)
 
 parameterEstimates(sem,
                    boot.ci.type = "bca.simple",

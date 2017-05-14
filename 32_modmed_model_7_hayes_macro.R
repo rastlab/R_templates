@@ -15,7 +15,7 @@
 # rm(list = ls())
 update.packages(ask=FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, rio, lavaan)
+pacman::p_load(parallel, rio, tidyverse, lavaan)
 
 ## load data
 
@@ -34,7 +34,7 @@ setwd("./PROJECT_NAME/")       # change PROJECT_NAME to your project's name
 View(dat)
 
 # list variables in dataset
-glimpse(dat)
+glimpse(dat1)
 
 ###############################
 ########## Data Prep ##########
@@ -42,6 +42,7 @@ glimpse(dat)
 
 # Hayes' template with all models can be found here:
 # http://afhayes.com/public/templates.pdf
+# this script is modified from: https://nickmichalak.blogspot.ca/2016/07/reproducing-hayess-process-models.html
 
 # going to run Hayes's PROCESS Model 7: moderated mediation
 # x*w -> m -> y
@@ -54,12 +55,13 @@ glimpse(dat)
 # we'll also remove NA values to make this simpler
 
 dat1 = na.omit(dat %>% 
-                 select(iv1, iv2, dv) %>% 
+                 select(iv1, iv2, iv3, dv) %>% 
                  rename(x = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         w = iv2, 
                         m = iv3, 
                         y = dv))
 
+# dat1$x <- as.numeric(dat1$x) # if IV is categorical run this
 dat1$cen_x <- scale(dat1$x, center=TRUE)
 dat1$cen_w <- scale(dat1$w, center=TRUE)
 dat1$cen_m <- scale(dat1$m, center=TRUE)
@@ -68,7 +70,7 @@ dat1$cen_m <- scale(dat1$m, center=TRUE)
 dat1$cen_xw <- dat1$cen_x * dat1$cen_w
 
 # check dataset1 
-glimspe(dat1)
+glimpse(dat1)
 
 # run modmed analysis ----
 
@@ -95,6 +97,7 @@ hayes7 <- ' # regressions
               indirect.SDabove := a1*b1 + a3*sqrt(w.var)*b1'
 
 # fit model
+# might take a minute or two to run depending on amount of resamples
 sem <- sem(model = hayes7,
             data = dat1,
             se = "bootstrap",
@@ -107,10 +110,8 @@ summary(sem,
         standardize = TRUE,
         rsquare = TRUE)
 
-
 # if you want bootstrapped parameter estimates
 # pay attention to lines 17, 18, 19, and 20 for the indirect effects and 'index of moderated mediation'
-
 parameterEstimates(sem,
                    boot.ci.type = "bca.simple",
                    level = .95, 
