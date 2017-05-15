@@ -161,15 +161,15 @@ describe(select(dat, iv1, iv2, avg_dv1, avg_dv2))
 ## It provides a log of your work in a clear file/folder hierarchy
 
 # replace PROJECT_NAME with your desire project name
-dir.create("./PROJECT_NAME")   # this is where we will save our entire project
+if(!exists("./PROJECT_NAME")) {dir.create("./PROJECT_NAME")}   # this is where we will save our entire project
 setwd("./PROJECT_NAME/")       # this will set the working directory to your new project
 
 # do not modify these lines
-dir.create("./r")         # this is where we will save our R scripts
-dir.create("./data")      # this is where we will save our datasets
-dir.create("./doc")       # this is where we will save our manuscripts and reports
-dir.create("./figures")   # this is where we will save our figures
-dir.create("./tables")    # this is where we will save our tables
+if(!exists("./r")) {dir.create("./r")}              # this is where we will save our R scripts
+if(!exists("./data")) {dir.create("./data")}        # this is where we will save our datasets
+if(!exists("./doc")) {dir.create("./doc")}          # this is where we will save our manuscripts and reports
+if(!exists("./figures")) {dir.create("./figures")}  # this is where we will save our figures
+if(!exists("./tables")) {dir.create("./tables")}    # this is where we will save our tables
 
 # Save current workspace: 
 export(dat, "./data/00_data_cleaned.RData")
