@@ -40,6 +40,8 @@ View(dat)
 # list variables in dataset
 glimpse(dat)
 
+# NB: Alt + Shift + K --> will bring up keyboard shortcuts
+
 ###################################################
 ###### Prepare Data/Scales for Alpha and EFA ######
 ###################################################

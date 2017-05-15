@@ -38,6 +38,7 @@ View(dat)
 # list variables in dataset
 glimpse(dat)
 
+# NB: Alt + Shift + K --> will bring up keyboard shortcuts
 
 ###############################
 ########## Data Prep ##########

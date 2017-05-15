@@ -40,6 +40,8 @@ View(dat)
 # list variables in dataset
 glimpse(dat)
 
+# NB: Alt + Shift + K --> will bring up keyboard shortcuts
+
 ###############################################
 ###### significant IV1 x IV2 interaction ######
 ###############################################
