@@ -80,8 +80,9 @@ jmv::anova(data = dat,
       dep = "dv",
       factors = c("iv1", "iv2"),
       effectSize = c("partEta", "omega"),
+      postHoc = list(c("iv1", "iv2")),  # calculates simple effects test, NB: gives t rather than F but t^2 = F
+      postHocCorr = "none",
       descStats = TRUE)
-
 
 ############################################################################
 ############# Simple effects of IV1 at different IV2 levels ################
