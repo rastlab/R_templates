@@ -61,9 +61,7 @@ dat$iv1_num <- as.numeric(dat$iv1) # iv1 should be replaced with the name of you
 # note: na.omit() removes any NAs contained within each of the IVs
 
 dat1 = na.omit(select(dat, iv1, iv2, iv3, dv))
-summarydat1 <- describe(dat1)
-
-summarydat1
+(summarydat1 <- describe(dat1))
 
 ####### center IVs
 # replace iv2 and iv3 names as appropriate if they were previously factors but turned in to numeric variables above
@@ -74,10 +72,9 @@ dat$c.iv2 <- scale(dat$iv2, center=TRUE)
 dat$c.iv3 <- scale(dat$iv3, center=TRUE)
 
 dat2 <- na.omit(select(dat, c.iv1, c.iv2, c.iv3, dv))
-summarydat2 <- describe(dat2)
 
 # verify centering
-summarydat2
+(summarydat2 <- describe(dat2))
 
 ####### test 3-way regression interaction
 
@@ -156,7 +153,7 @@ PlotSlope(s_slopes1,
           namey="dv",
           limitx=c(-2, 2),
           limity=c(4, 7)) +
-  apatheme
+          apatheme
 
 ## iv2 as slope, iv1 and iv3 as moderator
 s_slopes2 <- na.omit(simpleSlope(model1, pred = "iv2", mod1 = "iv1", mod2 = "iv3"))
@@ -172,7 +169,7 @@ PlotSlope(s_slopes2,
           namey="dv",
           limitx=c(-2, 2),
           limity=c(4, 7)) +
-  apatheme
+          apatheme
 
 ## iv3 as slope, iv1 and iv2 as moderator
 s_slopes3 <- na.omit(simpleSlope(model1, pred = "iv3", mod1 = "iv1", mod2 = "iv2"))
@@ -188,7 +185,7 @@ PlotSlope(s_slopes3,
           namey="dv",
           limitx=c(-2, 2),
           limity=c(4, 7)) +
-  apatheme
+          apatheme
 
 ###############################################################################################################
 ######## Prepare data for simple slopes of the 3-way interaction (see Mike's simples procedure sheet) #########

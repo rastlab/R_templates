@@ -48,9 +48,7 @@ glimpse(dat)
 # note: na.omit() removes any NAs contained within each of the IVs
 
 dat1 = na.omit(select(dat, iv1, iv2, dv))
-summarydat1 <- describe(dat1)
-
-summarydat1
+(summarydat1 <- describe(dat1))
 
 ####### center IVs
 
@@ -58,10 +56,10 @@ dat$c.iv1 <- scale(dat$iv1, center=TRUE)
 dat$c.iv2 <- scale(dat$iv2, center=TRUE)
 
 dat2 <- na.omit(select(dat, c.iv1, c.iv2, dv))
-summarydat2 <- describe(dat2)
 
 # verify centering
-summarydat2
+(summarydat2 <- describe(dat2))
+
 
 ####### test 2-way regression interaction
 
@@ -134,7 +132,7 @@ PlotSlope(s_slopes1, namemod=c("iv2 (-1SD)",
           namey="dv",
           limitx=c(-2, 2),
           limity=c(4, 7)) +
-  apatheme
+          apatheme
 
 ## iv2 as slope, iv1 as moderator
 s_slopes2 <- na.omit(simpleSlope(model1, pred="iv2",mod1="iv1"))
@@ -148,7 +146,7 @@ PlotSlope(s_slopes2, namemod=c("iv2 (-1SD)",
           namey="dv",
           limitx=c(-2, 2),
           limity=c(4, 7)) +
-  apatheme
+          apatheme
 
 ###############################################################################################################
 ######## Prepare data for simple slopes of the 3-way interaction (see Mike's simples procedure sheet) #########

@@ -56,12 +56,12 @@ glimpse(dat1)
 # one you change iv1, iv2, iv3, and dv to your variables of interest, then run the subsequent code in order
 # we'll also remove NA values to make this simpler
 
-dat1 = na.omit(dat %>% 
+(dat1 = na.omit(dat %>% 
                  select(iv1, iv2, iv3, dv) %>% 
                  rename(x = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         w = iv2, 
                         m = iv3, 
-                        y = dv))
+                        y = dv)))
 
 # dat1$x <- as.numeric(dat1$x) # if IV is categorical run this
 dat1$cen_x <- scale(dat1$x, center=TRUE)

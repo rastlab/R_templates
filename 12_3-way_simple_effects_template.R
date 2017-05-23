@@ -64,11 +64,11 @@ round(confint(model1), 3)
 
 ## descriptives based on condition 
 # note: na.omit() removes any NAs contained within each of the IVs
-summarydat <- na.omit(dat %>%
+(summarydat <- na.omit(dat %>%
                         group_by(iv1, iv2, iv3) %>%
                         summarise(N    = sum(!is.na(dv)),
                                   mean = round(mean(dv, na.rm=TRUE), 2),
-                                  sd   = round(sd(dv, na.rm=TRUE), 2)))
+                                  sd   = round(sd(dv, na.rm=TRUE), 2))))
 summarydat
 
 # new way of Anova using 'jmv' package, closer to SPSS output
@@ -91,18 +91,17 @@ jmv::anova(data = dat,
 # see https://cran.r-project.org/web/packages/phia/vignettes/phia.pdf
 
 # create interaction model of interest
-modinter <- na.omit(lm(dv~ iv1 * iv2 * iv3, data=dat))
+(modinter <- na.omit(lm(dv~ iv1 * iv2 * iv3, data=dat)))
 
 # examine simple effects
-moderation1 <- testInteractions(modinter, fixed = c("iv2", "iv3"), across="iv1", adjustment="none")
-
-moderation1
+(moderation1 <- testInteractions(modinter, fixed = c("iv2", "iv3"), across="iv1", adjustment="none"))
 
 etasqiv1.l_l <- (moderation1[1,3]) / ((moderation1[1,3]) + (moderation1[5,3])) # eta-squared iv2-l, iv3-l, across iv3
 etasqiv1.h_l <- (moderation1[2,3]) / ((moderation1[2,3]) + (moderation1[5,3])) # eta-squared iv2-h, iv3-l, across iv3
 etasqiv1.l_h <- (moderation1[3,3]) / ((moderation1[3,3]) + (moderation1[5,3])) # eta-squared iv2-l, iv3-h, across iv3
 etasqiv1.h_h <- (moderation1[4,3]) / ((moderation1[4,3]) + (moderation1[5,3])) # eta-squared iv2-h, iv3-h, across iv3
 
+moderation1
 etasqiv1.l_l
 etasqiv1.h_l
 etasqiv1.l_h
@@ -113,35 +112,32 @@ etasqiv1.h_h
 ############################################################################
 
 # examine simple effects
-moderation2 <- testInteractions(modinter, fixed = c("iv1", "iv3"), across="iv2", adjustment="none")
-
-moderation2
+(moderation2 <- testInteractions(modinter, fixed = c("iv1", "iv3"), across="iv2", adjustment="none"))
 
 etasqiv2.l_l <- (moderation2[1,3]) / ((moderation2[1,3]) + (moderation2[5,3])) # eta-squared iv1-l, iv3-l, across iv2
 etasqiv2.l_h <- (moderation2[2,3]) / ((moderation2[2,3]) + (moderation2[5,3])) # eta-squared iv1-h, iv3-l, across iv2
 etasqiv2.h_l <- (moderation2[3,3]) / ((moderation2[3,3]) + (moderation2[5,3])) # eta-squared iv1-l, iv3-h, across iv2
 etasqiv2.h_h <- (moderation2[4,3]) / ((moderation2[4,3]) + (moderation2[5,3])) # eta-squared iv1-h, iv3-h, across iv2
 
+moderation2
 etasqiv2.l_l
 etasqiv2.h_l
 etasqiv2.l_h
 etasqiv2.h_h
-
 
 ############################################################################
 ########### Simple effects of IV3 at different IV1 & IV2 levels ############
 ############################################################################
 
 # examine simple effects
-moderation3 <- testInteractions(modinter, fixed = c("iv1", "iv3"), across="iv2", adjustment="none")
-
-moderation3
+(moderation3 <- testInteractions(modinter, fixed = c("iv1", "iv3"), across="iv2", adjustment="none"))
 
 etasqiv3.l_l <- (moderation3[1,3]) / ((moderation3[1,3]) + (moderation3[5,3])) # eta-squared iv1-l, iv3-l, across iv2
 etasqiv3.h_l <- (moderation3[2,3]) / ((moderation3[2,3]) + (moderation3[5,3])) # eta-squared iv1-h, iv3-l, across iv2
 etasqiv3.l_h <- (moderation3[3,3]) / ((moderation3[3,3]) + (moderation3[5,3])) # eta-squared iv1-l, iv3-h, across iv2
 etasqiv3.h_h <- (moderation3[4,3]) / ((moderation3[4,3]) + (moderation3[5,3])) # eta-squared iv1-h, iv3-h, across iv2
 
+moderation3
 etasqiv3.l_l
 etasqiv3.h_l
 etasqiv3.l_h
@@ -155,11 +151,13 @@ etasqiv3.h_h
 ## good tutorial here
 # https://sakaluk.wordpress.com/2015/08/27/6-make-it-pretty-plotting-2-way-interactions-with-ggplot2/
 
-dat1 = describeBy(dat$dv, list(dat$iv1, dat$iv2, dat$iv3), mat=TRUE,digits=2)
+(dat1 = describeBy(dat$dv, list(dat$iv1, dat$iv2, dat$iv3), mat = TRUE, digits = 2))
 names(dat1)[names(dat1) == 'group1'] = 'iv1'
 names(dat1)[names(dat1) == 'group2'] = 'iv2'
 names(dat1)[names(dat1) == 'group3'] = 'iv3'
 dat1$se = dat1$sd/sqrt(dat1$n) # calculates SE for error bars if desired
+
+dat1
 
 ### tells R to provide a plot in APA style, figure is MS ready
 limits = aes(ymax = mean + (1.96*se), ymin=mean - (1.96*se))
@@ -172,7 +170,7 @@ apatheme=theme_bw()+
         text=element_text(family='Times'))
 
 ### now the actual figure
-figure1 = ggplot(dat1, aes(x = iv1, y = mean, group = iv2)) +
+(figure1 = ggplot(dat1, aes(x = iv1, y = mean, group = iv2)) +
   geom_bar(stat = "identity", position = "dodge", aes(fill = iv2)) +
   facet_wrap(  ~ iv3) +
   apatheme+
@@ -180,7 +178,7 @@ figure1 = ggplot(dat1, aes(x = iv1, y = mean, group = iv2)) +
   scale_y_continuous(breaks=seq(1,9,1)) + # this is the increment ticks on the y-axis
   ylab('dv') +
   xlab('iv1') +
-  scale_fill_grey() 
+  scale_fill_grey())
 
 figure1
 
