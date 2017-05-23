@@ -106,10 +106,7 @@ biplot(pca_dv1)
 plot((eigen(cor(dv1)))$values, type="both")
 
 #Next, do an exploratory factor analysis
-dv1.efa <- factanal(dv1, 3, rotation="promax")
-dv1.efa
-
-
+(dv1.efa <- factanal(dv1, 3, rotation="promax"))
 
 #### DV2 - PRINCIPAL COMPONENTS ANALYSIS (PCA) ####
 pca_dv2 <- princomp(dv2)
@@ -123,8 +120,7 @@ biplot(pca_dv2)
 plot((eigen(cor(dv2)))$values, type="both")
 
 #Next, do an exploratory factor analysis
-dv2.efa <- factanal(dv2, 3, rotation="promax")
-dv2.efa
+(dv2.efa <- factanal(dv2, 3, rotation="promax"))
 
 # remove EFAs/CFAs from temp/working memory if not needed
 rm(dv1.efa)
