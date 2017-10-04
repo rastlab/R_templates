@@ -16,8 +16,13 @@
 # rm(list = ls())
 update.packages(ask=FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, rio, tidyverse, psych, lubridate)
+pacman::p_load(parallel, rio, tidyverse, psych, lubridate, checkpoint)
 
+
+# if you want reproducible analysis, use the checkpoint() command using YYYY-MM-DD format
+# e.g., checkpoint("YYYY-MM-DD") or checkpoint("2017-09-25")
+
+# checkpoint("YYYY-MM-DD")
 
 ## load data
 
