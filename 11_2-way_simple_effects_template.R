@@ -15,7 +15,7 @@
 
 ## update packages then install these packages if not yet installed
 # rm(list = ls())
-update.packages(ask=FALSE, checkBuilt = TRUE)
+update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
 if(!require(jmv)){install.packages("jmv")}
 pacman::p_load(parallel, rio, psych, car, lsr, phia, tidyverse, apaTables)

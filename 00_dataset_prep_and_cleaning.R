@@ -14,7 +14,7 @@
 
 ## update packages then install these packages if not yet installed
 # rm(list = ls())
-update.packages(ask=FALSE, checkBuilt = TRUE)
+update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
 pacman::p_load(parallel, rio, tidyverse, psych, lubridate, checkpoint)
 
@@ -47,6 +47,8 @@ glimpse(dat)
 ###### Recoding Variables ######
 ################################
 
+#### recode IVs
+
 # Note: this suggested recoding scheme is based on Qualtrics data 
 # where all levels of the random assignment conditions are coded as 1
 
@@ -64,7 +66,7 @@ dat$iv2
 
 # reverse code any items required:
 # example syntax is for a 1 to 9 scale (10 - x)
-dat$dvitem_r = 10 - dat$dvitem
+dat$dvitem_r <- 10 - dat$dvitem
 dat$dvitem_r
 
 
@@ -79,20 +81,20 @@ sum(!is.na(dat$iv2))
 describe(select(dat, iv1_high, iv1_low, iv1, iv2_high, iv2_low, iv2))
 
 ##################################################################
-###### Ensuring R Generates the Same ANOVA F-values as SPSS ######
+####### Adding labels and levels to categorical variables ########
 ##################################################################
 
 # Set the variables to factors and labels, if experimental manipulations
 # if no conditions (e.g., a survey), then create labels and factor levels as need for ethnicity, year in school, etc.
 
-dat$iv1 = factor(dat$iv1, levels=c(1, 2), labels=c("Low", "High"), exclude = NA)
-dat$iv2 = factor(dat$iv2, levels=c(1, 2), labels=c("Low", "High"), exclude = NA)
-dat$gender = factor(dat$gender, levels=c(1, 2), labels=c("Male", "Female"), exclude = NA) 
-dat$year = factor(dat$year, levels=c(1, 2, 3, 4, 5), 
+dat$iv1 <- factor(dat$iv1, levels=c(1, 2), labels=c("Low", "High"), exclude = NA)
+dat$iv2 <- factor(dat$iv2, levels=c(1, 2), labels=c("Low", "High"), exclude = NA)
+dat$gender <- factor(dat$gender, levels=c(1, 2), labels=c("Male", "Female"), exclude = NA) 
+dat$year <- factor(dat$year, levels=c(1, 2, 3, 4, 5), 
                   labels=c("First","Second", "Third","Fourth", "GradStudent"), exclude = NA) 
 
 # revise this to match your data
-dat$ethnicity = factor(dat$ethnicity, levels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), 
+dat$ethnicity <- factor(dat$ethnicity, levels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), 
                        labels=c("Canadian","American", "British", "Chinese", "Dutch","French", 
                                 "German", "Irish", "Italian", "Native","Ukrainian", "Other"), 
                        exclude = NA)
@@ -100,7 +102,6 @@ dat$ethnicity = factor(dat$ethnicity, levels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 
 ## check IVs to ensure recoding worked corrected for manipulations
 describe(select(dat, iv1, iv2))
-
 
 #########################################
 ###### Recode manipulation timings ######
@@ -130,7 +131,7 @@ dat$avg_dv2 <- with(dat, rowMeans(cbind(dv2_1, dv2_2, dv2_3, dv2_4),
                                   na.rm = TRUE))
 
 # if difference score is needed:
-dat$diff = with(dat, avg_dv1 - avg_dv2)
+dat$diff <- with(dat, avg_dv1 - avg_dv2)
   
 
 #######################################
@@ -157,6 +158,19 @@ table(dat$gender, dat$ethnicity)
 # descriptives of IVs and DVs
 
 describe(select(dat, iv1, iv2, avg_dv1, avg_dv2))
+
+
+########################################################################
+############### Remove unwanted variables from dataset #################
+########################################################################
+
+# get list of variables in dataset
+glimpse(dat)
+
+# included any unwanted variables inside the -c()....example: -c(iv1_h, iv1_l)
+dat <- select(dat, -c(iv1_h, iv1_l, iv2_h, iv2_l))
+
+glimpse(dat)
 
 ########################################################################
 ###### Create Project Folder System and Saving Data and Workspace ######
