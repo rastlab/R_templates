@@ -110,11 +110,14 @@ describe(select(dat, iv1, iv2))
 # again, based on Qualtrics data, assume page timings were obtained
 ## Recode manipulation timings based on default Qualtrics variable naming scheme
 
-dat$iv1_timing <- with(dat, rowSums(cbind(iv1_1_3, iv1_2_3), 
-                                    na.rm = TRUE))
 
-dat$iv3_timing <- with(dat, rowSums(cbind(iv1_1_3, iv1_2_3), 
-                                    na.rm = TRUE))
+dat$iv1_timing <- dat %>% 
+                        select(iv1_1_3, iv1_2_3) %>% 
+                        rowSums(na.rm = TRUE)
+
+dat$iv2_timing <- dat %>% 
+                         select(iv2_1_3, iv2_2_3) %>% 
+                         rowSums(na.rm = TRUE)
 
 # summary of page timings
 describe(select(dat, iv1_timing, iv2_timing))
@@ -125,10 +128,17 @@ describe(select(dat, iv1_timing, iv2_timing))
 ##########################
 
 ## Create DVs
-dat$avg_dv1 <- with(dat, rowMeans(cbind(dv1_1, dv1_2, dv1_3, dv1_4), 
-                                  na.rm = TRUE))
-dat$avg_dv2 <- with(dat, rowMeans(cbind(dv2_1, dv2_2, dv2_3, dv2_4), 
-                                  na.rm = TRUE))
+
+dat$avg_dv1 <- dat %>% 
+                      select(dv1_1, dv1_2, dv1_3, dv1_4) %>% 
+                      rowMeans(na.rm = TRUE)
+
+dat$avg_dv2 <- dat %>% 
+                      select(dv2_1, dv2_2, dv2_3, dv2_4) %>% 
+                      rowMeans(na.rm = TRUE)
+
+# NB: if your variables start with same characters, then could use the following to simplify:
+# dat$avg_dv1 <- dat %>% select(starts_with("dv1_")) %>% rowMeans(na.rm = TRUE)
 
 # if difference score is needed:
 dat$diff <- with(dat, avg_dv1 - avg_dv2)
