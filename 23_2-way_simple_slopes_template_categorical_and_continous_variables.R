@@ -209,6 +209,7 @@ yrange = c(4,7)  # this is to change y-axis range. The first number is the y-axi
 
 ### Plot iv1 as slope and iv2 as moderator
 xrange = c(-1.5,1.5)
+png(file="./figures/figure_1.png", width=8, height=6, units="in", res = 1200)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes1$Points[1, 1]), (s_slopes1$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -218,7 +219,9 @@ axis(1, at=c(-1, 1), labels=c(iv1b, iv1a))
 axis(2, at=seq(1, 9, by=1))
 legend("topright", title = iv2, c(iv2a, iv2b), lty=1:2, cex=.90)
 box()
-dev.print(png, './figures/figure1.png', width = 480, height = 480)
+dev.off()
+graphics.off()
+
 
 ## repeat plot process here to change IV2 to the slope and IV1 as the moderator
 
@@ -239,6 +242,7 @@ yrange = c(4,7)  # this is to change y-axis range. The first number is the y-axi
 ### Plot iv2 as slope and iv1 as moderator
 yrange1 = c(4,7) # modify the y-axis range
 xrange1 = c(-1.5,1.5)
+png(file="./figures/figure_2.png", width=8, height=6, units="in", res = 1200)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes2$Points[1, 1]), (s_slopes2$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange1, xlim=xrange1)
@@ -248,7 +252,8 @@ axis(1, at=c(-1, 1), labels=c(iv2b, iv2a))
 axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = iv1, c(iv1a, iv1b), lty=1:2, cex=.90)
 box()
-dev.print(png, './figures/figure2.png', width = 480, height = 480)
+dev.off()
+graphics.off()
 
 
 #######################################
