@@ -234,6 +234,7 @@ summary(iv3.aa)
 ### Plot iv1 as slope and iv2 as moderator and iv3 (low -1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
+png(file="./figures/figure_1.png", width=8, height=6, units="in", res = 1200)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes1$Points[1, 1]), (s_slopes1$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -244,12 +245,14 @@ axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv2", c("iv2-high (+1SD)", "iv2-low (-1SD)"), lty=1:2, cex=.90)
 title(main="Panel B: iv3 (low -1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
-dev.print(png, './figures/figure1.png', width = 480, height = 480)
+dev.off()
+graphics.off()
 
 
 ### Plot iv1 as slope and iv2 as moderator and iv3 (high +1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
+png(file="./figures/figure_2.png", width=8, height=6, units="in", res = 1200)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes1$Points[2, 1]), (s_slopes1$Points[2, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -260,12 +263,14 @@ axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv2", c("iv2-high (+1SD)", "iv2-low (-1SD)"), lty=1:2, cex=.90)
 title(main="Panel B: iv3 (high +1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
-dev.print(png, './figures/figure2.png', width = 480, height = 480)
+dev.off()
+graphics.off()
 
 
 ### Plot iv2 as slope and iv1 as moderator and iv3 (low -1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
+png(file="./figures/figure_3.png", width=8, height=6, units="in", res = 1200)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes2$Points[1, 1]), (s_slopes2$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -276,12 +281,14 @@ axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv1", c("iv1-high (+1SD)", "iv1-low (-1SD)"), lty=1:2, cex=.90)
 title(main="Panel B: iv3 (low -1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
-dev.print(png, './figures/figure3.png', width = 480, height = 480)
+dev.off()
+graphics.off()
 
 
 ### Plot iv2 as slope and iv1 as moderator and iv3 (high +1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
+png(file="./figures/figure_4.png", width=8, height=6, units="in", res = 1200)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes2$Points[2, 1]), (s_slopes2$Points[2, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -292,12 +299,14 @@ axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv1", c("iv1-high (+1SD)", "iv1-low (-1SD)"), lty=1:2, cex=.90)
 title(main="Panel B: iv3 (high +1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
-dev.print(png, './figures/figure4.png', width = 480, height = 480)
+dev.off()
+graphics.off()
 
 
 ### Plot iv3 as slope and iv1 as moderator and iv2 (low -1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
+png(file="./figures/figure_5.png", width=8, height=6, units="in", res = 1200)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes3$Points[1, 1]), (s_slopes3$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -308,12 +317,14 @@ axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv1", c("iv1-high (+1SD)", "iv1-low (-1SD)"), lty=1:2, cex=.90)
 title(main="Panel B: iv2 (low -1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
-dev.print(png, './figures/figure5.png', width = 480, height = 480)
+dev.off()
+graphics.off()
 
 
 ### Plot iv3 as slope and iv1 as moderator and iv2 (high +1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
+png(file="./figures/figure_6.png", width=8, height=6, units="in", res = 1200)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes3$Points[2, 1]), (s_slopes3$Points[2, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -324,7 +335,8 @@ axis(2, at=c(4, 5, 6, 7))
 legend("topright", title = "iv1", c("iv1-high (+1SD)", "iv1-low (-1SD)"), lty=1:2, cex=.90)
 title(main="Panel B: iv2 (high +1SD)", adj = 0, font.main = 1, cex.main = 1)
 box()
-dev.print(png, './figures/figure6.png', width = 480, height = 480)
+dev.off()
+graphics.off()
 
 
 #######################################
