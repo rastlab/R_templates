@@ -80,7 +80,7 @@ dat2 <- na.omit(select(dat, c.iv1, c.iv2, c.iv3, dv))
 
 ### linear regression
 step1.1 <- lm(dv ~ c.iv1 + c.iv2 + c.iv3, data=dat)
-step2.1 <- lm(dv ~ c.iv1 + c.iv2 + c.iv3 + c.iv1:c.iv2 + c.iv1:c.iv3 + c.iv2:c.iv3, data=dat)
+step2.1 <- lm(dv ~ c.iv1 * c.iv2 + c.iv1 * c.iv3 + c.iv2 * c.iv3, data=dat)
 step3.1 <- lm(dv ~ c.iv1 * c.iv2 * c.iv3, data=dat)
 
 # regression summaries for each step
@@ -113,13 +113,18 @@ summary(model1$StepII)
 summary(model1)
 
 # F-change statistic from here
-model1$F_change
+modelCompare(model1$StepI, model1$StepII)
+modelCompare(model1$StepII, model1$Stepfin)
 
 # standardised coefficients (Beta weights)
 model1$beta.StepI
 model1$beta.StepII
 model1$beta.Stepfin
 
+# 95% confidence intervals (defaults to 95%), rounded to 3 decimal places
+round(confint(model1$StepI), 3)
+round(confint(model1$StepII), 3)
+round(confint(model1$Stepfin), 3)
 
 #####################################################################################
 ######################## Simple Slope Testing Automatically #########################
@@ -249,7 +254,7 @@ summary(iv3.aa)
 ### Plot iv1 as slope and iv2 as moderator and iv3 (low -1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
-png(file="./figures/figure_1.png", width=8, height=6, units="in", res = 1200)
+png(file="./figures/figure_1.png", width=8, height=6, units="in", res = 800)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes1$Points[1, 1]), (s_slopes1$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -267,7 +272,7 @@ graphics.off()
 ### Plot iv1 as slope and iv2 as moderator and iv3 (high +1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
-png(file="./figures/figure_2.png", width=8, height=6, units="in", res = 1200)
+png(file="./figures/figure_2.png", width=8, height=6, units="in", res = 800)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes1$Points[2, 1]), (s_slopes1$Points[2, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -285,7 +290,7 @@ graphics.off()
 ### Plot iv2 as slope and iv1 as moderator and iv3 (low -1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
-png(file="./figures/figure_3.png", width=8, height=6, units="in", res = 1200)
+png(file="./figures/figure_3.png", width=8, height=6, units="in", res = 800)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes2$Points[1, 1]), (s_slopes2$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -303,7 +308,7 @@ graphics.off()
 ### Plot iv2 as slope and iv1 as moderator and iv3 (high +1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
-png(file="./figures/figure_4.png", width=8, height=6, units="in", res = 1200)
+png(file="./figures/figure_4.png", width=8, height=6, units="in", res = 800)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes2$Points[2, 1]), (s_slopes2$Points[2, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -321,7 +326,7 @@ graphics.off()
 ### Plot iv3 as slope and iv1 as moderator and iv2 (low -1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
-png(file="./figures/figure_5.png", width=8, height=6, units="in", res = 1200)
+png(file="./figures/figure_5.png", width=8, height=6, units="in", res = 800)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes3$Points[1, 1]), (s_slopes3$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -339,7 +344,7 @@ graphics.off()
 ### Plot iv3 as slope and iv1 as moderator and iv2 (high +1SD) as panel
 yrange = c(4,7)  # modify the y-axis range
 xrange = c(-1.5,1.5)
-png(file="./figures/figure_6.png", width=8, height=6, units="in", res = 1200)
+png(file="./figures/figure_6.png", width=8, height=6, units="in", res = 800)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes3$Points[2, 1]), (s_slopes3$Points[2, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)

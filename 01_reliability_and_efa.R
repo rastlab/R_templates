@@ -49,8 +49,14 @@ glimpse(dat)
 ###################################################
 
 # Create dataframes that has only the relevant items for each scale
-dv1 = na.omit(select(dat, c(dv1_1, dv1_2, dv1_3, dv1_4)))
-dv2 = na.omit(select(dat, c(dv2_1, dv2_2, dv2_3, dv2_4)))
+
+dv1 <- dat %>% select(dv1_1, dv1_2, dv1_3, dv1_4) %>% na.omit()
+
+dv2 <- dat %>% select(dv2_1, dv2_2, dv2_3, dv2_4) %>% na.omit()
+
+## could also use the following commands to simplify if appropriate
+# dv1 <- dat %>% select(starts_with("dv1_") %>% na.omit()
+# dv2 <- dat %>% select(starts_with("dv2_") %>% na.omit()
 
 ################################
 ###### Scale Descriptives ######
@@ -62,16 +68,30 @@ describe(dv1)
 describe(dv2)
 
 ## summary table
-describe(select(dat, c(avg_dv1, avg_dv2)))
+dat %>% 
+       select(avg_dv1, avg_dv2) %>% 
+       describe()
+
+# could also shorten by writing:
+# dat %>% 
+#        select(starts_with("avg_")) %>% 
+#        describe()
 
 #########################################
 ###### Inter-variable Correlations ######
 #########################################
 
 # Interscale correlations
-round(cor(select(dat, c(avg_dv1, avg_dv2)), 
-          use = "complete.obs", 
-          method = "pearson"), 2)
+dat %>%
+       select(avg_dv1, avg_dv2) %>%
+       cor(use = "complete.obs", method = "pearson") %>%
+       round(2)
+
+# could also shorten by writing:
+# dat %>%
+#       select(starts_with("avg_")) %>%
+#       cor(use = "complete.obs", method = "pearson") %>%
+#       round(2)
 
 
 ##############################
@@ -81,14 +101,9 @@ round(cor(select(dat, c(avg_dv1, avg_dv2)),
 # Calculate Cronbach's Alpha
 
 # alpha for scale, with item if deleted summary also
-jmv::reliability(
-  data = dat,
-  vars = c("dv1_1", "dv1_2", "dv1_3", "dv1_4"),
-  meanScale = TRUE,
-  sdScale = TRUE,
-  alphaItems = TRUE,
-  meanItems = TRUE,
-  sdItems = TRUE)
+alpha(dv1)
+
+alpha(dv2)
 
 
 ##############################

@@ -89,8 +89,8 @@ round(confint(step1.1), 3)
 round(confint(step2.1), 3)
 
 # Betas, rounded to 3 decimal places
-round(lm.beta(step1.1), 3)
-round(lm.beta(step2.1), 3)
+round(lm.beta(step1.1), 5)
+round(lm.beta(step2.1), 5)
 
 ### could also achive this differently by doing:
 
@@ -102,11 +102,15 @@ summary(model1$StepI)
 summary(model1)
 
 # F-change statistic from here
-model1$F_change
+modelCompare(model1$StepI, model1$Stepfin)
 
 # standardised coefficients (Beta weights)
 model1$beta.StepI
 model1$beta.Stepfin
+
+# 95% confidence intervals (defaults to 95%), rounded to 3 decimal places
+round(confint(model1$StepI), 3)
+round(confint(model1$Stepfin), 3)
 
 
 #####################################################################################
@@ -209,7 +213,7 @@ yrange = c(4,7)  # this is to change y-axis range. The first number is the y-axi
 
 ### Plot iv1 as slope and iv2 as moderator
 xrange = c(-1.5,1.5)
-png(file="./figures/figure_1.png", width=8, height=6, units="in", res = 1200)
+png(file="./figures/figure_1.png", width=8, height=6, units="in", res = 800)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes1$Points[1, 1]), (s_slopes1$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
@@ -242,7 +246,7 @@ yrange = c(4,7)  # this is to change y-axis range. The first number is the y-axi
 ### Plot iv2 as slope and iv1 as moderator
 yrange1 = c(4,7) # modify the y-axis range
 xrange1 = c(-1.5,1.5)
-png(file="./figures/figure_2.png", width=8, height=6, units="in", res = 1200)
+png(file="./figures/figure_2.png", width=8, height=6, units="in", res = 800)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes2$Points[1, 1]), (s_slopes2$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange1, xlim=xrange1)

@@ -162,7 +162,7 @@ figure1
 ## if you like the figure, then can save it to your computer with this command:
 # can change file name and storage location as you see fit
 # if no path is selected, the the figure will be saved into your R stats working directory
-ggsave('./figures/figure1.png', width=6, height=6, unit='in', dpi=300)
+ggsave('./figures/figure1.png', width=8, height=6, unit='in', dpi=300)
 
 
 #######################################
@@ -174,7 +174,7 @@ ggsave('./figures/figure1.png', width=6, height=6, unit='in', dpi=300)
 # directly into your MS, presentation, or poster
 # we'll also remove NA values to make this simpler
 
-dat2 = na.omit(select(dat, c(iv1, iv2, dv)))
+dat2 <- dat %>% select(iv1, iv2, dv) %>% na.omit()
 
 # can make multiple tables by changing 'table.number = X
 apa.2way.table(iv1, iv2, dv, data = dat2, landscape = TRUE, table.number = 1, filename="./tables/anova_table.doc")
