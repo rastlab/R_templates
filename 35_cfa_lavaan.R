@@ -95,12 +95,7 @@ round(fitMeasures(fit_saturated_model)[c('chisq', 'df', 'pvalue', 'cfi', 'ifi', 
 
 ## compare models, if needed
 # produces Chi-square difference test
-
-# compare 1 factor (5 item) model vs 2 factor (10 item) model
-anova(fit_five_item, fit_two_factor_model)
-
-# compare 1 factor (5 item) model vs fully saturated model
-anova(fit_five_item, fit_saturated_model)
+# can only compare models with the same items but different df
 
 # compare 2 factor (10 item) model vs fully saturated model
 anova(fit_two_factor_model, fit_saturated_model)
