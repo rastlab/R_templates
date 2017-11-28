@@ -18,8 +18,7 @@ if(!require(pacman)){install.packages("pacman")}
 pacman::p_load(parallel, rio, tidyverse, lavaan)
 
 ## load data
-
-dat <- import("https://www.dropbox.com/s/cnumemoi62ef2hz/UMKC%20IRI%20Validation%20-%202nd%20data%20collection.sav?dl=1")
+dat <- import(file.choose())
 
 # check to see that you loaded the correct dataset
 View(dat)
