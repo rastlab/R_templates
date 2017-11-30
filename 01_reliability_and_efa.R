@@ -16,7 +16,8 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, rio, tidyverse, car, psych, jmv)
+devtools::install_github("NumbersInternational/flipDimensionReduction")
+pacman::p_load(parallel, rio, tidyverse, car, psych, flipDimensionReduction, jmv)
 
 # if you want reproducible analysis, use the checkpoint() command using YYYY-MM-DD format
 # e.g., checkpoint("YYYY-MM-DD") or checkpoint("2017-09-25")
@@ -109,6 +110,43 @@ alpha(dv2)
 ##############################
 ###### Factor Analysis #######
 ##############################
+
+
+##%######################################################%##
+#                                                          #
+####       Using 'flipDimensionReduction' package       ####
+#                                                          #
+##%######################################################%##
+
+
+# Note that the rotations used by SPSS will sometimes use the “Kaiser Normalization”. 
+# By default, the rotations used in 'psych' do not normalize.
+# We will use another package that builds off 'psych' but does normalize the EFA/PCA by default to match SPSS' output
+# this package also gives a nice, visually appealing table in the "Viewer" window
+
+# Note: Rotate can "none", "varimax", "quatimax", "promax", "oblimin", "simplimax", or "cluster" .
+
+# analysis without a rotation
+PrincipalComponentsAnalysis(dv1, rotation = "none", select.n.rule="Kaiser rule")
+
+# analysis with a rotation, as an example
+PrincipalComponentsAnalysis(dv1, rotation = "equamax", select.n.rule="Kaiser rule")
+
+## add {print.type=""} to get different types of output
+# "details" gives a lot more EFA/PCA info and in a plain text output in the R console
+PrincipalComponentsAnalysis(dv1, rotation = "equamax", select.n.rule="Kaiser rule", print.type="details")
+
+# "scree" provides a simple, yet elegant looking scree plot in the "Viewer" pane
+PrincipalComponentsAnalysis(dv1, rotation = "equamax", select.n.rule="Kaiser rule", print.type= "scree")
+
+
+
+##%######################################################%##
+#                                                          #
+####               Using 'psych' package                ####
+#                                                          #
+##%######################################################%##
+
 
 # Note: Rotate can "none", "varimax", "quatimax", "promax", "oblimin", "simplimax", or "cluster" .
 # Note: retaining 3 components but can be any number
