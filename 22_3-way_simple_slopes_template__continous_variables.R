@@ -17,7 +17,7 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, rio, psych, pequod, QuantPsyc, lmSupport, tidyverse, apaTables)
+pacman::p_load(parallel, haven, rio, pequod, tidyverse, QuantPsyc, lmSupport, jtools, apaTables, cowplot, stargazer)
 
 ## load data
 
@@ -69,9 +69,9 @@ step2.1 <- lm(dv ~ c.iv1 * c.iv2 + c.iv1 * c.iv3 + c.iv2 * c.iv3, data=dat)
 step3.1 <- lm(dv ~ c.iv1 * c.iv2 * c.iv3, data=dat)
 
 # regression summaries for each step
-summary(step1.1)
-summary(step2.1)
-summary(step3.1)
+summ(step1.1, digits = 3)
+summ(step2.1, digits = 3)
+summ(step3.1, digits = 3)
 
 # F-change and Delta R-Squared statistics from here
 modelCompare(step1.1, step2.1)
@@ -87,15 +87,41 @@ round(lm.beta(step1.1), 3)
 round(lm.beta(step2.1), 3)
 round(lm.beta(step3.1), 3)
 
+### test simple slopes 
+
+# Johnson-Neyman intervals with plots
+sim_slopes(step3.1, pred = c.iv1, modx = c.iv2, mod2 = c.iv3, jnplot = TRUE)
+sim_slopes(step3.1, pred = c.iv1, modx = c.iv3, mod2 = c.iv2, jnplot = TRUE)
+sim_slopes(step3.1, pred = c.iv2, modx = c.iv1, mod2 = c.iv3, jnplot = TRUE)
+sim_slopes(step3.1, pred = c.iv2, modx = c.iv3, mod2 = c.iv2, jnplot = TRUE)
+sim_slopes(step3.1, pred = c.iv3, modx = c.iv1, mod2 = c.iv2, jnplot = TRUE)
+sim_slopes(step3.1, pred = c.iv3, modx = c.iv2, mod2 = c.iv1, jnplot = TRUE)
+
+# simple slopes plots with Johnson-Neyman intervals in output
+probe_interaction(step3.1, 
+                  pred = c.iv1, modx = c.iv2, mod2 = c.iv3, 
+                  interval = TRUE,
+                  plot.points = TRUE)
+
+probe_interaction(step3.1, 
+                  pred = c.iv2, modx = c.iv1, mod2 = c.iv3, 
+                  interval = TRUE,
+                  plot.points = TRUE)
+
+probe_interaction(step3.1, 
+                  pred = c.iv3, modx = c.iv1, mod2 = c.iv2, 
+                  interval = TRUE,
+                  plot.points = TRUE)
+
 ### could also achive this differently by doing:
 
 ### linear regression
 model1 <- na.omit(lmres(dv ~ c.iv1 * c.iv2 * c.iv3, data=dat))
 
 # regression summaries for each step
-summary(model1$StepI)
-summary(model1$StepII) 
-summary(model1)
+summ(model1$StepI) 
+summ(model1$StepII)
+summ(model1$Stepfin)
 
 # F-change statistic from here
 modelCompare(model1$StepI, model1$StepII)
@@ -367,6 +393,21 @@ apa.cor.table(dat3, filename = "./tables/correlation_table.doc", table.number = 
 # regression table
 apa.reg.table(step1.1, step2.1, step3.1, filename = "./tables/regression_table.doc", table.number = 2)
 
+# regression model summary (paste and copy into document)
+stargazer(step1.1, step2.1, step3.1, 
+          type="text", 
+          title="Regression Results",
+          dep.var.labels=c("Dependent Variable"),
+          column.labels = c("Main Effects", "2-way Interactions", "3-way Interaction"),
+          covariate.labels=c("iv1", "iv2", "iv3", 
+                             "2-way interaction1", "2-way interaction2", "2-way interaction3", 
+                             "3-way interaction"),
+          omit.stat=c("ser"),
+          align=TRUE,
+          intercept.bottom = FALSE, 
+          single.row=TRUE,     
+          notes.append = FALSE, 
+          header=FALSE)
 
 #######################################
 ###### Saving Data and Workspace ######
