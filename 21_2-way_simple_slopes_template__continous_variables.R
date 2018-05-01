@@ -17,7 +17,7 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, haven, rio, pequod, tidyverse, QuantPsyc, lmSupport, jtools, apaTables, cowplot, stargazer)
+pacman::p_load(parallel, rio, pequod, tidyverse, QuantPsyc, lmSupport, jtools, apaTables, cowplot, stargazer)
 
 ## load data
 
@@ -30,7 +30,6 @@ pacman::p_load(parallel, haven, rio, pequod, tidyverse, QuantPsyc, lmSupport, jt
 # the following command will open a dialog box and allow you to select the file you wish to laod
 dat <- import(file.choose())
 
-setwd("./PROJECT_NAME/")       # change PROJECT_NAME to your project's name
 
 # check to see that you loaded the correct dataset
 View(dat)
@@ -52,8 +51,8 @@ dat1 = na.omit(select(dat, iv1, iv2, dv))
 
 ####### center IVs
 
-dat$c.iv1 <- scale(dat$iv1, center=TRUE)
-dat$c.iv2 <- scale(dat$iv2, center=TRUE)
+dat$c.iv1 <- c(scale(dat$iv1, center=TRUE))
+dat$c.iv2 <- c(scale(dat$iv2, center=TRUE))
 
 dat2 <- na.omit(select(dat, c.iv1, c.iv2, dv))
 
@@ -63,7 +62,16 @@ dat2 <- na.omit(select(dat, c.iv1, c.iv2, dv))
 
 ####### test 2-way regression interaction
 
-### linear regression
+## regression function 
+# simplified code to run regressions on all DVs at once
+
+reg_models <- dat %>% 
+                     select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
+                      map(~summ(lm(. ~ c_IV1 * c_IV2, data = dat))) 
+
+reg_models 
+
+### linear regression to dive into any significant 2-ways
 step1.1 <- lm(dv ~ c.iv1 + c.iv2, data=dat)
 step2.1 <- lm(dv ~ c.iv1 * c.iv2, data=dat)
 

@@ -35,7 +35,6 @@ pacman::p_load(parallel, rio, tidyverse, car, psych, flipDimensionReduction, jmv
 # the following command will open a dialog box and allow you to select the file you wish to laod
 dat <- import(file.choose())
 
-setwd("./PROJECT_NAME/")       # change PROJECT_NAME to your project's name
 
 # check to see that you loaded the correct dataset
 View(dat)

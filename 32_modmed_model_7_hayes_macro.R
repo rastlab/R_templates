@@ -28,8 +28,6 @@ pacman::p_load(parallel, rio, tidyverse, lavaan)
 # the following command will open a dialog box and allow you to select the file you wish to laod
 dat <- import(file.choose())
 
-setwd("./PROJECT_NAME/")       # change PROJECT_NAME to your project's name
-
 # check to see that you loaded the correct dataset
 View(dat)
 
@@ -64,9 +62,9 @@ glimpse(dat1)
                         y = dv)))
 
 # dat1$x <- as.numeric(dat1$x) # if IV is categorical run this
-dat1$cen_x <- scale(dat1$x, center=TRUE)
-dat1$cen_w <- scale(dat1$w, center=TRUE)
-dat1$cen_m <- scale(dat1$m, center=TRUE)
+dat1$cen_x <- c(scale(dat1$x, center=TRUE))
+dat1$cen_w <- c(scale(dat1$w, center=TRUE))
+dat1$cen_m <- c(scale(dat1$m, center=TRUE))
 
 # need to manually add interaction term for IV and Moderator
 dat1$cen_xw <- dat1$cen_x * dat1$cen_w

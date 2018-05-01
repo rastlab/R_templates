@@ -32,7 +32,6 @@ pacman::p_load(parallel, rio, psych, car, lsr, phia, tidyverse, apaTables)
 # the following command will open a dialog box and allow you to select the file you wish to laod
 dat <- import(file.choose())
 
-setwd("./PROJECT_NAME/")       # change PROJECT_NAME to your project's name
 
 # check to see that you loaded the correct dataset
 View(dat)
@@ -50,7 +49,18 @@ glimpse(dat)
 options(contrasts = c("contr.helmert", "contr.poly"))
 
 ## R way of Anova using 'car' package
-# create ANOVA model
+
+## ANOVA function 
+# simplified code to run ANOVAs on all DVs at once
+
+aov_models <- dat %>% 
+                     select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
+                     map(~Anova(lm(. ~ iv1 * iv2, data = dat), type = 3))
+
+aov_models 
+
+
+# ANOVA model to dive into any significant 2-ways
 model1 <- lm(dv ~ iv1 * iv2, data=dat)
 
 # run ANOVA, rounded to 3 decimals
