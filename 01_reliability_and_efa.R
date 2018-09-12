@@ -17,7 +17,7 @@
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
 devtools::install_github("NumbersInternational/flipDimensionReduction")
-pacman::p_load(parallel, rio, tidyverse, car, psych, flipDimensionReduction, jmv)
+pacman::p_load(parallel, rio, tidyverse, car, psych, flipDimensionReduction, corrr)
 
 # if you want reproducible analysis, use the checkpoint() command using YYYY-MM-DD format
 # e.g., checkpoint("YYYY-MM-DD") or checkpoint("2017-09-25")
@@ -83,15 +83,18 @@ dat %>%
 
 # Interscale correlations
 dat %>%
-       select(avg_dv1, avg_dv2) %>%
-       cor(use = "complete.obs", method = "pearson") %>%
-       round(2)
+  select(avg_dv1, avg_dv2) %>%           # Selects only variables/items for correlation table
+  correlate(use = "complete.obs") %>%    # Create correlation data frame (cor_df)
+  shave() %>%                            # only show bottom 'triangle' of output
+  fashion()                              # formats output to be more readable
+
 
 # could also shorten by writing:
 # dat %>%
 #       select(starts_with("avg_")) %>%
-#       cor(use = "complete.obs", method = "pearson") %>%
-#       round(2)
+#       correlate(use = "complete.obs") %>%
+#       shave() %>%
+#       fashion()
 
 
 ##############################
