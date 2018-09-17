@@ -16,7 +16,7 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-devtools::install_github("NumbersInternational/flipDimensionReduction")
+install_github("Displayr/flipDimensionReduction")
 pacman::p_load(parallel, rio, tidyverse, car, psych, flipDimensionReduction, corrr)
 
 # if you want reproducible analysis, use the checkpoint() command using YYYY-MM-DD format
