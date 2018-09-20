@@ -17,7 +17,7 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, rio, pequod, tidyverse, QuantPsyc, lmSupport, jtools, apaTables, cowplot, stargazer)
+pacman::p_load(parallel, rio, pequod, tidyverse, QuantPsyc, lmSupport, jtools, apaTables, cowplot, stargazer, sjmisc)
 
 ## load data
 
@@ -99,11 +99,13 @@ sim_slopes(step2.1, pred = c.iv2, modx = c.iv1, jnplot = TRUE)
 # simple slopes plots with Johnson-Neyman intervals in output
 probe_interaction(step2.1, 
                   pred = c.iv1, modx = c.iv2,
+                  modx.values = "plus-minus",  # nb: remove this line if you have a categorical predictor
                   interval = TRUE,
                   plot.points = TRUE)
 
 probe_interaction(step2.1, 
                   pred = c.iv2, modx = c.iv1,
+                  modx.values = "plus-minus",  # nb: remove this line if you have a categorical predictor
                   interval = TRUE,
                   plot.points = TRUE)
 

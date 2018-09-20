@@ -98,27 +98,30 @@ round(lm.beta(step3.1), 3)
 ### test simple slopes 
 
 # Johnson-Neyman intervals with plots
-sim_slopes(step3.1, pred = c.iv1, modx = c.iv2, mod2 = c.iv3, jnplot = TRUE)
-sim_slopes(step3.1, pred = c.iv1, modx = c.iv3, mod2 = c.iv2, jnplot = TRUE)
-sim_slopes(step3.1, pred = c.iv2, modx = c.iv1, mod2 = c.iv3, jnplot = TRUE)
-sim_slopes(step3.1, pred = c.iv2, modx = c.iv3, mod2 = c.iv2, jnplot = TRUE)
-sim_slopes(step3.1, pred = c.iv3, modx = c.iv1, mod2 = c.iv2, jnplot = TRUE)
-sim_slopes(step3.1, pred = c.iv3, modx = c.iv2, mod2 = c.iv1, jnplot = TRUE)
+sim_slopes(step3.1, pred = c.iv1, modx = c.iv2, mod2 = c.iv3, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
+sim_slopes(step3.1, pred = c.iv1, modx = c.iv3, mod2 = c.iv2, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
+sim_slopes(step3.1, pred = c.iv2, modx = c.iv1, mod2 = c.iv3, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
+sim_slopes(step3.1, pred = c.iv2, modx = c.iv3, mod2 = c.iv2, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
+sim_slopes(step3.1, pred = c.iv3, modx = c.iv1, mod2 = c.iv2, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
+sim_slopes(step3.1, pred = c.iv3, modx = c.iv2, mod2 = c.iv1, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
 
 # simple slopes plots with Johnson-Neyman intervals in output
 probe_interaction(step3.1, 
                   pred = c.iv1, modx = c.iv2, mod2 = c.iv3, 
-                  interval = TRUE,
+                  modx.values = "plus-minus", 
+                  mod2.values = "plus-minus", 
                   plot.points = TRUE)
 
 probe_interaction(step3.1, 
                   pred = c.iv2, modx = c.iv1, mod2 = c.iv3, 
-                  interval = TRUE,
+                  modx.values = "plus-minus", 
+                  mod2.values = "plus-minus", 
                   plot.points = TRUE)
 
 probe_interaction(step3.1, 
                   pred = c.iv3, modx = c.iv1, mod2 = c.iv2, 
-                  interval = TRUE,
+                  modx.values = "plus-minus", 
+                  mod2.values = "plus-minus", 
                   plot.points = TRUE)
 
 ### could also achive this differently by doing:
