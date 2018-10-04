@@ -17,8 +17,9 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, rio, pequod, tidyverse, QuantPsyc, lmSupport, jtools, apaTables, cowplot, stargazer, sjmisc)
-
+pacman::p_load(parallel, rio, pequod, QuantPsyc, lmSupport, 
+               jtools, apaTables, cowplot, stargazer, sjmisc, 
+               sjstats, psych, tidyverse)
 ## load data
 
 # RData files work the best in R. 
