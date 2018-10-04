@@ -59,21 +59,23 @@ dat$iv1_num <- as.numeric(dat$iv1) # iv1 should be replaced with the name of you
 ## descriptive summary table 
 # note: na.omit() removes any NAs contained within each of the IVs
 
-dat1 = na.omit(select(dat, iv1, iv2, iv3, dv))
-(summarydat1 <- describe(dat1))
+
+dat %>%
+  select(iv1, iv2, dv) %>%
+  describe()
 
 ####### center IVs
-# replace iv2 and iv3 names as appropriate if they were previously factors but turned in to numeric variables above
-# e.g., iv2/iv3 changed to iv2_num/iv3_num if neccessary 
 
-dat$c.iv1 <- c(scale(dat$iv1_num, center=TRUE))
-dat$c.iv2 <- c(scale(dat$iv2, center=TRUE))
-dat$c.iv3 <- c(scale(dat$iv3, center=TRUE))
+dat$c_iv1 <- std(dat$iv1, robust = c("sd"), include.fac = TRUE)  # this is your manipulated/factor variable
+dat$c_iv2 <- std(dat$iv2, robust = c("sd"))                      # this is your continuous variable 
+dat$c_iv3 <- std(dat$iv2, robust = c("sd"))                      # this is your continuous variable 
 
-dat2 <- na.omit(select(dat, c.iv1, c.iv2, c.iv3, dv))
+# if you have more than 1 factor/manipulated variables, then add 'include.fac = TRUE' to command above
 
 # verify centering
-(summarydat2 <- describe(dat2))
+dat %>%
+  select(starts_with("c_")) %>%
+  describe()
 
 ####### test 3-way regression interaction
 
@@ -82,16 +84,24 @@ dat2 <- na.omit(select(dat, c.iv1, c.iv2, c.iv3, dv))
 
 reg_models <- dat %>% 
   select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
-  map(~summ(lm(. ~ c_IV1 * c_IV2 * c_IV3, data = dat))) 
+  map(~summ(lm(. ~ c_iv1 * c_iv2 * c_iv3, data = dat))) 
 
 reg_models 
 
 ### linear regression to dive into any significant 3-ways
-step1.1 <- lm(dv ~ c.iv1 + c.iv2 + c.iv3, data=dat)
-step2.1 <- lm(dv ~ c.iv1 * c.iv2 + c.iv1 * c.iv3 + c.iv2 * c.iv3, data=dat)
-step3.1 <- lm(dv ~ c.iv1 * c.iv2 * c.iv3, data=dat)
+step1.1 <- lm(dv ~ c_iv1 + c_iv2 + c_iv3, data=dat)
+step2.1 <- lm(dv ~ c_iv1 * c_iv2 + c_iv1 * c_iv3 + c_iv2 * c_iv3, data=dat)
+step3.1 <- lm(dv ~ c_iv1 * c_iv2 * c_iv3, data=dat)
 
-# regression summaries for each step
+# check GLM assumptions for:
+# heteroskedastic (error variance), autocorrelation (independence of errors)
+# normality (normality of residuals), multicollinearity (predictor independence)
+check_assumptions(step3.1, as.logical = FALSE)
+
+# tests for outliers in model then iteratively removes outliers and re-runs the model
+outliers(step3.1, iterations = 5)
+
+## regression summaries for each step
 summ(step1.1, digits = 3)
 summ(step2.1, digits = 3)
 summ(step3.1, digits = 3)
@@ -113,33 +123,33 @@ round(lm.beta(step3.1), 3)
 ### test simple slopes 
 
 # Johnson-Neyman intervals with plots
-sim_slopes(step3.1, pred = c.iv1, modx = c.iv2, mod2 = c.iv3, jnplot = TRUE)
-sim_slopes(step3.1, pred = c.iv1, modx = c.iv3, mod2 = c.iv2, jnplot = TRUE)
-sim_slopes(step3.1, pred = c.iv2, modx = c.iv1, mod2 = c.iv3, jnplot = TRUE)
-sim_slopes(step3.1, pred = c.iv2, modx = c.iv3, mod2 = c.iv2, jnplot = TRUE)
-sim_slopes(step3.1, pred = c.iv3, modx = c.iv1, mod2 = c.iv2, jnplot = TRUE)
-sim_slopes(step3.1, pred = c.iv3, modx = c.iv2, mod2 = c.iv1, jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv1, modx = c_iv2, mod2 = c_iv3, jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv1, modx = c_iv3, mod2 = c_iv2, jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv2, modx = c_iv1, mod2 = c_iv3, jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv2, modx = c_iv3, mod2 = c_iv2, jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv3, modx = c_iv1, mod2 = c_iv2, jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv3, modx = c_iv2, mod2 = c_iv1, jnplot = TRUE)
 
 # simple slopes plots with Johnson-Neyman intervals in output
 probe_interaction(step3.1, 
-                  pred = c.iv1, modx = c.iv2, mod2 = c.iv3, 
+                  pred = c_iv1, modx = c_iv2, mod2 = c_iv3, 
                   interval = TRUE,
                   plot.points = TRUE)
 
 probe_interaction(step3.1, 
-                  pred = c.iv2, modx = c.iv1, mod2 = c.iv3, 
+                  pred = c_iv2, modx = c_iv1, mod2 = c_iv3, 
                   interval = TRUE,
                   plot.points = TRUE)
 
 probe_interaction(step3.1, 
-                  pred = c.iv3, modx = c.iv1, mod2 = c.iv2, 
+                  pred = c_iv3, modx = c_iv1, mod2 = c_iv2, 
                   interval = TRUE,
                   plot.points = TRUE)
 
 ### could also achive this differently by doing:
 
 ### linear regression
-model1 <- na.omit(lmres(dv ~ c.iv1 * c.iv2 * c.iv3, data=dat))
+model1 <- na.omit(lmres(dv ~ c_iv1 * c_iv2 * c_iv3, data=dat))
 
 # regression summaries for each step
 summ(model1$StepI) 
@@ -232,22 +242,22 @@ PlotSlope(s_slopes3,
 
 ## Step 3 of Mike's sheet
 
-dat$c.iv1A <- dat$c.iv1 - sd(dat$c.iv1, na.rm=T)
-dat$c.iv1B <- dat$c.iv1 + sd(dat$c.iv1, na.rm=T)
-dat$c.iv2A <- dat$c.iv2 - sd(dat$c.iv2, na.rm=T)
-dat$c.iv2B <- dat$c.iv2 + sd(dat$c.iv2, na.rm=T)
-dat$c.iv3A <- dat$c.iv3 - sd(dat$c.iv2, na.rm=T)
-dat$c.iv3B <- dat$c.iv3 + sd(dat$c.iv2, na.rm=T)
+dat$c_iv1A <- dat$c_iv1 - sd(dat$c_iv1, na.rm=T)
+dat$c_iv1B <- dat$c_iv1 + sd(dat$c_iv1, na.rm=T)
+dat$c_iv2A <- dat$c_iv2 - sd(dat$c_iv2, na.rm=T)
+dat$c_iv2B <- dat$c_iv2 + sd(dat$c_iv2, na.rm=T)
+dat$c_iv3A <- dat$c_iv3 - sd(dat$c_iv2, na.rm=T)
+dat$c_iv3B <- dat$c_iv3 + sd(dat$c_iv2, na.rm=T)
 
 ## Step 4 of Mike's sheet is not needed in R
 
 ## Step 5 & 6 of Mike's sheet
 
 # simple slopes for iv1
-iv1.bb <- lm(dv ~ c.iv1 * c.iv2B * c.iv3B, data=dat)
-iv1.ab <- lm(dv ~ c.iv1 * c.iv2A * c.iv3B, data=dat)
-iv1.ba <- lm(dv ~ c.iv1 * c.iv2B * c.iv3A, data=dat)
-iv1.aa <- lm(dv ~ c.iv1 * c.iv2A * c.iv3A, data=dat)
+iv1.bb <- lm(dv ~ c_iv1 * c_iv2B * c_iv3B, data=dat)
+iv1.ab <- lm(dv ~ c_iv1 * c_iv2A * c_iv3B, data=dat)
+iv1.ba <- lm(dv ~ c_iv1 * c_iv2B * c_iv3A, data=dat)
+iv1.aa <- lm(dv ~ c_iv1 * c_iv2A * c_iv3A, data=dat)
 
 summary(iv1.bb)
 summary(iv1.ab)
@@ -255,10 +265,10 @@ summary(iv1.bb)
 summary(iv1.aa)
 
 # simple slopes for iv2
-iv2.bb <- lm(dv ~ c.iv2 * c.iv1B * c.iv3B, data=dat)
-iv2.ab <- lm(dv ~ c.iv2 * c.iv1A * c.iv3B, data=dat)
-iv2.ba <- lm(dv ~ c.iv2 * c.iv1B * c.iv3A, data=dat)
-iv2.aa <- lm(dv ~ c.iv2 * c.iv1A * c.iv3A, data=dat)
+iv2.bb <- lm(dv ~ c_iv2 * c_iv1B * c_iv3B, data=dat)
+iv2.ab <- lm(dv ~ c_iv2 * c_iv1A * c_iv3B, data=dat)
+iv2.ba <- lm(dv ~ c_iv2 * c_iv1B * c_iv3A, data=dat)
+iv2.aa <- lm(dv ~ c_iv2 * c_iv1A * c_iv3A, data=dat)
 
 summary(iv2.bb)
 summary(iv2.ab)
@@ -266,10 +276,10 @@ summary(iv2.bb)
 summary(iv2.aa)
 
 # simple slopes for iv3
-iv3.bb <- lm(dv ~ c.iv3 * c.iv1B * c.iv2B, data=dat)
-iv3.ab <- lm(dv ~ c.iv3 * c.iv1A * c.iv2B, data=dat)
-iv3.ba <- lm(dv ~ c.iv3 * c.iv1B * c.iv2A, data=dat)
-iv3.aa <- lm(dv ~ c.iv3 * c.iv1A * c.iv2A, data=dat)
+iv3.bb <- lm(dv ~ c_iv3 * c_iv1B * c_iv2B, data=dat)
+iv3.ab <- lm(dv ~ c_iv3 * c_iv1A * c_iv2B, data=dat)
+iv3.ba <- lm(dv ~ c_iv3 * c_iv1B * c_iv2A, data=dat)
+iv3.aa <- lm(dv ~ c_iv3 * c_iv1A * c_iv2A, data=dat)
 
 summary(iv3.bb)
 summary(iv3.ab)
@@ -407,7 +417,7 @@ dat3 = na.omit(dat %>%
                  rename(NEW_NAME_IV1 = iv1_num, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         NEW_NAME_IV2 = iv2, 
                         NEW_NAME_IV2 = iv3,
-                        NEW_NAME_DV = dv))
+                        NEW_NAME_DV  = dv))
 
 # correlation table
 apa.cor.table(dat3, filename = "./tables/correlation_table.doc", table.number = 1,
