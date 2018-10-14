@@ -32,49 +32,49 @@ welcome()
 # get your research project id from "Researcher: XX" link on the GPL"s OSF
 # your id is the weblink: osf.io/YOUR_ID
 
-project <- create_component(id = "OSF_ID_HERE",               # put your research ID here
-                            title = "PROJECT_NAME_HERE",
-                            category = "project",
+project <- create_component(id          = "OSF_ID_HERE",       # put your research ID here
+                            title       = "PROJECT_NAME_HERE",
+                            category    = "project",
                             description = "A new project")
 
-project_lit <- create_component(id = project,               
-                                title = "Literature",
-                                category = "other",
+project_lit <- create_component(id          = project,               
+                                title       = "Literature",
+                                category    = "other",
                                 description = "Store your background papers here. A space to collect associated literature that relates to your project.")
 
-project_mat <- create_component(id = project,               
-                                title = "Materials and Methods",
-                                category = "instrumentation",
+project_mat <- create_component(id          = project,               
+                                title       = "Materials and Methods",
+                                category    = "instrumentation",
                                 description = "Any digital materials, such as questionnaires or ethics applications/approvals, related to the study")
 
-project_doc <- create_component(id = project,               
-                                title = "Notes and Documentation",
-                                category = "other",
+project_doc <- create_component(id          = project,               
+                                title       = "Notes and Documentation",
+                                category    = "other",
                                 description = "A space to keep notes from each work session and documentation about the data and related materials produced.")
 
-project_ana <- create_component(id = project,               
-                                title = "Analysis Scripts",
-                                category = "analysis",
+project_ana <- create_component(id          = project,               
+                                title       = "Analysis Scripts",
+                                category    = "analysis",
                                 description = "Store analysis scripts here")
 
-project_dat <- create_component(id = project,               
-                                title = "Data",
-                                category = "data",
+project_dat <- create_component(id          = project,               
+                                title       = "Data",
+                                category    = "data",
                                 description = "Data that does not have identifying information and has been cleaned and ready for analysis.   Remember to make sure that all data and related materials connected to the OSF must not contain any personally identifiable information or personal health information.")
 
-project_raw <- create_component(id = project_dat,               
-                                title = "Raw Data",
-                                category = "data",
+project_raw <- create_component(id          = project_dat,               
+                                title       = "Raw Data",
+                                category    = "data",
                                 description = "!!NEVER MAKE PUBLIC***Raw data, may contain identifying information**NEVER MAKE PUBLIC!!!")
 
-project_out <- create_component(id = project,               
-                                title = "Scholarly Output",
-                                category = "communication",
+project_out <- create_component(id          = project,               
+                                title       = "Scholarly Output",
+                                category    = "communication",
                                 description = "A space to keep materials that communicate to different audiences the process and the results of the experiment/project.")
 
-project_reg <- create_component(id = project,               
-                                title = "Registration",
-                                category = "other",
+project_reg <- create_component(id          = project,               
+                                title       = "Registration",
+                                category    = "other",
                                 description = "Project registration and disclosure documents")
 
 
