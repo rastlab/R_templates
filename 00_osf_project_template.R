@@ -32,10 +32,10 @@ welcome()
 # get your research project id from "Researcher: XX" link on the GPL"s OSF
 # your id is the weblink: osf.io/YOUR_ID
 
-project <- create_component(id          = "OSF_ID_HERE",       # put your research ID here
-                            title       = "PROJECT_NAME_HERE",
+project <- create_component(id          = "8ydqx",            # put your research ID here
+                            title       = "MEETING_TEST_PROJECT",     # change project name
                             category    = "project",
-                            description = "A new project")
+                            description = "A new project")    # add short project description here
 
 project_lit <- create_component(id          = project,               
                                 title       = "Literature",
@@ -96,8 +96,8 @@ project_info$project_reg <- project_reg
 project_info
 
 # save OSF IDs to you can use them later if necessary
-if(!exists("./osf_project_info")) {dir.create("./osf_project_info")}    # this is where we will save our tables
-rio::export(as.data.frame(project_info), "./osf_project_info/project_info.csv")
+if(!exists("./project_info")) {dir.create("./project_info")}    # this is where we will save our tables
+rio::export(as.data.frame(project_info), "./project_info/osf_project_info.csv")
 
 # don't forget to log out of the OSF within RStudio!
 logout()
