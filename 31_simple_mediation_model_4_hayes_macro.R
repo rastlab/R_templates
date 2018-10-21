@@ -60,9 +60,9 @@ glimpse(dat)
                         m = iv2, 
                         y = dv)))
 
-# dat1$x <- as.numeric(dat1$x) # if IV is categorical run this
-dat1$cen_x <- c(scale(dat1$x, center=TRUE))
-dat1$cen_m <- c(scale(dat1$m, center=TRUE))
+####### center IVs
+dat1$cen_x <- std(dat1$x, robust = c("sd"))
+dat1$cen_m <- std(dat1$m, robust = c("sd"))
 
 # check dataset1 
 glimpse(dat1)

@@ -61,10 +61,10 @@ glimpse(dat1)
                         m = iv3, 
                         y = dv)))
 
-# dat1$x <- as.numeric(dat1$x) # if IV is categorical run this
-dat1$cen_x <- c(scale(dat1$x, center=TRUE))
-dat1$cen_w <- c(scale(dat1$w, center=TRUE))
-dat1$cen_m <- c(scale(dat1$m, center=TRUE))
+####### center IVs
+dat1$cen_x <- std(dat1$x, robust = c("sd"))
+dat1$cen_w <- std(dat1$w, robust = c("sd"))
+dat1$cen_m <- std(dat1$m, robust = c("sd"))
 
 # need to manually add interaction term for IV and Moderator
 dat1$cen_xw <- dat1$cen_x * dat1$cen_w
