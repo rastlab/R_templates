@@ -32,8 +32,8 @@ welcome()
 # get your research project id from "Researcher: XX" link on the GPL"s OSF
 # your id is the weblink: osf.io/YOUR_ID
 
-project <- create_component(id          = "8ydqx",            # put your research ID here
-                            title       = "MEETING_TEST_PROJECT",     # change project name
+project <- create_component(id          = "YOUR_OSF_ID",            # put your research ID here
+                            title       = "YOUR_PROJECT_TITLE",     # change project name
                             category    = "project",
                             description = "A new project")    # add short project description here
 
