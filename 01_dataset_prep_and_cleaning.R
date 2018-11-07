@@ -199,6 +199,7 @@ if(!exists("./data")) {dir.create("./data")}        # this is where we will save
 if(!exists("./doc")) {dir.create("./doc")}          # this is where we will save our manuscripts and reports
 if(!exists("./figures")) {dir.create("./figures")}  # this is where we will save our figures
 if(!exists("./tables")) {dir.create("./tables")}    # this is where we will save our tables
+download.file(url = "http://bit.ly/2JNFPSu", destfile = ".gitignore") # creates recommended .gitignore file
 
 # Save current workspace: 
 export(dat, "./data/00_data_cleaned.RData")
