@@ -4,6 +4,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.dropbox
 
 ## suggested at https://github.com/github/gitignore/blob/master/R.gitignore
 
