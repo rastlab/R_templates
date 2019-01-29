@@ -14,7 +14,7 @@
 
 ## update packages then install these packages if not yet installed
 if(!require(pacman)){install.packages("pacman")}
-devtools::install_github("chartgerink/osfr")
+remotes::install_github("centerforopenscience/osfr")
 pacman::p_load(osfr)
 
 ###############################
@@ -22,60 +22,74 @@ pacman::p_load(osfr)
 ###############################
 
 # login to OSF
-login()
+osf_auth(token = 'INSERT_OSF_PAT_HERE')   # to get a PAT, follow instructions here: http://centerforopenscience.github.io/osfr/articles/auth.html
 
-# verify login
-welcome()
+
 
 ## create the GPL"s Project Template on your OSF within RStudio 
 
 # get your research project id from "Researcher: XX" link on the GPL"s OSF
 # your id is the weblink: osf.io/YOUR_ID
 
-project <- create_component(id          = "YOUR_OSF_ID",            # put your research ID here
-                            title       = "YOUR_PROJECT_TITLE",     # change project name
-                            category    = "project",
-                            description = "A new project")    # add short project description here
+new_project <- osf_retrieve_node("INSERT_YOUR_RESEACHER_ID_HERE")  ## will be a random string and will look like 'vha2d'
 
-project_lit <- create_component(id          = project,               
-                                title       = "Literature",
-                                category    = "other",
-                                description = "Store your background papers here. A space to collect associated literature that relates to your project.")
+## everything below this will run and place the OSF project/component into your OSF based on the GPL's OSF template
 
-project_mat <- create_component(id          = project,               
-                                title       = "Materials and Methods",
-                                category    = "instrumentation",
-                                description = "Any digital materials, such as questionnaires or ethics applications/approvals, related to the study")
+## only modify the lines instructing you to modify them!
 
-project_doc <- create_component(id          = project,               
-                                title       = "Notes and Documentation",
-                                category    = "other",
-                                description = "A space to keep notes from each work session and documentation about the data and related materials produced.")
+project <- osf_create_component(x = new_project,                
+                                title = "RStudio_Test",                    # give appropriate project title
+                                description = "A new project",             # give brief description to help others identify project
+                                category = "project",
+                                public = FALSE)
 
-project_ana <- create_component(id          = project,               
-                                title       = "Analysis Scripts",
-                                category    = "analysis",
-                                description = "Store analysis scripts here")
+project_lit <- osf_create_component(x = project,               
+                                    title = "Literature",
+                                    category = "other",
+                                    description = "Store your background papers here. A space to collect associated literature that relates to your project.",
+                                    public = FALSE)
 
-project_dat <- create_component(id          = project,               
-                                title       = "Data",
-                                category    = "data",
-                                description = "Data that does not have identifying information and has been cleaned and ready for analysis.   Remember to make sure that all data and related materials connected to the OSF must not contain any personally identifiable information or personal health information.")
+project_mat <- osf_create_component(x = project,              
+                                    title = "Materials and Methods",
+                                    category = "instrumentation",
+                                    description = "Any digital materials, such as questionnaires or ethics applications/approvals, related to the study",
+                                    public = FALSE)
 
-project_raw <- create_component(id          = project_dat,               
-                                title       = "Raw Data",
-                                category    = "data",
-                                description = "!!NEVER MAKE PUBLIC***Raw data, may contain identifying information**NEVER MAKE PUBLIC!!!")
+project_doc <- osf_create_component(x = project,              
+                                    title = "Notes and Documentation",
+                                    category = "other",
+                                    description = "A space to keep notes from each work session and documentation about the data and related materials produced.",
+                                    public = FALSE)
 
-project_out <- create_component(id          = project,               
-                                title       = "Scholarly Output",
-                                category    = "communication",
-                                description = "A space to keep materials that communicate to different audiences the process and the results of the experiment/project.")
+project_ana <- osf_create_component(x = project,             
+                                    title = "Analysis Scripts",
+                                    category = "analysis",
+                                    description = "Store analysis scripts here",
+                                    public = FALSE)
 
-project_reg <- create_component(id          = project,               
-                                title       = "Registration",
-                                category    = "other",
-                                description = "Project registration and disclosure documents")
+project_dat <- osf_create_component(x = project,              
+                                    title = "Data",
+                                    category = "data",
+                                    description = "Data that does not have identifying information and has been cleaned and ready for analysis. Remember to make sure that all data and related materials connected to the OSF must not contain any personally identifiable information or personal health information.",
+                                    public = FALSE)
+
+project_raw <- osf_create_component(x = project_dat,               
+                                    title = "Raw Data",
+                                    category = "data",
+                                    description = "!!NEVER MAKE PUBLIC***Raw data, may contain identifying information**NEVER MAKE PUBLIC!!!",
+                                    public = FALSE)
+
+project_out <- osf_create_component(x = project,              
+                                    title = "Scholarly Output",
+                                    category = "communication",
+                                    description = "A space to keep materials that communicate to different audiences the process and the results of the experiment/project.",
+                                    public = FALSE)
+
+project_reg <- osf_create_component(x = project,               
+                                    title = "Registration",
+                                    category = "other",
+                                    description = "Project registration and disclosure documents",
+                                    public = FALSE)
 
 
 
@@ -96,8 +110,10 @@ project_info$project_reg <- project_reg
 project_info
 
 # save OSF IDs to you can use them later if necessary
-if(!exists("./project_info")) {dir.create("./project_info")}    # this is where we will save our tables
-rio::export(as.data.frame(project_info), "./project_info/osf_project_info.csv")
+if(!exists("./osf_project_info")) {dir.create("./osf_project_info")}    # this is where we will save our tables
+rio::export(as.data.frame(project_info), "./osf_project_info/project_info.csv")
 
-# don't forget to log out of the OSF within RStudio!
-logout()
+# copy your raw data from RStudio Server to OSF as well
+# goal is to keep our analysis scripts completely reproducible
+if(!exists("./data")) {dir.create("./data")}    
+if(!exists("./data/raw_data")) {dir.create("./data/raw_data")}    
