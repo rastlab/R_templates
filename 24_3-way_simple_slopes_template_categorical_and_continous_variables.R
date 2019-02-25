@@ -18,7 +18,7 @@
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
 pacman::p_load(parallel, rio, pequod, QuantPsyc, lmSupport, 
-               jtools, apaTables, cowplot, stargazer, sjmisc, 
+               jtools, interactions, apaTables, stargazer, sjmisc, 
                sjstats, psych, tidyverse)
 
 ## load data
