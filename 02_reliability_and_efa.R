@@ -55,8 +55,8 @@ dv1 <- dat %>% select(dv1_1, dv1_2, dv1_3, dv1_4) %>% na.omit()
 dv2 <- dat %>% select(dv2_1, dv2_2, dv2_3, dv2_4) %>% na.omit()
 
 ## could also use the following commands to simplify if appropriate
-# dv1 <- dat %>% select(starts_with("dv1_") %>% na.omit()
-# dv2 <- dat %>% select(starts_with("dv2_") %>% na.omit()
+# dv1 <- dat %>% select(starts_with("dv1_")) %>% na.omit()
+# dv2 <- dat %>% select(starts_with("dv2_")) %>% na.omit()
 
 ################################
 ###### Scale Descriptives ######
