@@ -128,7 +128,7 @@ round(lm.beta(step3.1), 3)
 sim_slopes(step3.1, pred = c_iv1, modx = c_iv2, mod2 = c_iv3, jnplot = TRUE)
 sim_slopes(step3.1, pred = c_iv1, modx = c_iv3, mod2 = c_iv2, jnplot = TRUE)
 sim_slopes(step3.1, pred = c_iv2, modx = c_iv1, mod2 = c_iv3, jnplot = TRUE)
-sim_slopes(step3.1, pred = c_iv2, modx = c_iv3, mod2 = c_iv2, jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv2, modx = c_iv3, mod2 = c_iv1, jnplot = TRUE)
 sim_slopes(step3.1, pred = c_iv3, modx = c_iv1, mod2 = c_iv2, jnplot = TRUE)
 sim_slopes(step3.1, pred = c_iv3, modx = c_iv2, mod2 = c_iv1, jnplot = TRUE)
 
