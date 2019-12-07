@@ -16,13 +16,7 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_install_gh("Displayr/flipDimensionReduction")
-pacman::p_load(parallel, rio, tidyverse, car, psych, flipDimensionReduction, corrr)
-
-# if you want reproducible analysis, use the checkpoint() command using YYYY-MM-DD format
-# e.g., checkpoint("YYYY-MM-DD") or checkpoint("2017-09-25")
-
-# checkpoint("YYYY-MM-DD")
+pacman::p_load(parallel, rio, tidyverse, car, psych, corrr, jmv, nFactors, parameters)
 
 ## load data
 
@@ -50,9 +44,9 @@ glimpse(dat)
 
 # Create dataframes that has only the relevant items for each scale
 
-dv1 <- dat %>% select(dv1_1, dv1_2, dv1_3, dv1_4) %>% na.omit()
+dv1 <- dat %>% dplyr::select(dv1_1, dv1_2, dv1_3, dv1_4) %>% na.omit()
 
-dv2 <- dat %>% select(dv2_1, dv2_2, dv2_3, dv2_4) %>% na.omit()
+dv2 <- dat %>% dplyr::select(dv2_1, dv2_2, dv2_3, dv2_4) %>% na.omit()
 
 ## could also use the following commands to simplify if appropriate
 # dv1 <- dat %>% select(starts_with("dv1_")) %>% na.omit()
@@ -69,7 +63,7 @@ describe(dv2)
 
 ## summary table
 dat %>% 
-       select(avg_dv1, avg_dv2) %>% 
+       dplyr::select(avg_dv1, avg_dv2) %>% 
        describe()
 
 # could also shorten by writing:
@@ -83,7 +77,7 @@ dat %>%
 
 # Interscale correlations
 dat %>%
-  select(avg_dv1, avg_dv2) %>%           # Selects only variables/items for correlation table
+  dplyr::select(avg_dv1, avg_dv2) %>%    # Selects only variables/items for correlation table
   correlate(use = "complete.obs") %>%    # Create correlation data frame (cor_df)
   shave() %>%                            # only show bottom 'triangle' of output
   fashion()                              # formats output to be more readable
@@ -91,7 +85,7 @@ dat %>%
 
 # could also shorten by writing:
 # dat %>%
-#       select(starts_with("avg_")) %>%
+#       dplyr::select(starts_with("avg_")) %>%
 #       correlate(use = "complete.obs") %>%
 #       shave() %>%
 #       fashion()
@@ -104,85 +98,80 @@ dat %>%
 # Calculate Cronbach's Alpha
 
 # alpha for scale, with item if deleted summary also
-alpha(dv1)
+reliability(dv1, alphaItems = TRUE)
 
-alpha(dv2)
-
+reliability(dv2, alphaItems = TRUE)
 
 ##############################
 ###### Factor Analysis #######
 ##############################
 
+# Check factor structure
+check_factorstructure(dv1)
 
-##%######################################################%##
-#                                                          #
-####       Using 'flipDimensionReduction' package       ####
-#                                                          #
-##%######################################################%##
+check_factorstructure(dv2)
+
+### EFA 
+
+## check number of factors
+
+# no rotation 
+n_factors(dv1, type = "FA", rotation = "none")
+
+# varimax rotation
+n_factors(dv1, type = "FA", rotation = "varimax")
+
+## conduct EFA
+
+# Note: Rotate can be:
+# orthogonal: "none", "varimax", "quartimax", "bentlerT", "equamax", "varimin", "geominT" and "bifactor"
+# oblique: Promax", "promax", "oblimin", "simplimax", "bentlerQ, "geominQ" and "biquartimin" and "cluster"
+
+# no rotation
+fa(dv1, rotation = "none") %>% model_parameters(sort = TRUE, threshold = "max")
+
+# promax rotation
+fa(dv2, rotation = "varimax") %>% model_parameters(sort = TRUE, threshold = "max")
 
 
+### PCA
+
+## check number of factors
+
+# no rotation 
+n_factors(dv1, type = "PCA", rotation = "none")
+
+# varimax rotation
+n_factors(dv1, type = "PCA", rotation = "varimax")
+
+## conduct EFA
+
+# Note that SPSS conducts a PCA, not EFA by default for Dimension Reduction
 # Note that the rotations used by SPSS will sometimes use the “Kaiser Normalization”. 
-# By default, the rotations used in 'psych' do not normalize.
-# We will use another package that builds off 'psych' but does normalize the EFA/PCA by default to match SPSS' output
-# this package also gives a nice, visually appealing table in the "Viewer" window
+# Note: Rotate can be 'none', 'varimax' (default), 'quartimax', 'promax', 'oblimin', or 'simplimax'
 
-# Note: Rotate can "none", "varimax", "quatimax", "promax", "oblimin", "simplimax", or "cluster" .
+# no rotation 
+pca(dv1,
+         rotation = "none",
+         nFactorMethod = "eigen",
+         screePlot = TRUE,
+         eigen = TRUE,
+         factorCor = TRUE,
+         factorSummary = TRUE)
 
-# analysis without a rotation
-PrincipalComponentsAnalysis(dv1, rotation = "none", select.n.rule="Kaiser rule")
-
-# analysis with a rotation, as an example
-PrincipalComponentsAnalysis(dv1, rotation = "equamax", select.n.rule="Kaiser rule")
-
-## add {print.type=""} to get different types of output
-# "details" gives a lot more EFA/PCA info and in a plain text output in the R console
-PrincipalComponentsAnalysis(dv1, rotation = "equamax", select.n.rule="Kaiser rule", print.type="details")
-
-# "scree" provides a simple, yet elegant looking scree plot in the "Viewer" pane
-PrincipalComponentsAnalysis(dv1, rotation = "equamax", select.n.rule="Kaiser rule", print.type= "scree")
-
-
-
-##%######################################################%##
-#                                                          #
-####               Using 'psych' package                ####
-#                                                          #
-##%######################################################%##
+# varimax rotation
+pca(dv1,
+         rotation = "varimax",
+         nFactorMethod = "eigen",
+         screePlot = TRUE,
+         eigen = TRUE,
+         factorCor = TRUE,
+         factorSummary = TRUE)
 
 
-# Note: Rotate can "none", "varimax", "quatimax", "promax", "oblimin", "simplimax", or "cluster" .
-# Note: retaining 3 components but can be any number
+# can also conduct PCA another way to get different tables
+dv1_pca <- principal_components(dv1, rotation = "varimax", threshold = "max")
 
-#### DV1 - PRINCIPAL COMPONENTS ANALYSIS (PCA) ####
-pca_dv1 <- princomp(dv1)
-summary(pca_dv1)
-loadings(pca_dv1)
-plot(pca_dv1, type="lines")
-biplot(pca_dv1)
+dv1_pca
+summary(dv1_pca)
 
-#### DV1 - EXPLORATORY FACTOR ANALYSIS (EFA) ####
-#First make a Scree Plot
-plot((eigen(cor(dv1)))$values, type="both")
-
-#Next, do an exploratory factor analysis
-(dv1.efa <- factanal(dv1, 3, rotation="promax"))
-
-#### DV2 - PRINCIPAL COMPONENTS ANALYSIS (PCA) ####
-pca_dv2 <- princomp(dv2)
-summary(pca_dv2)
-loadings(pca_dv2)
-plot(pca_dv2, type="lines")
-biplot(pca_dv2)
-
-#### DV2 - EXPLORATORY FACTOR ANALYSIS (EFA) ####
-#First make a Scree Plot
-plot((eigen(cor(dv2)))$values, type="both")
-
-#Next, do an exploratory factor analysis
-(dv2.efa <- factanal(dv2, 3, rotation="promax"))
-
-# remove EFAs/CFAs from temp/working memory if not needed
-rm(dv1.efa)
-rm(dv2.efa)
-rm(pca_dv1)
-rm(pca_dv2)

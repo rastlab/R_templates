@@ -16,7 +16,7 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, rio, tidyverse, psych, lubridate, checkpoint)
+pacman::p_load(parallel, rio, psych, lubridate, tidyverse)
 
 
 # if you want reproducible analysis, use the checkpoint() command using YYYY-MM-DD format
@@ -46,6 +46,19 @@ glimpse(dat)
 ################################
 ###### Recoding Variables ######
 ################################
+
+
+### remove non-reconsenting pparticipants, if needed
+
+# count how many participants did not provide reconsent
+sum(!is.na(dat$reconsent[dat$reconsent == 2]))
+
+frq(dat$reconsent)
+
+#remove 2 NAs & 1 no
+dat <- filter(dat, (reconsent != 2))
+frq(dat$reconsent)
+
 
 #### recode IVs
 
