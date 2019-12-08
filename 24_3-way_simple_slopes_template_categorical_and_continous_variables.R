@@ -63,7 +63,7 @@ dat$iv1_num <- as.numeric(dat$iv1) # iv1 should be replaced with the name of you
 
 
 dat %>%
-  select(iv1, iv2, dv) %>%
+  dplyr::select(iv1, iv2, dv) %>%
   describe()
 
 ####### center IVs
@@ -76,7 +76,7 @@ dat$c_iv3 <- std(dat$iv2, robust = c("sd"))                      # this is your 
 
 # verify centering
 dat %>%
-  select(starts_with("c_")) %>%
+  dplyr::select(starts_with("c_")) %>%
   describe()
 
 ####### test 3-way regression interaction
@@ -85,7 +85,7 @@ dat %>%
 # simplified code to run regressions on all DVs at once
 
 reg_models <- dat %>% 
-  select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
+  dplyr::select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
   map(~summ(lm(. ~ c_iv1 * c_iv2 * c_iv3, data = dat))) 
 
 reg_models 
@@ -95,82 +95,83 @@ step1.1 <- lm(dv ~ c_iv1 + c_iv2 + c_iv3, data=dat)
 step2.1 <- lm(dv ~ c_iv1 * c_iv2 + c_iv1 * c_iv3 + c_iv2 * c_iv3, data=dat)
 step3.1 <- lm(dv ~ c_iv1 * c_iv2 * c_iv3, data=dat)
 
-# check GLM assumptions for:
-# heteroskedastic (error variance), autocorrelation (independence of errors)
-# normality (normality of residuals), multicollinearity (predictor independence)
-check_assumptions(step3.1, as.logical = FALSE)
+##  check GLM assumptions for:
+#heteroskedastic (error variance)
+check_heteroscedasticity(step3.1)
+
+# autocorrelation (independence of errors)
+check_autocorrelation(step3.1)
+
+# normality (normality of residuals)
+check_normality(step3.1)
+
+# multicollinearity (predictor independence)
+check_collinearity(step3.1)
 
 # tests for outliers in model then iteratively removes outliers and re-runs the model
-outliers(step3.1, iterations = 5)
+# consider add "mcd" method to detect outliers (Mahalanobis et al., 2018)
+check_outliers(step3.1, method = c("cook", "zscore", "mahalanobis"))
 
-## regression summaries for each step
-summ(step1.1, digits = 3)
-summ(step2.1, digits = 3)
-summ(step3.1, digits = 3)
+## SPSS-like regression summary
+jmv::linReg(data = dat,
+            dep = dv,
+            covs = vars(c_iv1, c_iv2, c_iv3),
+            blocks = list(
+              list("c_iv1", "c_iv2", "c_iv3"),
+              list(c("c_iv1", "c_iv2"),
+                   c("c_iv1", "c_iv3"),
+                   c("c_iv2", "c_iv3")),
+              list(c("c_iv1", "c_iv2", "c_iv3"))),
+            r2 = FALSE, r2Adj = TRUE, ci = TRUE, stdEst = TRUE,
+            ciEmm = FALSE, emmPlots = FALSE, emmWeights = FALSE)
 
-# F-change and Delta R-Squared statistics from here
-modelCompare(step1.1, step2.1)
-modelCompare(step2.1, step3.1)
-
-# 95% confidence intervals (defaults to 95%), rounded to 3 decimal places
-round(confint(step1.1), 3)
-round(confint(step2.1), 3)
-round(confint(step3.1), 3)
-
-# Betas, rounded to 3 decimal places
-round(lm.beta(step1.1), 3)
-round(lm.beta(step2.1), 3)
-round(lm.beta(step3.1), 3)
 
 ### test simple slopes 
 
 # Johnson-Neyman intervals with plots
-sim_slopes(step3.1, pred = c_iv1, modx = c_iv2, mod2 = c_iv3, jnplot = TRUE)
-sim_slopes(step3.1, pred = c_iv1, modx = c_iv3, mod2 = c_iv2, jnplot = TRUE)
-sim_slopes(step3.1, pred = c_iv2, modx = c_iv1, mod2 = c_iv3, jnplot = TRUE)
-sim_slopes(step3.1, pred = c_iv2, modx = c_iv3, mod2 = c_iv1, jnplot = TRUE)
-sim_slopes(step3.1, pred = c_iv3, modx = c_iv1, mod2 = c_iv2, jnplot = TRUE)
-sim_slopes(step3.1, pred = c_iv3, modx = c_iv2, mod2 = c_iv1, jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv1, modx = c_iv2, mod2 = c_iv3, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv1, modx = c_iv3, mod2 = c_iv2, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv2, modx = c_iv1, mod2 = c_iv3, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv2, modx = c_iv3, mod2 = c_iv1, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv3, modx = c_iv1, mod2 = c_iv2, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
+sim_slopes(step3.1, pred = c_iv3, modx = c_iv2, mod2 = c_iv1, modx.values = "plus-minus", mod2.values = "plus-minus", jnplot = TRUE)
 
 # simple slopes plots with Johnson-Neyman intervals in output
 probe_interaction(step3.1, 
                   pred = c_iv1, modx = c_iv2, mod2 = c_iv3, 
-                  interval = TRUE,
+                  modx.values = "plus-minus", 
+                  mod2.values = "plus-minus", 
                   plot.points = TRUE)
 
 probe_interaction(step3.1, 
                   pred = c_iv2, modx = c_iv1, mod2 = c_iv3, 
-                  interval = TRUE,
+                  modx.values = "plus-minus", 
+                  mod2.values = "plus-minus", 
                   plot.points = TRUE)
 
 probe_interaction(step3.1, 
                   pred = c_iv3, modx = c_iv1, mod2 = c_iv2, 
-                  interval = TRUE,
+                  modx.values = "plus-minus", 
+                  mod2.values = "plus-minus", 
                   plot.points = TRUE)
 
 ### could also achive this differently by doing:
 
-### linear regression
-model1 <- na.omit(lmres(dv ~ c_iv1 * c_iv2 * c_iv3, data=dat))
+reghelper::build_model(dv, c(c_iv1 + c_iv2), 
+                       c(c_iv1 * c_iv2, 
+                         c_iv1 * c_iv3, 
+                         c_iv2 * c_iv3),
+                       c(c_iv1 * c_iv2 * c_iv3),
+                       data=dat, model='lm') %>% summary()
 
-# regression summaries for each step
-summ(model1$StepI) 
-summ(model1$StepII)
-summ(model1$Stepfin)
+# step 1
+model_parameters(step1.1, standardize = "refit")
 
-# F-change statistic from here
-modelCompare(model1$StepI, model1$StepII)
-modelCompare(model1$StepII, model1$Stepfin)
+# step 2
+model_parameters(step2.1, standardize = "refit")
 
-# standardised coefficients (Beta weights)
-model1$beta.StepI
-model1$beta.StepII
-model1$beta.Stepfin
-
-# 95% confidence intervals (defaults to 95%), rounded to 3 decimal places
-round(confint(model1$StepI), 3)
-round(confint(model1$StepII), 3)
-round(confint(model1$Stepfin), 3)
+# step 3
+model_parameters(step3.1, standardize = "refit")
 
 #####################################################################################
 ######################## Simple Slope Testing Automatically #########################
@@ -415,7 +416,7 @@ graphics.off()
 # we'll also remove NA values to make this simpler
 
 dat3 = na.omit(dat %>% 
-                 select(iv1_num, iv2, iv3, dv) %>% 
+                 dplyr::select(iv1_num, iv2, iv3, dv) %>% 
                  rename(NEW_NAME_IV1 = iv1_num, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         NEW_NAME_IV2 = iv2, 
                         NEW_NAME_IV2 = iv3,

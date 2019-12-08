@@ -18,7 +18,7 @@
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
 if(!require(jmv)){install.packages("jmv")}
-pacman::p_load(parallel, rio, psych, car, lsr, phia, tidyverse, apaTables)
+pacman::p_load(parallel, rio, psych, car, lsr, phia, tidyverse, parameters, apaTables)
 
 
 ## load data
@@ -54,23 +54,20 @@ options(contrasts = c("contr.helmert", "contr.poly"))
 # simplified code to run ANOVAs on all DVs at once
 
 aov_models <- dat %>% 
-  select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
+  dplyr::select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
   map(~Anova(lm(. ~ iv1 * iv2, data = dat), type = 3))
 
 aov_models 
 
 
-# ANOVA model to dive into any significant 2-ways
-model1 <- lm(dv ~ iv1 * iv2 * iv3, data=dat)
+# linear model to dive into any significant 2-ways
+model1 <- lm(dv ~ dv ~ iv1 * iv2 * iv3, data=dat)
 
-# run ANOVA, rounded to 3 decimals
-round(Anova(model1, type = 3), 3)
+# create ANOVA
+model_1 <- Anova(model1, type = 3)
 
-# eta-squared, rounded to 3 decimals
-round(etaSquared(model1, type=3), 3)
-
-# calculate 95% confidence interval, rounded to 3 decimals
-round(confint(model1), 3)
+# run ANOVA
+model_parameters(model_1, eta_squared = "partial")
 
 ## descriptives based on condition 
 # note: na.omit() removes any NAs contained within each of the IVs
@@ -83,15 +80,12 @@ summarydat
 
 # new way of Anova using 'jmv' package, closer to SPSS output
 # gives partial eta-squared and omega effect sizes
-# also gives a nice descriptive table
 
-jmv::anova(data = dat,
-           dep = "dv",
-           factors = c("iv1", "iv2", "iv3"),
-           effectSize = c("partEta", "omega"),
-           postHoc = list(c("iv1", "iv2", "iv3")),  # calculates simple effects test, NB: gives t rather than F but t^2 = F
-           postHocCorr = "none",
-           descStats = TRUE)
+jmv::ANOVA(
+           formula = dv ~ iv1 * iv2 * iv3,
+           data = dat,
+           effectSize = "partEta",
+           emMeans = ~ iv1:iv2:iv3)
 
 ############################################################################
 ########### Simple effects of IV1 at different IV2 & IV3 levels ############
@@ -101,7 +95,7 @@ jmv::anova(data = dat,
 # see https://cran.r-project.org/web/packages/phia/vignettes/phia.pdf
 
 # create interaction model of interest
-(modinter <- na.omit(lm(dv~ iv1 * iv2 * iv3, data=dat)))
+modinter <- na.omit(model1)
 
 # examine simple effects
 (moderation1 <- testInteractions(modinter, fixed = c("iv2", "iv3"), across="iv1", adjustment="none"))
@@ -209,7 +203,7 @@ ggsave('./figures/figure1.png', width=8, height=6, unit='in', dpi=300)
 # directly into your MS, presentation, or poster
 # we'll also remove NA values to make this simpler
 
-dat2 <- dat %>% select(iv1, iv2, iv3, dv) %>% na.omit()
+dat2 <- dat %>% dplyr::select(iv1, iv2, iv3, dv) %>% na.omit()
 
 # can make multiple tables by changing 'table.number = X
 
@@ -218,7 +212,7 @@ apa.aov.table(modinter, conf.level = 0.9, type = 3,  table.number = 1, filename=
 # correlation matrix
 
 dat3 = na.omit(dat %>% 
-                 select(iv1_num, iv2, iv3, dv) %>% 
+                 dplyr::select(iv1_num, iv2, iv3, dv) %>% 
                  rename(NEW_NAME_IV1 = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         NEW_NAME_IV2 = iv2, 
                         NEW_NAME_IV3 = iv3, 
