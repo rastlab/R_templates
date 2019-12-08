@@ -96,6 +96,10 @@ check_collinearity(step3.1)
 # consider add "mcd" method to detect outliers (Mahalanobis et al., 2018)
 check_outliers(step3.1, method = c("cook", "zscore", "mahalanobis"))
 
+# can also plot GLM assumptions
+plot(gvlma(step2.1))
+
+
 ## SPSS-like regression summary
 jmv::linReg(data = dat,
             dep = dv,
