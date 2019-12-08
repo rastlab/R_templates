@@ -6,7 +6,7 @@
 pacman::p_load(rio, pequod, tidyverse, janitor, QuantPsyc, lmSupport, jtools, interactions, ggstance, patchwork)
 
 # import data
-dat <- import(file.choose())
+# dat <- import(file.choose())
 
 #####################################################################################
 ######################## Simple Slope Testing Automatically #########################
