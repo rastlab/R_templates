@@ -17,9 +17,10 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(parallel, rio, pequod, QuantPsyc, lmSupport, 
-               jtools, interactions, apaTables, stargazer, sjmisc, 
-               sjstats, psych, tidyverse)
+if(!require(jmv)){install.packages("jmv")}
+pacman::p_load(rio, pequod, QuantPsyc, lmSupport, jtools, interactions, 
+               apaTables, stargazer, sjmisc, sjstats, psych, tidyverse, 
+               parameters, performance, effectsize)
 
 ## load data
 

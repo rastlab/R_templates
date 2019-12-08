@@ -16,10 +16,12 @@
 ## update packages then install these packages if not yet installed
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
+if(!require(pacman)){install.packages("pacman")}
 if(!require(jmv)){install.packages("jmv")}
 pacman::p_load(rio, pequod, QuantPsyc, lmSupport, jtools, interactions, 
                apaTables, stargazer, sjmisc, sjstats, psych, tidyverse, 
                parameters, performance, effectsize)
+
 ## load data
 
 # RData files work the best in R. 
