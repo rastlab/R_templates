@@ -115,7 +115,7 @@ panel_b <- data_plot %>%
                           size = 1.25) +
                 coord_cartesian(ylim = y_range, xlim = c(1.3, 1.7)) +  
                 scale_y_continuous(breaks = seq(y_axis_low, y_axis_high)) + 
-                labs(subtitle = panel_a_label) +
+                labs(subtitle = panel_b_label) +
                 ylab(y_label) +
                 xlab(z_label) +
                 scale_x_discrete(labels = z_values) +  
