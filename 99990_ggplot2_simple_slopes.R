@@ -16,7 +16,7 @@ pacman::p_load(rio, pequod, tidyverse, janitor, QuantPsyc, lmSupport, jtools, in
 model1 <- na.omit(lmres(dv ~ iv1 * iv2 * iv3, data=dat))
 
 # iv1 as non-moderator, iv2 and iv3 as moderators
-s_slopes1 <- na.omit(simpleSlope(model1, pred = "iv1",mod1 = "iv2", mod2 = "iv3"))
+s_slopes1 <- na.omit(simpleSlope(model1, pred = "iv1", mod1 = "iv2", mod2 = "iv3"))
 summary(s_slopes1)
 
 
