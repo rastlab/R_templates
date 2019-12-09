@@ -63,6 +63,10 @@ dat %>%
   dplyr::select(starts_with("c_")) %>%
   describe()
 
+##############################
+###### 3-way Regression ######
+##############################
+
 ####### test 3-way regression interaction
 
 ## regression function 
@@ -143,8 +147,12 @@ probe_interaction(step3.1,
                   mod2.values = "plus-minus", 
                   plot.points = TRUE)
 
-### could also achive this differently by doing:
 
+##############################################################
+######## could also achive this differently by doing: ########
+##############################################################
+
+# hierarchical linear regression
 reghelper::build_model(dv, c(c_iv1 + c_iv2), 
                            c(c_iv1 * c_iv2, 
                              c_iv1 * c_iv3, 
@@ -152,80 +160,42 @@ reghelper::build_model(dv, c(c_iv1 + c_iv2),
                            c(c_iv1 * c_iv2 * c_iv3),
                        data=dat, model='lm') %>% summary()
 
-# step 1
+# step 1 betas
 model_parameters(step1.1, standardize = "refit")
 
-# step 2
+# step 2 betas
 model_parameters(step2.1, standardize = "refit")
 
-# step 3
+# step 3 betas
 model_parameters(step3.1, standardize = "refit")
 
-#####################################################################################
-######################## Simple Slope Testing Automatically #########################
-#####################################################################################
+##### simple slopes automatically
+
+## create simple slopes using 'pequod'
+model1 <- na.omit(lmres(dv ~ iv1 * iv2 * iv3, data=dat))
 
 ### iv1 as slope, iv2 and iv3 as moderator
 s_slopes1 <- na.omit(simpleSlope(model1, pred = "iv1", mod1 = "iv2", mod2 = "iv3"))
 summary(s_slopes1)
 
-# simple slope points to plot manually in Excel
+# generate simple slope points to plot manually in Excel
 s_slopes1$Points
-
-##### Autmatically Plot simple slopes
-
-# tells R to provide a plot in APA style, figure is MS ready
-apatheme=theme_bw()+
-  theme(panel.grid.major=element_blank(),
-        panel.grid.minor=element_blank(),
-        panel.border=element_blank(),
-        axis.line=element_line(),
-        text=element_text(family='Times'),
-        axis.text=element_text(size=12),
-        axis.title=element_text(size=12),
-        legend.text=element_text(size=12),
-        legend.title = element_text(size=12),
-        legend.position = c(.88,.88), # manually position the legend (numbers being from 0,0 at bottom left of whole plot to 1,1 at top right)
-        legend.background = element_rect(colour = 'black', size = 0.5, linetype='solid'))
-
-PlotSlope(s_slopes1, 
-          namex="iv1", 
-          namey="dv",
-          limitx=c(-2, 2),
-          limity=c(4, 7)) +
-          apatheme
 
 ## iv2 as slope, iv1 and iv3 as moderator
 s_slopes2 <- na.omit(simpleSlope(model1, pred = "iv2", mod1 = "iv1", mod2 = "iv3"))
 summary(s_slopes2)
 
-# simple slope points to plot manually in Excel
+# generate simple slope points to plot manually in Excel
 s_slopes2$Points
 
-## Automatically plot simple slopes
-
-PlotSlope(s_slopes2, 
-          namex="iv1", 
-          namey="dv",
-          limitx=c(-2, 2),
-          limity=c(4, 7)) +
-          apatheme
 
 ## iv3 as slope, iv1 and iv2 as moderator
 s_slopes3 <- na.omit(simpleSlope(model1, pred = "iv3", mod1 = "iv1", mod2 = "iv2"))
 summary(s_slopes3)
 
-# simple slope points to plot manually in Excel
+# generate simple slope points to plot manually in Excel
 s_slopes3$Points
 
-## Automatically plot simple slopes
-
-PlotSlope(s_slopes3,
-          namex="iv1", 
-          namey="dv",
-          limitx=c(-2, 2),
-          limity=c(4, 7)) +
-          apatheme
 
 ###############################################################################################################
 ######## Prepare data for simple slopes of the 3-way interaction (see Mike's simples procedure sheet) #########
