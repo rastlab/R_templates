@@ -18,6 +18,7 @@
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
 if(!require(jmv)){install.packages("jmv")}
+if(!require(reghelper)){install.packages("reghelper")}
 pacman::p_load(rio, pequod, QuantPsyc, lmSupport, jtools, interactions, 
                apaTables, stargazer, sjmisc, sjstats, psych, tidyverse, 
                parameters, performance, effectsize)
@@ -96,7 +97,7 @@ check_collinearity(step3.1)
 check_outliers(step3.1, method = c("cook", "zscore", "mahalanobis"))
 
 # can also plot GLM assumptions
-plot(gvlma(step2.1))
+plot(gvlma::gvlma(step2.1))
 
 
 ## SPSS-like regression summary
