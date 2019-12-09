@@ -71,7 +71,7 @@ dat %>%
 
 dat$c_iv1 <- std(dat$iv1, robust = c("sd"), include.fac = TRUE)  # this is your manipulated/factor variable
 dat$c_iv2 <- std(dat$iv2, robust = c("sd"))                      # this is your continuous variable 
-dat$c_iv3 <- std(dat$iv2, robust = c("sd"))                      # this is your continuous variable 
+dat$c_iv3 <- std(dat$iv3, robust = c("sd"))                      # this is your continuous variable 
 
 # if you have more than 1 factor/manipulated variables, then add 'include.fac = TRUE' to command above
 
