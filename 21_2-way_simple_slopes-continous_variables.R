@@ -53,15 +53,14 @@ dat %>%
       dplyr::select(iv1, iv2, dv) %>%
       describe()
 
-####### center IVs
-
-dat$c_iv1 <- std(dat$iv1, robust = c("sd"))
-dat$c_iv2 <- std(dat$iv2, robust = c("sd"))
+####### center and scale IVs
+dat$c_iv1 <- standardize(dat$iv1, two_sd = FALSE, force = TRUE)
+dat$c_iv2 <- standardize(dat$iv2, two_sd = FALSE, force = TRUE)
 
 # verify centering
 dat %>%
-       dplyr::select(starts_with("c_")) %>%
-       describe()
+  dplyr::select(starts_with("c_")) %>%
+  describe()
 
 ####### test 2-way regression interaction
 

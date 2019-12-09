@@ -42,19 +42,6 @@ glimpse(dat)
 
 # NB: Alt + Shift + K --> will bring up keyboard shortcuts
 
-###############################
-########## Data Prep ##########
-###############################
-
-# if you a dichotomous/trichotomous X continous IVs (opposed a full survey design with only continuous variables)
-# then you must turn your dichotomous/trichotomous factor into a numeric variable
-# NB: this is how SPSS treats data, but R handles factors differently!
-# repeat this for each dichotomous/trichotomous variable, as needed
-# R and SPSS output will be different if the experimental variable is not changed into a numeric value here. 
-
-dat$iv1_num <- as.numeric(dat$iv1) # iv1 should be replaced with the name of your dichotomous/trichotomous variable
-
-
 ################################
 ###### Summary Statistics ######
 ################################
@@ -67,13 +54,10 @@ dat %>%
   dplyr::select(iv1, iv2, iv3, dv) %>%
   describe()
 
-####### center IVs
-
-dat$c_iv1 <- std(dat$iv1, robust = c("sd"), include.fac = TRUE)  # this is your manipulated/factor variable
-dat$c_iv2 <- std(dat$iv2, robust = c("sd"))                      # this is your continuous variable 
-dat$c_iv3 <- std(dat$iv3, robust = c("sd"))                      # this is your continuous variable 
-
-# if you have more than 1 factor/manipulated variables, then add 'include.fac = TRUE' to command above
+####### center and scale IVs
+dat$c_iv1 <- standardize(dat$iv1, two_sd = FALSE, force = TRUE)
+dat$c_iv2 <- standardize(dat$iv2, two_sd = FALSE, force = TRUE)
+dat$c_iv3 <- standardize(dat$iv3, two_sd = FALSE, force = TRUE)
 
 # verify centering
 dat %>%
