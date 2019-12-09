@@ -99,7 +99,7 @@ check_collinearity(step3.1)
 check_outliers(step3.1, method = c("cook", "zscore", "mahalanobis"))
 
 # can also plot GLM assumptions
-plot(gvlma::gvlma(step2.1))
+plot(gvlma::gvlma(step3.1))
 
 
 ## SPSS-like regression summary

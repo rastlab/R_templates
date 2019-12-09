@@ -15,7 +15,7 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(rio, tidyverse, lavaan)
+pacman::p_load(rio, dplyr, effectsize, lavaan)
 
 ## load data
 
@@ -60,9 +60,9 @@ glimpse(dat)
                         m = iv2, 
                         y = dv)))
 
-####### center IVs
-dat1$cen_x <- std(dat1$x, robust = c("sd"))
-dat1$cen_m <- std(dat1$m, robust = c("sd"))
+####### center and scale IVs
+dat1$cen_x <- standardize(dat1$x, two_sd = FALSE, force = TRUE) # main predictor
+dat1$cen_m <- standardize(dat1$m, two_sd = FALSE, force = TRUE) # moderator
 
 # check dataset1 
 glimpse(dat1)

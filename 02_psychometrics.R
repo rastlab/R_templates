@@ -68,14 +68,14 @@ dat %>%
 
 # could also shorten by writing:
 # dat %>% 
-#        select(starts_with("avg_")) %>% 
+#        dplyr::select(starts_with("avg_")) %>% 
 #        describe()
 
 #########################################
 ###### Inter-variable Correlations ######
 #########################################
 
-# Interscale correlations
+# Interscale correlation total
 dat %>%
   dplyr::select(avg_dv1, avg_dv2) %>%    # Selects only variables/items for correlation table
   correlate(use = "complete.obs") %>%    # Create correlation data frame (cor_df)
@@ -89,6 +89,16 @@ dat %>%
 #       correlate(use = "complete.obs") %>%
 #       shave() %>%
 #       fashion()
+
+# Correlation testing table for ALL DV correlations
+dat %>%
+       dplyr::select(avg_dv1, avg_dv2) %>%    # Selects only variables/items for correlation table
+       correlation::correlation()
+
+# could also shorten by writing:
+# dat %>%
+#       dplyr::select(starts_with("avg_")) %>%
+#       correlation::correlation()
 
 
 ##############################
@@ -130,8 +140,6 @@ n_factors(dv1, type = "FA", rotation = "varimax")
 # no rotation
 fa(dv1, rotation = "none") %>% model_parameters(sort = TRUE, threshold = "max")
 
-# promax rotation
-fa(dv2, rotation = "varimax") %>% model_parameters(sort = TRUE, threshold = "max")
 
 
 ### PCA

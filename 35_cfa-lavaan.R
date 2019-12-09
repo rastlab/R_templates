@@ -15,7 +15,7 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(rio, tidyverse, lavaan)
+pacman::p_load(rio, dplyr, lavaan)
 
 ## load data
 dat <- import(file.choose())
@@ -38,12 +38,12 @@ glimpse(dat)
 
 # create new dataframes for just the focal CFA
 dat1 = dat %>% 
-              select(item1, item2, item3, item4, item5)
+              dplyr::select(item1, item2, item3, item4, item5)
 
 # create more dataframes if multiple CFAs
 
 dat2 = dat %>% 
-              select(item1, item2, item3, item4, item5, item6, item7, item8, item9, item10)
+              dplyr::select(item1, item2, item3, item4, item5, item6, item7, item8, item9, item10)
 
 
 # check dataframes 
@@ -51,7 +51,7 @@ glimpse(dat1)
 glimpse(dat2)
 
 
-### lavaan ----
+#### lavaan ----
 
 ## cereate models
 
