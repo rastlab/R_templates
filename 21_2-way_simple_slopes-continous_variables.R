@@ -297,7 +297,7 @@ graphics.off()
 # we'll also remove NA values to make this simpler
 
 dat3 = na.omit(dat %>% 
-                 select(iv1, iv2, dv) %>% 
+                 dplyr::select(iv1, iv2, dv) %>% 
                  rename(NEW_NAME_IV1 = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         NEW_NAME_IV2 = iv2, 
                         NEW_NAME_DV  = dv))
