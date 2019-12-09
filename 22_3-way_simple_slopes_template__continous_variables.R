@@ -17,10 +17,9 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-if(!require(jmv)){install.packages("jmv")}
-pacman::p_load(rio, pequod, QuantPsyc, lmSupport, jtools, interactions, 
-               apaTables, stargazer, sjmisc, sjstats, psych, tidyverse, 
-               parameters, performance, effectsize)
+pacman::p_load(parallel, rio, pequod, QuantPsyc, lmSupport, 
+               jtools, interactions, apaTables, stargazer, sjmisc, 
+               sjstats, psych, tidyverse)
 ## load data
 
 # RData files work the best in R. 
@@ -49,7 +48,7 @@ glimpse(dat)
 # note: na.omit() removes any NAs contained within each of the IVs
 
 dat %>%
-  dplyr::select(iv1, iv2, iv3, dv) %>%
+  select(iv1, iv2, iv3 dv) %>%
   describe()
 
 ####### center IVs
@@ -60,7 +59,7 @@ dat$c_iv3 <- std(dat$iv3, robust = c("sd"))
 
 # verify centering
 dat %>%
-  dplyr::select(starts_with("c_")) %>%
+  select(starts_with("c_")) %>%
   describe()
 
 ####### test 3-way regression interaction
@@ -69,7 +68,7 @@ dat %>%
 # simplified code to run regressions on all DVs at once
 
 reg_models <- dat %>% 
-  dplyr::select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
+  select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
   map(~summ(lm(. ~ c_iv1 * c_iv2 * c_iv3, data = dat))) 
 
 reg_models 
@@ -79,40 +78,32 @@ step1.1 <- lm(dv ~ c_iv1 + c_iv2 + c_iv3, data=dat)
 step2.1 <- lm(dv ~ c_iv1 * c_iv2 + c_iv1 * c_iv3 + c_iv2 * c_iv3, data=dat)
 step3.1 <- lm(dv ~ c_iv1 * c_iv2 * c_iv3, data=dat)
 
-##  check GLM assumptions for:
-#heteroskedastic (error variance)
-check_heteroscedasticity(step3.1)
-
-# autocorrelation (independence of errors)
-check_autocorrelation(step3.1)
-
-# normality (normality of residuals)
-check_normality(step3.1)
-
-# multicollinearity (predictor independence)
-check_collinearity(step3.1)
+# check GLM assumptions for:
+# heteroskedastic (error variance), autocorrelation (independence of errors)
+# normality (normality of residuals), multicollinearity (predictor independence)
+check_assumptions(step3.1, as.logical = FALSE)
 
 # tests for outliers in model then iteratively removes outliers and re-runs the model
-# consider add "mcd" method to detect outliers (Mahalanobis et al., 2018)
-check_outliers(step3.1, method = c("cook", "zscore", "mahalanobis"))
+outliers(step3.1, iterations = 5)
 
-# can also plot GLM assumptions
-plot(gvlma(step2.1))
+## regression summaries for each step
+summ(step1.1, digits = 3)
+summ(step2.1, digits = 3)
+summ(step3.1, digits = 3)
 
+# F-change and Delta R-Squared statistics from here
+modelCompare(step1.1, step2.1)
+modelCompare(step2.1, step3.1)
 
-## SPSS-like regression summary
-jmv::linReg(data = dat,
-            dep = dv,
-            covs = vars(c_iv1, c_iv2, c_iv3),
-            blocks = list(
-              list("c_iv1", "c_iv2", "c_iv3"),
-              list(c("c_iv1", "c_iv2"),
-                   c("c_iv1", "c_iv3"),
-                   c("c_iv2", "c_iv3")),
-              list(c("c_iv1", "c_iv2", "c_iv3"))),
-            r2 = FALSE, r2Adj = TRUE, ci = TRUE, stdEst = TRUE,
-            ciEmm = FALSE, emmPlots = FALSE, emmWeights = FALSE)
+# 95% confidence intervals (defaults to 95%), rounded to 3 decimal places
+round(confint(step1.1), 3)
+round(confint(step2.1), 3)
+round(confint(step3.1), 3)
 
+# Betas, rounded to 3 decimal places
+round(lm.beta(step1.1), 3)
+round(lm.beta(step2.1), 3)
+round(lm.beta(step3.1), 3)
 
 ### test simple slopes 
 
@@ -145,21 +136,27 @@ probe_interaction(step3.1,
 
 ### could also achive this differently by doing:
 
-reghelper::build_model(dv, c(c_iv1 + c_iv2), 
-                           c(c_iv1 * c_iv2, 
-                             c_iv1 * c_iv3, 
-                             c_iv2 * c_iv3),
-                           c(c_iv1 * c_iv2 * c_iv3),
-                       data=dat, model='lm') %>% summary()
+### linear regression
+model1 <- na.omit(lmres(dv ~ c_iv1 * c_iv2 * c_iv3, data=dat))
 
-# step 1
-model_parameters(step1.1, standardize = "refit")
+# regression summaries for each step
+summ(model1$StepI) 
+summ(model1$StepII)
+summ(model1$Stepfin)
 
-# step 2
-model_parameters(step2.1, standardize = "refit")
+# F-change statistic from here
+modelCompare(model1$StepI, model1$StepII)
+modelCompare(model1$StepII, model1$Stepfin)
 
-# step 3
-model_parameters(step3.1, standardize = "refit")
+# standardised coefficients (Beta weights)
+model1$beta.StepI
+model1$beta.StepII
+model1$beta.Stepfin
+
+# 95% confidence intervals (defaults to 95%), rounded to 3 decimal places
+round(confint(model1$StepI), 3)
+round(confint(model1$StepII), 3)
+round(confint(model1$Stepfin), 3)
 
 #####################################################################################
 ######################## Simple Slope Testing Automatically #########################
@@ -404,7 +401,7 @@ graphics.off()
 # we'll also remove NA values to make this simpler
 
 dat3 = na.omit(dat %>% 
-                 dplyr::select(iv1, iv2, iv3, dv) %>% 
+                 select(iv1, iv2, iv3, dv) %>% 
                  rename(NEW_NAME_IV1 = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         NEW_NAME_IV2 = iv2, 
                         NEW_NAME_IV2 = iv3,

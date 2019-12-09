@@ -64,7 +64,7 @@ dat$iv1_num <- as.numeric(dat$iv1) # iv1 should be replaced with the name of you
 
 
 dat %>%
-  dplyr::select(iv1, iv2, dv) %>%
+  dplyr::select(iv1, iv2, iv3, dv) %>%
   describe()
 
 ####### center IVs
