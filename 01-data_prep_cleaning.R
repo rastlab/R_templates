@@ -199,14 +199,16 @@ glimpse(dat)
 
 # replace PROJECT_NAME with your desire project name
 if(!exists("./PROJECT_NAME")) {dir.create("./PROJECT_NAME")}   # this is where we will save our entire project
-setwd("./PROJECT_NAME/")       # this will set the working directory to your new project
+# setwd("./PROJECT_NAME/")       # this will set the working directory to your new project
 
 # do not modify these lines
 if(!exists("./r")) {dir.create("./r")}              # this is where we will save our R scripts
 if(!exists("./data")) {dir.create("./data")}        # this is where we will save our datasets
+if(!exists("./data/raw_data")) {dir.create("./data/raw_data")}        # this is where we will save our datasets
 if(!exists("./doc")) {dir.create("./doc")}          # this is where we will save our manuscripts and reports
 if(!exists("./figures")) {dir.create("./figures")}  # this is where we will save our figures
 if(!exists("./tables")) {dir.create("./tables")}    # this is where we will save our tables
+if(!exists("./manuscript")) {dir.create("./manuscript")}    # this is where we will save our tables
 download.file(url = "http://bit.ly/2JNFPSu", destfile = ".gitignore") # creates recommended .gitignore file
 
 # Save current workspace: 
