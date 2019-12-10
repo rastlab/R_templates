@@ -18,7 +18,8 @@
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
 if(!require(jmv)){install.packages("jmv")}
-pacman::p_load(parallel, rio, psych, car, lsr, phia, tidyverse, parameters, apaTables)
+pacman::p_load(parallel, rio, psych, car, lsr, phia, tidyverse, parameters, 
+               apaTables, patchwork)
 
 
 ## load data

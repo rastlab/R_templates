@@ -69,8 +69,8 @@ figure_1 <- data_plot$interactplot$data %>%
                 geom_line(aes(color = modx_group,
                               linetype = modx_group),
                           size = 1.25) +
-                scale_y_continuous(limits = y_range,
-                                   breaks = seq(y_axis_low, y_axis_high)) + 
+                scale_y_continuous(limits = c(y_axis_low, y_axis_high),
+                                   breaks = seq(y_axis_low, y_axis_high, y_increment)) + 
                 ylab(y_label) +
                 xlab(z_label) +
                 scale_x_discrete(limits = z_range,

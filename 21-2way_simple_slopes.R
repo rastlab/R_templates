@@ -170,9 +170,9 @@ dat$y <- dat$dv           # outcome variable here
 # change labels in quotes to be what you want them to be
 
 y_label        <- "dv_name"
-y_range        <- c(-1.0, 1.0)           # desired numeric range of y-axis
-y_axis_high    <- 1.0                    # high descrete numeric value displayed on y-axis
-y_axis_low     <- -1.0                    # low descrete numeric value displayed on y-axis
+y_axis_high    <- 9.0                    # high descrete numeric value displayed on y-axis
+y_axis_low     <- 1.0                    # low descrete numeric value displayed on y-axis
+y_increment    <- 1.0                    # increments for y-axis
 z_label        <- "z_non-moderator_name" # X-axis variable (non-moderator)
 z_values       <- c("low", "high")       # non-moderator values
 z_range        <- c(-1.0, 1.0)           # non-moderator numerical values
