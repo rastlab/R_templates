@@ -124,15 +124,12 @@ sim_slopes(step2.1, pred = c_iv2, modx = c_iv1, jnplot = TRUE)
 # simple slopes plots with Johnson-Neyman intervals in output
 probe_interaction(step2.1, 
                   pred = c_iv1, modx = c_iv2,
-                  modx.values = "plus-minus",  # nb: remove this line if you have a categorical predictor
-                  interval = TRUE,
-                  plot.points = TRUE)
+                  modx.values = "plus-minus")
+
 
 probe_interaction(step2.1, 
                   pred = c_iv2, modx = c_iv1,
-                  modx.values = "plus-minus",  # nb: remove this line if you have a categorical predictor
-                  interval = TRUE,
-                  plot.points = TRUE)
+                  modx.values = "plus-minus")
 
 ##############################################################
 ######## could also achive this differently by doing: ########

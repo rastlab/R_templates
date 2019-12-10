@@ -132,20 +132,17 @@ sim_slopes(step3.1, pred = c_iv3, modx = c_iv2, mod2 = c_iv1, modx.values = "plu
 probe_interaction(step3.1, 
                   pred = c_iv1, modx = c_iv2, mod2 = c_iv3, 
                   modx.values = "plus-minus", 
-                  mod2.values = "plus-minus", 
-                  plot.points = TRUE)
+                  mod2.values = "plus-minus")
 
 probe_interaction(step3.1, 
                   pred = c_iv2, modx = c_iv1, mod2 = c_iv3, 
                   modx.values = "plus-minus", 
-                  mod2.values = "plus-minus", 
-                  plot.points = TRUE)
+                  mod2.values = "plus-minus")
 
 probe_interaction(step3.1, 
                   pred = c_iv3, modx = c_iv1, mod2 = c_iv2, 
                   modx.values = "plus-minus", 
-                  mod2.values = "plus-minus", 
-                  plot.points = TRUE)
+                  mod2.values = "plus-minus")
 
 
 ##############################################################
