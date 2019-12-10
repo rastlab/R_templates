@@ -60,8 +60,8 @@ aov_models <- dat %>%
 aov_models 
 
 
-# linear model to dive into any significant 2-ways
-model1 <- lm(dv ~ dv ~ iv1 * iv2 * iv3, data=dat)
+# linear model to dive into any significant 3-ways
+model1 <- lm(dv ~ iv1 * iv2 * iv3, data=dat)
 
 # create ANOVA
 model_1 <- Anova(model1, type = 3)
