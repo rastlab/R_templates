@@ -212,7 +212,7 @@ apa.aov.table(modinter, conf.level = 0.9, type = 3,  table.number = 1, filename=
 # correlation matrix
 
 dat3 = na.omit(dat %>% 
-                 dplyr::select(iv1_num, iv2, iv3, dv) %>% 
+                 dplyr::select(iv1, iv2, iv3, dv) %>% 
                  rename(NEW_NAME_IV1 = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         NEW_NAME_IV2 = iv2, 
                         NEW_NAME_IV3 = iv3, 
