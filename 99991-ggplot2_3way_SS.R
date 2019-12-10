@@ -51,7 +51,6 @@
 
 # regression
 step3 <- lm(y ~ z * x * w, data=dat)
-summary(step3)
 
 # create figure
 data_plot <- probe_interaction(step3, 

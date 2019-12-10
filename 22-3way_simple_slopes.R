@@ -240,7 +240,7 @@ line_colors   <- c("#9E9E9E", "#000000")  # these are colorblind friendly color 
 legend_loc    <- c(0.2, 0.8)
 
 # jtools ggplot2 plots
-source("https://raw.githubusercontent.com/rastlab/R_templates/master/99991_ggplot2_simple_slopes.R")
+source("https://raw.githubusercontent.com/rastlab/R_templates/master/99991-ggplot2_3way_SS.R")
 
 
 #####################################

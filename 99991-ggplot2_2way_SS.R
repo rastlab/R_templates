@@ -12,10 +12,9 @@
 # ######################## Simple Slope Testing Automatically #########################
 # #####################################################################################
 # 
-# ### create x, z, w, and y columns by renaming IVs
+# ### create x, z, and y columns by renaming IVs
 # dat$z <- NON-MODERATOR_HERE # x-axis variable here
 # dat$x <- MODERATOR_HERE     # moderator_1 variable here
-# dat$w <- PANEL_HERE         # moderator_2 variable here
 # dat$y <- DV_HERE            # outcome variable here
 # 
 # 
@@ -23,8 +22,6 @@
 # # must use quotes for labels
 # # change labels in quotes to be what you want them to be
 # 
-# panel_a_label  <- "Panel A: YYY"         # panel A = low moderator
-# panel_b_label  <- "Panel B: ZZZ"         # panel B = high moderator
 # y_label        <- "dv_name"
 # y_range        <- c(-1.0, 1.0)           # desired numeric range of y-axis
 # y_axis_high    <- 1.0                    # high descrete numeric value displayed on y-axis
@@ -50,16 +47,13 @@
 ###########################################
 
 # regression
-step3 <- lm(y ~ z * x * w, data=dat)
-summary(step3)
+step2 <- lm(y ~ z * x, data=dat)
 
 # create figure
-data_plot <- probe_interaction(step3, 
+data_plot <- probe_interaction(step2, 
                                pred = z, 
                                modx = x, 
-                               mod2 = w,
-                               modx.values = "plus-minus",
-                               mod2.values = "plus-minus")
+                               modx.values = "plus-minus")
 
 ### tells R to provide a plot in APA style, figure is MS ready
 apatheme = theme_bw() +
@@ -70,15 +64,13 @@ apatheme = theme_bw() +
                  text=element_text(family='Times'))
 
 # create Panel A
-panel_a <- data_plot$interactplot$data %>%
-                filter(mod2_group == "Mean of w - 1 SD") %>%
+figure_1 <- data_plot$interactplot$data %>%
                 ggplot(aes(x = z, y = y, group = modx_group)) +
                 geom_line(aes(color = modx_group,
                               linetype = modx_group),
                           size = 1.25) +
                 scale_y_continuous(limits = y_range,
                                    breaks = seq(y_axis_low, y_axis_high)) + 
-                labs(subtitle = panel_a_label) +
                 ylab(y_label) +
                 xlab(z_label) +
                 scale_x_discrete(limits = z_range,
@@ -97,43 +89,13 @@ panel_a <- data_plot$interactplot$data %>%
 
 # ggsave('./figures/figure_1_panel_a.png', width=8, height=6, unit='in', dpi=300)
 
-# create Panel B
-panel_b <- data_plot$interactplot$data %>%
-                filter(mod2_group == "Mean of w + 1 SD") %>%
-                ggplot(aes(x = z, y = y, group = modx_group)) +
-                geom_line(aes(color = modx_group,
-                              linetype = modx_group),
-                          size = 1.25) +
-                scale_y_continuous(limits = y_range,
-                                   breaks = seq(y_axis_low, y_axis_high)) + 
-                labs(subtitle = panel_b_label) +
-                ylab(y_label) +
-                xlab(z_label) +
-                scale_x_discrete(limits = z_range,
-                                 labels = z_values) +  
-                scale_linetype_manual(name = modx_label,
-                                      labels = modx_values,
-                                      values = line_types,
-                                      guide = guide_legend(reverse = TRUE)) +
-                scale_colour_manual(name = modx_label,
-                                    labels = modx_values,
-                                    values = line_colors,
-                                    guide = guide_legend(reverse = TRUE)) +
-                apatheme +
-                theme(legend.position = legend_loc) +
-                scale_fill_grey()
-
 # ggsave('./figures/figure_1_panel_b.png', width=8, height=6, unit='in', dpi=300)
 
 ######################################
 ####### Here are your figures ########
 ######################################
 
-# panel_a
-# panel_b 
-
-panel_a_b <- panel_a / panel_b
-
+# figure_1
 # ggsave('./figures/figure_1.png', width=8, height=8, unit='in', dpi=300)
 
 
