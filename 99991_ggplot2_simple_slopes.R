@@ -95,6 +95,8 @@ panel_a <- data_plot$interactplot$data %>%
                 theme(legend.position = legend_loc) +
                 scale_fill_grey()
 
+ggsave('figure1_panel_a.png', width=8, height=6, unit='in', dpi=300)
+
 # create Panel B
 panel_b <- data_plot$interactplot$data %>%
                 filter(mod2_group == "Mean of w + 1 SD") %>%
@@ -120,6 +122,8 @@ panel_b <- data_plot$interactplot$data %>%
                 apatheme +
                 theme(legend.position = legend_loc) +
                 scale_fill_grey()
+
+ggsave('figure1_panel_b.png', width=8, height=6, unit='in', dpi=300)
 
 ######################################
 ####### Here are your figures ########
