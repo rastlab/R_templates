@@ -55,7 +55,7 @@ options(contrasts = c("contr.helmert", "contr.poly"))
 
 aov_models <- dat %>% 
   dplyr::select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
-  map(~Anova(lm(. ~ iv1 * iv2, data = dat), type = 3))
+  map(~Anova(lm(. ~ iv1 * iv2 * iv3, data = dat), type = 3))
 
 aov_models 
 
