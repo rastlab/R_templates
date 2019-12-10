@@ -172,7 +172,9 @@ probe_interaction(step3.1,
                   mod2.values = "plus-minus")
 
 
-##### simple slopes for Excel plotting
+##### simple slopes another way to get:
+# (1) Dawson & Richter's (2006) simple slope difference tests
+# (2) Excepl plotting points
 
 ## create simple slopes using 'pequod'
 model1 <- na.omit(lmres(dv ~ iv1 * iv2 * iv3, data=dat))
@@ -239,7 +241,7 @@ line_colors   <- c("#9E9E9E", "#000000")  # these are colorblind friendly color 
 # (0.8, 0.8) is upper-right corner, (0.2, 0.8) is the top left of the figure
 legend_loc    <- c(0.2, 0.8)
 
-# jtools ggplot2 plots
+# run next line and figures will be automatically created
 source("https://raw.githubusercontent.com/rastlab/R_templates/master/99991-ggplot2_3way_SS.R")
 
 
@@ -247,6 +249,7 @@ source("https://raw.githubusercontent.com/rastlab/R_templates/master/99991-ggplo
 ####### Here are the figures ########
 #####################################
 
+# verify figures look similar to the probe_interaction() commands at line 159, 164 or 169
 panel_a
 panel_b
 panel_a_b # don't worry about legend overlapping with figure, it'll fix when saving it

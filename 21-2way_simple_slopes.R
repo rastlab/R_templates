@@ -153,91 +153,56 @@ probe_interaction(step2.1,
                   modx.values = "plus-minus")
 
 
-##### simple slopes for Excel plotting
-
-## create simple slopes using 'pequod'
-model1 <- na.omit(lmres(dv ~ iv1 * iv2, data=dat))
-
-## iv1 as slope, iv2 as moderator
-s_slopes1 <- na.omit(simpleSlope(step2.1, pred="iv1",mod1="iv2"))
-summary(s_slopes1)
-
-# generate simple slope points to plot manually in Excel
-s_slopes1$Points
-
-## iv2 as slope, iv1 as moderator
-s_slopes2 <- na.omit(simpleSlope(model1, pred="iv2",mod1="iv1"))
-summary(s_slopes2)
-
-# generate simple slope points to plot manually in Excel
-s_slopes2$Points
-
 ###############################################
 ######### Plotting 2-way interaction ##########
 ###############################################
 
-# the folllowing commands will create APA-style, MS ready figures
+# the follow commands will create APA-style, MS ready figures
 
-# to get the correct figure, only change the follow 8 lines of code
-# after entering your desired IV and DV names, run the plotting code provide directly beneath
-iv1 <- "ENTER DESIRED IV1 NAME HERE"
-iv1a <- "ENTER IV1 HIGH CONDITION HERE"
-iv1b <- "ENTER IV1 LOW CONDITION HERE"
-iv2 <- "ENTER DESIRED IV2 NAME HERE"
-iv2a <- "ENTER IV2 HIGH CONDITION HERE (+1SD)"
-iv2b <- "ENTER IV2 LOW CONDITION HERE (-1SD)"
-dv <- "ENTER DESIRED DV NAME HERE"
-yrange = c(4,7)  # this is to change y-axis range. The first number is the y-axis low point, the second number is the y-axis high point
+### create x, z, and y columns by renaming IVs
+dat$z <- dat$c_iv1        # x-axis variable here
+dat$x <- dat$c_iv2        # moderator_1 variable here
+dat$y <- dat$dv           # outcome variable here
 
 
-## do not modify the plot code, run it as it. Only change the IV and DV names provided above!
+## create labels for figure
+# must use quotes for labels
+# change labels in quotes to be what you want them to be
 
-### Plot iv1 as slope and iv2 as moderator
-xrange = c(-1.5,1.5)
-png(file="./figures/figure_1.png", width=8, height=6, units="in", res = 800)
-par(bty = 'l')
-par(family="Times")
-plot(c(-1, 1), c((s_slopes1$Points[1, 1]), (s_slopes1$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
-par(new = T)
-plot(c(-1, 1), c((s_slopes1$Points[2, 1]), (s_slopes1$Points[2, 2])), type='b', lty=2, pch = 16, axes=F, xlab=iv1, ylab=dv, ylim=yrange, xlim=xrange)
-axis(1, at=c(-1, 1), labels=c(iv1b, iv1a))
-axis(2, at=seq(1, 9, by=1))
-legend("topright", title = iv2, c(iv2a, iv2b), lty=1:2, cex=.90)
-box()
-dev.off()
-graphics.off()
+y_label        <- "dv_name"
+y_range        <- c(-1.0, 1.0)           # desired numeric range of y-axis
+y_axis_high    <- 1.0                    # high descrete numeric value displayed on y-axis
+y_axis_low     <- -1.0                    # low descrete numeric value displayed on y-axis
+z_label        <- "z_non-moderator_name" # X-axis variable (non-moderator)
+z_values       <- c("low", "high")       # non-moderator values
+z_range        <- c(-1.0, 1.0)           # non-moderator numerical values
+modx_label     <- "x_moderator_name"     # figure legend (moderator)
+modx_values    <- c("low", "high")       # moderator values
 
-## repeat plot process here to change IV2 to the slope and IV1 as the moderator
+# run but only modify these if needed
+# line type and color are set for APA 7ed
+line_types    <- c("longdash", "solid")   # can be “solid”, “dashed”, “dotted”, “dotdash”, “longdash”, “twodash”
+line_colors   <- c("#9E9E9E", "#000000")  # these are colorblind friendly color schemes, don't change unless needed
 
-# to get the correct figure, only change the follow 8 lines of code
-# after entering your desired IV and DV names, run the plotting code provide directly beneath
-iv1 <- "ENTER DESIRED IV1 NAME HERE"
-iv1a <- "ENTER IV1 HIGH CONDITION HERE (+1SD)"
-iv1b <- "ENTER IV1 LOW CONDITION HERE (-1SD)"
-iv2 <- "ENTER DESIRED IV2 NAME HERE"
-iv2a <- "ENTER IV2 HIGH CONDITION HERE"
-iv2b <- "ENTER IV2 LOW CONDITION HERE"
-dv <- "ENTER DESIRED DV NAME HERE"
-yrange = c(4,7)  # this is to change y-axis range. The first number is the y-axis low point, the second number is the y-axis high point
+# change legend location if needed
+# in the format of (x,y), can be any number between 0 and 1
+# (0.8, 0.8) is upper-right corner, (0.2, 0.8) is the top left of the figure
+legend_loc    <- c(0.2, 0.8)
+
+# run next line and figure will be automatically created
+source("https://raw.githubusercontent.com/rastlab/R_templates/master/99991-ggplot2_2way_SS.R")
 
 
-## do not modify the plot code, run it as it. Only change the IV and DV names provided above!
+#####################################
+####### Here are the figures ########
+#####################################
 
-### Plot iv2 as slope and iv1 as moderator
-yrange1 = c(4,7) # modify the y-axis range
-xrange1 = c(-1.5,1.5)
-png(file="./figures/figure_2.png", width=8, height=6, units="in", res = 800)
-par(bty = 'l')
-par(family="Times")
-plot(c(-1, 1), c((s_slopes2$Points[1, 1]), (s_slopes2$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange1, xlim=xrange1)
-par(new = T)
-plot(c(-1, 1), c((s_slopes2$Points[2, 1]), (s_slopes2$Points[2, 2])), type='b', lty=2, pch = 16, axes=F, xlab=iv2, ylab=dv, ylim=yrange1, xlim=xrange1)
-axis(1, at=c(-1, 1), labels=c(iv2b, iv2a))
-axis(2, at=c(4, 5, 6, 7))
-legend("topright", title = iv1, c(iv1a, iv1b), lty=1:2, cex=.90)
-box()
-dev.off()
-graphics.off()
+# verify figures look similar to the probe_interaction() commands at line 146 or 151
+figure_1
+
+# if you are happy with figures, save them
+# can change dimensions, file type, and dpi as per journal requirement specifications
+ggsave('./figures/figure_1.png', panel_a_b, width = 8, height = 8, unit = 'in', dpi = 320)
 
 
 #######################################
