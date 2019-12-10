@@ -172,8 +172,6 @@ probe_interaction(step3.1,
                   mod2.values = "plus-minus")
 
 
-
-
 ##### simple slopes for Excel plotting
 
 ## create simple slopes using 'pequod'
@@ -208,115 +206,57 @@ s_slopes3$Points
 
 # the follow commands will create APA-style, MS ready figures
 
-######## ONLY MODIFY THE WORDS IV1, IV2, IV3, AND DV 
+### create x, z, w, and y columns by renaming IVs
+dat$z <- dat$c_iv1     # x-axis variable here
+dat$x <- dat$c_iv2     # moderator_1 variable here
+dat$w <- dat$c_iv3         # moderator_2 variable here
+dat$y <- dat$dv           # outcome variable here
 
 
-### Plot iv1 as slope and iv2 as moderator and iv3 (low -1SD) as panel
-yrange = c(4,7)  # modify the y-axis range
-xrange = c(-1.5,1.5)
-png(file="./figures/figure_1.png", width=8, height=6, units="in", res = 800)
-par(bty = 'l')
-par(family="Times")
-plot(c(-1, 1), c((s_slopes1$Points[1, 1]), (s_slopes1$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
-par(new = T)
-plot(c(-1, 1), c((s_slopes1$Points[3, 1]), (s_slopes1$Points[3, 2])), type='b', lty=2, pch = 16, axes=F, xlab="iv1", ylab="dv", ylim=yrange, xlim=xrange)
-axis(1, at=c(-1, 1), labels=c("iv1-low", "iv1-high"))
-axis(2, at=c(4, 5, 6, 7))
-legend("topright", title = "iv2", c("iv2-high (+1SD)", "iv2-low (-1SD)"), lty=1:2, cex=.90)
-title(main="Panel B: iv3 (low -1SD)", adj = 0, font.main = 1, cex.main = 1)
-box()
-dev.off()
-graphics.off()
+## create labels for figure
+# must use quotes for labels
+# change labels in quotes to be what you want them to be
+
+panel_a_label  <- "Panel A: YYY"         # panel A = low moderator
+panel_b_label  <- "Panel B: ZZZ"         # panel B = high moderator
+y_label        <- "dv_name"
+y_range        <- c(-1.0, 1.0)           # desired numeric range of y-axis
+y_axis_high    <- 1.0                    # high descrete numeric value displayed on y-axis
+y_axis_low     <- -1.0                    # low descrete numeric value displayed on y-axis
+z_label        <- "z_non-moderator_name" # X-axis variable (non-moderator)
+z_values       <- c("low", "high")       # non-moderator values
+z_range        <- c(-1.0, 1.0)           # non-moderator numerical values
+modx_label     <- "x_moderator_name"     # figure legend (moderator)
+modx_values    <- c("low", "high")       # moderator values
+
+# run but only modify these if needed
+# line type and color are set for APA 7ed
+line_types    <- c("longdash", "solid")   # can be “solid”, “dashed”, “dotted”, “dotdash”, “longdash”, “twodash”
+line_colors   <- c("#9E9E9E", "#000000")  # these are colorblind friendly color schemes, don't change unless needed
+
+# change legend location if needed
+# in the format of (x,y), can be any number between 0 and 1
+# (0.8, 0.8) is upper-right corner, (0.2, 0.8) is the top left of the figure
+legend_loc    <- c(0.2, 0.8)
+
+# jtools ggplot2 plots
+source("https://raw.githubusercontent.com/rastlab/R_templates/master/99991_ggplot2_simple_slopes.R")
 
 
-### Plot iv1 as slope and iv2 as moderator and iv3 (high +1SD) as panel
-yrange = c(4,7)  # modify the y-axis range
-xrange = c(-1.5,1.5)
-png(file="./figures/figure_2.png", width=8, height=6, units="in", res = 800)
-par(bty = 'l')
-par(family="Times")
-plot(c(-1, 1), c((s_slopes1$Points[2, 1]), (s_slopes1$Points[2, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
-par(new = T)
-plot(c(-1, 1), c((s_slopes1$Points[4, 1]), (s_slopes1$Points[4, 2])), type='b', lty=2, pch = 16, axes=F, xlab="iv1", ylab="dv", ylim=yrange, xlim=xrange)
-axis(1, at=c(-1, 1), labels=c("iv1-low", "iv1-high"))
-axis(2, at=c(4, 5, 6, 7))
-legend("topright", title = "iv2", c("iv2-high (+1SD)", "iv2-low (-1SD)"), lty=1:2, cex=.90)
-title(main="Panel B: iv3 (high +1SD)", adj = 0, font.main = 1, cex.main = 1)
-box()
-dev.off()
-graphics.off()
+#####################################
+####### Here are the figures ########
+#####################################
+
+panel_a
+panel_b
+panel_a_b # don't worry about legend overlapping with figure, it'll fix when saving it
 
 
-### Plot iv2 as slope and iv1 as moderator and iv3 (low -1SD) as panel
-yrange = c(4,7)  # modify the y-axis range
-xrange = c(-1.5,1.5)
-png(file="./figures/figure_3.png", width=8, height=6, units="in", res = 800)
-par(bty = 'l')
-par(family="Times")
-plot(c(-1, 1), c((s_slopes2$Points[1, 1]), (s_slopes2$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
-par(new = T)
-plot(c(-1, 1), c((s_slopes2$Points[3, 1]), (s_slopes2$Points[3, 2])), type='b', lty=2, pch = 16, axes=F, xlab="iv2", ylab="dv", ylim=yrange, xlim=xrange)
-axis(1, at=c(-1, 1), labels=c("iv2-low", "iv2-high"))
-axis(2, at=c(4, 5, 6, 7))
-legend("topright", title = "iv1", c("iv1-high (+1SD)", "iv1-low (-1SD)"), lty=1:2, cex=.90)
-title(main="Panel B: iv3 (low -1SD)", adj = 0, font.main = 1, cex.main = 1)
-box()
-dev.off()
-graphics.off()
-
-
-### Plot iv2 as slope and iv1 as moderator and iv3 (high +1SD) as panel
-yrange = c(4,7)  # modify the y-axis range
-xrange = c(-1.5,1.5)
-png(file="./figures/figure_4.png", width=8, height=6, units="in", res = 800)
-par(bty = 'l')
-par(family="Times")
-plot(c(-1, 1), c((s_slopes2$Points[2, 1]), (s_slopes2$Points[2, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
-par(new = T)
-plot(c(-1, 1), c((s_slopes2$Points[4, 1]), (s_slopes2$Points[4, 2])), type='b', lty=2, pch = 16, axes=F, xlab="iv2", ylab="dv", ylim=yrange, xlim=xrange)
-axis(1, at=c(-1, 1), labels=c("iv2-low", "iv2-high"))
-axis(2, at=c(4, 5, 6, 7))
-legend("topright", title = "iv1", c("iv1-high (+1SD)", "iv1-low (-1SD)"), lty=1:2, cex=.90)
-title(main="Panel B: iv3 (high +1SD)", adj = 0, font.main = 1, cex.main = 1)
-box()
-dev.off()
-graphics.off()
-
-
-### Plot iv3 as slope and iv1 as moderator and iv2 (low -1SD) as panel
-yrange = c(4,7)  # modify the y-axis range
-xrange = c(-1.5,1.5)
-png(file="./figures/figure_5.png", width=8, height=6, units="in", res = 800)
-par(bty = 'l')
-par(family="Times")
-plot(c(-1, 1), c((s_slopes3$Points[1, 1]), (s_slopes3$Points[1, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
-par(new = T)
-plot(c(-1, 1), c((s_slopes3$Points[3, 1]), (s_slopes3$Points[3, 2])), type='b', lty=2, pch = 16, axes=F, xlab="iv3", ylab="dv", ylim=yrange, xlim=xrange)
-axis(1, at=c(-1, 1), labels=c("iv3-low", "iv3-high"))
-axis(2, at=c(4, 5, 6, 7))
-legend("topright", title = "iv1", c("iv1-high (+1SD)", "iv1-low (-1SD)"), lty=1:2, cex=.90)
-title(main="Panel B: iv2 (low -1SD)", adj = 0, font.main = 1, cex.main = 1)
-box()
-dev.off()
-graphics.off()
-
-
-### Plot iv3 as slope and iv1 as moderator and iv2 (high +1SD) as panel
-yrange = c(4,7)  # modify the y-axis range
-xrange = c(-1.5,1.5)
-png(file="./figures/figure_6.png", width=8, height=6, units="in", res = 800)
-par(bty = 'l')
-par(family="Times")
-plot(c(-1, 1), c((s_slopes3$Points[2, 1]), (s_slopes3$Points[2, 2])), type='b', lty=1, pch = 15, axes=F, xlab="", ylab="", ylim=yrange, xlim=xrange)
-par(new = T)
-plot(c(-1, 1), c((s_slopes2$Points[4, 1]), (s_slopes2$Points[4, 2])), type='b', lty=2, pch = 16, axes=F, xlab="iv3", ylab="dv", ylim=yrange, xlim=xrange)
-axis(1, at=c(-1, 1), labels=c("iv3-low", "iv3-high"))
-axis(2, at=c(4, 5, 6, 7))
-legend("topright", title = "iv1", c("iv1-high (+1SD)", "iv1-low (-1SD)"), lty=1:2, cex=.90)
-title(main="Panel B: iv2 (high +1SD)", adj = 0, font.main = 1, cex.main = 1)
-box()
-dev.off()
-graphics.off()
+# if you are happy with figures, save them
+# can change dimensions, file type, and dpi as per journal requirement specifications
+ggsave('./figures/figure_1_a.png', panel_a, width = 8, height = 6, unit = 'in', dpi = 320)
+ggsave('./figures/figure_1_b.png', panel_b, width = 8, height = 6, unit = 'in', dpi = 320)
+ggsave('./figures/figure_1.png', panel_a_b, width = 8, height = 8, unit = 'in', dpi = 320)
 
 
 #######################################
