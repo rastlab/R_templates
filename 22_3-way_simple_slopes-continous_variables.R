@@ -19,9 +19,11 @@ update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
 if(!require(jmv)){install.packages("jmv")}
 if(!require(reghelper)){install.packages("reghelper")}
-pacman::p_load(rio, pequod, QuantPsyc, lmSupport, jtools, interactions, 
-               apaTables, stargazer, sjmisc, sjstats, psych, tidyverse, 
-               parameters, performance, effectsize)
+pacman::p_load(rio, pequod, jtools, interactions, 
+               apaTables, stargazer, psych, tidyverse, 
+               parameters, performance, effectsize,
+               janitor, ggstance, patchwork) # this row is needed for plotting
+
 ## load data
 
 # RData files work the best in R. 
@@ -117,6 +119,31 @@ jmv::linReg(data = dat,
             r2 = FALSE, r2Adj = TRUE, ci = TRUE, stdEst = TRUE,
             ciEmm = FALSE, emmPlots = FALSE, emmWeights = FALSE)
 
+##############################################################
+######## could also achive this differently by doing: ########
+##############################################################
+
+# hierarchical linear regression
+reghelper::build_model(dv, c(c_iv1 + c_iv2), 
+                       c(c_iv1 * c_iv2, 
+                         c_iv1 * c_iv3, 
+                         c_iv2 * c_iv3),
+                       c(c_iv1 * c_iv2 * c_iv3),
+                       data=dat, model='lm') %>% summary()
+
+# step 1 betas
+sjstats::std_beta(step1.1)
+
+# step 2 betas
+sjstats::std_beta(step2.1)
+
+# step 3 betas
+sjstats::std_beta(step3.1)
+
+
+######################################################################
+############### Simple Slope Testing Automatically ###################
+######################################################################
 
 ### test simple slopes 
 
@@ -145,28 +172,9 @@ probe_interaction(step3.1,
                   mod2.values = "plus-minus")
 
 
-##############################################################
-######## could also achive this differently by doing: ########
-##############################################################
 
-# hierarchical linear regression
-reghelper::build_model(dv, c(c_iv1 + c_iv2), 
-                           c(c_iv1 * c_iv2, 
-                             c_iv1 * c_iv3, 
-                             c_iv2 * c_iv3),
-                           c(c_iv1 * c_iv2 * c_iv3),
-                       data=dat, model='lm') %>% summary()
 
-# step 1 betas
-model_parameters(step1.1, standardize = "refit")
-
-# step 2 betas
-model_parameters(step2.1, standardize = "refit")
-
-# step 3 betas
-model_parameters(step3.1, standardize = "refit")
-
-##### simple slopes automatically
+##### simple slopes for Excel plotting
 
 ## create simple slopes using 'pequod'
 model1 <- na.omit(lmres(dv ~ iv1 * iv2 * iv3, data=dat))
@@ -193,56 +201,6 @@ summary(s_slopes3)
 # generate simple slope points to plot manually in Excel
 s_slopes3$Points
 
-
-###############################################################################################################
-######## Prepare data for simple slopes of the 3-way interaction (see Mike's simples procedure sheet) #########
-###############################################################################################################
-
-## Step 3 of Mike's sheet
-
-dat$c_iv1A <- dat$c_iv1 - sd(dat$c_iv1, na.rm=T)
-dat$c_iv1B <- dat$c_iv1 + sd(dat$c_iv1, na.rm=T)
-dat$c_iv2A <- dat$c_iv2 - sd(dat$c_iv2, na.rm=T)
-dat$c_iv2B <- dat$c_iv2 + sd(dat$c_iv2, na.rm=T)
-dat$c_iv3A <- dat$c_iv3 - sd(dat$c_iv2, na.rm=T)
-dat$c_iv3B <- dat$c_iv3 + sd(dat$c_iv2, na.rm=T)
-
-## Step 4 of Mike's sheet is not needed in R
-
-## Step 5 & 6 of Mike's sheet
-
-# simple slopes for iv1
-iv1.bb <- lm(dv ~ c_iv1 * c_iv2B * c_iv3B, data=dat)
-iv1.ab <- lm(dv ~ c_iv1 * c_iv2A * c_iv3B, data=dat)
-iv1.ba <- lm(dv ~ c_iv1 * c_iv2B * c_iv3A, data=dat)
-iv1.aa <- lm(dv ~ c_iv1 * c_iv2A * c_iv3A, data=dat)
-
-summary(iv1.bb)
-summary(iv1.ab)
-summary(iv1.bb)
-summary(iv1.aa)
-
-# simple slopes for iv2
-iv2.bb <- lm(dv ~ c_iv2 * c_iv1B * c_iv3B, data=dat)
-iv2.ab <- lm(dv ~ c_iv2 * c_iv1A * c_iv3B, data=dat)
-iv2.ba <- lm(dv ~ c_iv2 * c_iv1B * c_iv3A, data=dat)
-iv2.aa <- lm(dv ~ c_iv2 * c_iv1A * c_iv3A, data=dat)
-
-summary(iv2.bb)
-summary(iv2.ab)
-summary(iv2.bb)
-summary(iv2.aa)
-
-# simple slopes for iv3
-iv3.bb <- lm(dv ~ c_iv3 * c_iv1B * c_iv2B, data=dat)
-iv3.ab <- lm(dv ~ c_iv3 * c_iv1A * c_iv2B, data=dat)
-iv3.ba <- lm(dv ~ c_iv3 * c_iv1B * c_iv2A, data=dat)
-iv3.aa <- lm(dv ~ c_iv3 * c_iv1A * c_iv2A, data=dat)
-
-summary(iv3.bb)
-summary(iv3.ab)
-summary(iv3.bb)
-summary(iv3.aa)
 
 ###############################################
 ######### Plotting 3-way interaction ##########
@@ -381,24 +339,6 @@ dat3 = na.omit(dat %>%
 apa.cor.table(dat3, filename = "./tables/correlation_table.doc", table.number = 1,
               show.conf.interval = FALSE, landscape = TRUE)
 
-# regression table
-apa.reg.table(step1.1, step2.1, step3.1, filename = "./tables/regression_table.doc", table.number = 2)
-
-# regression model summary (paste and copy into document)
-stargazer(step1.1, step2.1, step3.1, 
-          type="text", 
-          title="Regression Results",
-          dep.var.labels=c("Dependent Variable"),
-          column.labels = c("Main Effects", "2-way Interactions", "3-way Interaction"),
-          covariate.labels=c("iv1", "iv2", "iv3", 
-                             "2-way interaction1", "2-way interaction2", "2-way interaction3", 
-                             "3-way interaction"),
-          omit.stat=c("ser"),
-          align=TRUE,
-          intercept.bottom = FALSE, 
-          single.row=TRUE,     
-          notes.append = FALSE, 
-          header=FALSE)
 
 #######################################
 ###### Saving Data and Workspace ######

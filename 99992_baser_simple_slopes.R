@@ -3,7 +3,7 @@
 #####################################
 
 # load packages
-pacman::p_load(rio, pequod)
+pacman::p_load(rio, pequod, magick)
 
 # import data
 dat <- import(file.choose())
@@ -28,7 +28,7 @@ y_label          <- "dv_name"
 z_label          <- "non-moderator_name"
 z_values         <- c("low (-1SD)", "high (+1SD)")  # non-moderator values
 modx_label       <- "moderator_name"
-modx_values      <- c("high", "low")  # moderator values
+modx_values      <- c("high", "low")       # moderator values
 legend_placement <- "topleft" # can be: "bottomright", "bottom", "bottomleft", "left", "topleft", "top", "topright", "right" and "center"
 y_range = c(-1,1)  # this is to change y-axis range. The first number is the y-axis low point, the second number is the y-axis high point
 
@@ -46,7 +46,7 @@ s_slopes1 <- na.omit(simpleSlope(model1, pred = "z",mod1 = "x", mod2 = "w"))
 #### Plot iv1 as slope and iv2 as moderator and iv3 (low -1SD) as panel
 yrange = y_range  # modify the y-axis range
 xrange = c(-1.5,1.5)
-png(file="./Study 1/r/testing_ss_ggplot2/figure_1.png", width = 8, height = 6, units = "in", res = 800)
+png(file="./figures/figure_1_br.png", width = 8, height = 6, units = "in", res = 800)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes1$Points[3, 1]), (s_slopes1$Points[3, 2])), type ='b', lty = 1, pch = 15, axes = F, xlab = "", ylab = "", ylim = yrange, xlim = xrange)
@@ -60,12 +60,11 @@ box()
 dev.off()
 graphics.off()
 
-
 ### Plot iv1 as slope and iv2 as moderator and iv3 (high +1SD) as panel
 yrange = y_range # modify the y-axis range
 xrange = c(-1.5,1.5)
 ylim(-1,1)
-png(file="./Study 1/r/testing_ss_ggplot2/figure_2.png", width=8, height=6, units="in", res = 800)
+png(file="./figures/figure_2_br.png", width=8, height=6, units="in", res = 800)
 par(bty = 'l')
 par(family="Times")
 plot(c(-1, 1), c((s_slopes1$Points[4, 1]), (s_slopes1$Points[4, 2])), type ='b', lty = 1, pch = 15, axes = F, xlab = "", ylab = "", ylim = yrange, xlim = xrange)
@@ -78,3 +77,13 @@ title(main=panel_b_label, adj = 0, font.main = 1, cex.main = 1)
 box()
 dev.off()
 graphics.off()
+
+
+# now combine plots into a single figure
+panel_a <- image_read('./figures/figure_1_br.png')
+panel_b <- image_read("./figures/figure_2_br.png")
+img <- c(panel_a, panel_b)
+
+# save combined figure as single file
+image_write(image_append(img, stack = TRUE), "./figures/figure_br.png")
+

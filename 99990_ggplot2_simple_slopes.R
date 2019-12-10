@@ -139,5 +139,5 @@ ggsave('./figures/figure_1_panel_b_pequod.png', width=8, height=6, unit='in', dp
 # panel_b 
 
 figure_1 <- panel_a / panel_b
-ggsave('figure_1_pequod.png', width=8, height=8, unit='in', dpi=300)
+ggsave('./figures/figure_1_pequod.png', width=8, height=8, unit='in', dpi=300)
 

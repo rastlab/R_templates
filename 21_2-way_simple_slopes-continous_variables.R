@@ -19,9 +19,10 @@ update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
 if(!require(jmv)){install.packages("jmv")}
 if(!require(reghelper)){install.packages("reghelper")}
-pacman::p_load(rio, pequod, QuantPsyc, lmSupport, jtools, interactions, 
-               apaTables, stargazer, sjmisc, sjstats, psych, tidyverse, 
-               parameters, performance, effectsize)
+pacman::p_load(rio, pequod, jtools, interactions, 
+               apaTables, stargazer, psych, tidyverse, 
+               parameters, performance, effectsize,
+               janitor, ggstance, patchwork) # this row is needed for plotting
 
 ## load data
 
@@ -115,6 +116,26 @@ jmv::linReg(data = dat,
             ciEmm = FALSE, emmPlots = FALSE, emmWeights = FALSE)
 
 
+##############################################################
+######## could also achive this differently by doing: ########
+##############################################################
+
+# hierarchical linear regression
+reghelper::build_model(dv, c(c_iv1 + c_iv2), 
+                       c(c_iv1 * c_iv2), 
+                       data=dat, model='lm') %>% summary()
+
+# step 1 betas
+sjstats::std_beta(step1.1)
+
+# step 2 betas
+sjstats::std_beta(step2.1)
+
+
+######################################################################
+############### Simple Slope Testing Automatically ###################
+######################################################################
+
 ### test simple slopes 
 
 # Johnson-Neyman intervals with plots
@@ -131,22 +152,8 @@ probe_interaction(step2.1,
                   pred = c_iv2, modx = c_iv1,
                   modx.values = "plus-minus")
 
-##############################################################
-######## could also achive this differently by doing: ########
-##############################################################
 
-# hierarchical linear regression
-reghelper::build_model(dv, c(c_iv1 + c_iv2), 
-                           c(c_iv1 * c_iv2), 
-                       data=dat, model='lm') %>% summary()
-
-# step 1 betas
-model_parameters(step1.1, standardize = "refit")
-
-# step 2 betas
-model_parameters(step2.1, standardize = "refit")
-
-##### simple slopes automatically
+##### simple slopes for Excel plotting
 
 ## create simple slopes using 'pequod'
 model1 <- na.omit(lmres(dv ~ iv1 * iv2, data=dat))
@@ -164,35 +171,6 @@ summary(s_slopes2)
 
 # generate simple slope points to plot manually in Excel
 s_slopes2$Points
-
-###############################################################################################################
-######## Prepare data for simple slopes of the 3-way interaction (see Mike's simples procedure sheet) #########
-###############################################################################################################
-
-## Step 3 of Mike's sheet
-
-dat$c_iv1A <- dat$c_iv1 - sd(dat$c_iv1, na.rm=T)
-dat$c_iv1B <- dat$c_iv1 + sd(dat$c_iv1, na.rm=T)
-dat$c_iv2A <- dat$c_iv2 - sd(dat$c_iv2, na.rm=T)
-dat$c_iv2B <- dat$c_iv2 + sd(dat$c_iv2, na.rm=T)
-
-## Step 4 of Mike's sheet is not needed in R
-
-## Step 5 & 6 of Mike's sheet
-
-# simple slopes for iv1
-iv1.b <- lm(dv ~ c_iv1 * c_iv2B, data=dat)
-iv1.a <- lm(dv ~ c_iv1 * c_iv2A, data=dat)
-
-summary(iv1.b)
-summary(iv1.a)
-
-# simple slopes for iv2
-iv2.b <- lm(dv ~ c_iv2 * c_iv1B, data=dat)
-iv2.a <- lm(dv ~ c_iv2 * c_iv1A, data=dat)
-
-summary(iv2.b)
-summary(iv2.a)
 
 ###############################################
 ######### Plotting 2-way interaction ##########
@@ -280,6 +258,7 @@ dat3 = na.omit(dat %>%
 # correlation table
 apa.cor.table(dat3, filename = "./tables/correlation_table.doc", table.number = 1,
               show.conf.interval = FALSE, landscape = TRUE)
+
 
 #######################################
 ###### Saving Data and Workspace ######
