@@ -95,7 +95,7 @@ panel_a <- data_plot$interactplot$data %>%
                 theme(legend.position = legend_loc) +
                 scale_fill_grey()
 
-ggsave('./figures/figure_1_panel_a.png', width=8, height=6, unit='in', dpi=300)
+# ggsave('./figures/figure_1_panel_a.png', width=8, height=6, unit='in', dpi=300)
 
 # create Panel B
 panel_b <- data_plot$interactplot$data %>%
@@ -123,7 +123,7 @@ panel_b <- data_plot$interactplot$data %>%
                 theme(legend.position = legend_loc) +
                 scale_fill_grey()
 
-ggsave('./figures/figure_1_panel_b.png', width=8, height=6, unit='in', dpi=300)
+# ggsave('./figures/figure_1_panel_b.png', width=8, height=6, unit='in', dpi=300)
 
 ######################################
 ####### Here are your figures ########
@@ -132,9 +132,9 @@ ggsave('./figures/figure_1_panel_b.png', width=8, height=6, unit='in', dpi=300)
 # panel_a
 # panel_b 
 
-figure_1 <- panel_a / panel_b
+panel_a_b <- panel_a / panel_b
 
-ggsave('./figures/figure_1.png', width=8, height=8, unit='in', dpi=300)
+# ggsave('./figures/figure_1.png', width=8, height=8, unit='in', dpi=300)
 
 
 

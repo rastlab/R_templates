@@ -46,7 +46,7 @@
 ###########################################
 ####### Run code but do not modify ########
 ###########################################
-# 
+
 ### create simple slopes using 'pequod'
 model1 <- na.omit(lmres(y ~ z * x * w, data=dat))
 
