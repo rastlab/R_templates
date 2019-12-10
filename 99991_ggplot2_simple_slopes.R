@@ -132,4 +132,10 @@ ggsave('figure1_panel_b.png', width=8, height=6, unit='in', dpi=300)
 # panel_a
 # panel_b 
 
-# (figure_1 <- panel_a / panel_b)
+figure_1 <- panel_a / panel_b
+
+ggsave('figure1.png', width=8, height=6, unit='in', dpi=300)
+
+
+
+
