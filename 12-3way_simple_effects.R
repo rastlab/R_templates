@@ -153,45 +153,57 @@ etasqiv3.h_h
 ######### Plotting 3-way interaction ##########
 ###############################################
 
-## good tutorial here
-# https://sakaluk.wordpress.com/2015/08/27/6-make-it-pretty-plotting-2-way-interactions-with-ggplot2/
+# the follow commands will create APA-style, MS ready figures
 
-(dat1 = describeBy(dat$dv, list(dat$iv1, dat$iv2, dat$iv3), mat = TRUE, digits = 2))
-names(dat1)[names(dat1) == 'group1'] = 'iv1'
-names(dat1)[names(dat1) == 'group2'] = 'iv2'
-names(dat1)[names(dat1) == 'group3'] = 'iv3'
-dat1$se = dat1$sd/sqrt(dat1$n) # calculates SE for error bars if desired
+### create x, z, and y columns by renaming IVs
+dat$iv1 <- dat$YOUR_IV1_NAME_HERE       # x-axis variable here
+dat$iv2 <- dat$YOUR_IV2_NAME_HERE       # moderator_1 variable here
+dat$iv3 <- dat$YOUR_IV3_NAME_HERE       # panel variable here
+dat$dv  <- dat$YOUR_DV_NAME_HERE        # outcome variable here
 
-dat1
 
-### tells R to provide a plot in APA style, figure is MS ready
-limits = aes(ymax = mean + (1.96*se), ymin=mean - (1.96*se))
-dodge = position_dodge(width=0.9)
-apatheme=theme_bw()+
-  theme(panel.grid.major=element_blank(),
-        panel.grid.minor=element_blank(),
-        panel.border=element_blank(),
-        axis.line=element_line(),
-        text=element_text(family='Times'))
+## create labels for figure
+# must use quotes for labels
+# change labels in quotes to be what you want them to be
 
-### now the actual figure
-(figure1 = ggplot(dat1, aes(x = iv1, y = mean, group = iv2)) +
-  geom_bar(stat = "identity", position = "dodge", aes(fill = iv2)) +
-  facet_wrap(  ~ iv3) +
-  apatheme+
-  coord_cartesian(ylim=c(1,9)) +  # this is the range of the y-axis
-  scale_y_continuous(breaks=seq(1,9,1)) + # this is the increment ticks on the y-axis
-  ylab('dv') +
-  xlab('iv1') +
-  scale_fill_grey())
+panel_a_label  <- "Panel A: YYY"         # panel A = low moderator
+panel_b_label  <- "Panel B: ZZZ"         # panel B = high moderator
+y_label        <- "dv_name"
+y_axis_high    <- 9.0                    # high descrete numeric value displayed on y-axis
+y_axis_low     <- 1.0                    # low descrete numeric value displayed on y-axis
+y_increment    <- 1.0                    # increments for y-axis
+x_label        <- "x-axis_label"         # x-axis variable (non-moderator)
+x_values       <- c("low", "high")       # x-axis values
+mod_label      <- "x_moderator_name"     # figure legend (moderator)
+mod_values     <- c("low", "high")       # moderator values
 
-figure1
+# change legend location if needed
+# in the format of (x,y), can be any number between 0 and 1
+# (0.8, 0.8) is upper-right corner, (0.2, 0.8) is the top left of the figure
+legend_loc    <- c(0.8, 0.8)
 
-## if you like the figure, then can save it to your computer with this command:
-# can change file name and storage location as you see fit
-# if no path is selected, the the figure will be saved into your R stats working directory
-ggsave('./figures/figure1.png', width=8, height=6, unit='in', dpi=300)
+# run next line and figure will be automatically created
 
+# run next line and figure will be automatically created
+source("https://raw.githubusercontent.com/rastlab/R_templates/master/99990-ggplot2_3way_SE.R")
+
+
+
+#####################################
+####### Here are the figures ########
+#####################################
+
+# verify figures are consistent with condition means
+panel_a
+panel_b
+panel_a_b # don't worry about legend overlapping with figure, it'll fix when saving it
+
+
+# if you are happy with figures, save them
+# can change dimensions, file type, and dpi as per journal requirement specifications
+ggsave('./figures/figure_1_a.png', panel_a, width = 8, height = 6, unit = 'in', dpi = 320)
+ggsave('./figures/figure_1_b.png', panel_b, width = 8, height = 6, unit = 'in', dpi = 320)
+ggsave('./figures/figure_1.png', panel_a_b, width = 8, height = 8, unit = 'in', dpi = 320)
 
 
 
