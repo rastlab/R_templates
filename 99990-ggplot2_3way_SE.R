@@ -1,3 +1,6 @@
+
+## this script is meant to be sourced from other scripts ##
+
 ###########################################
 ####### Run code but do not modify ########
 ###########################################
@@ -50,16 +53,8 @@ panel_b <- dat1 %>%
                   theme(legend.position = legend_loc) +
                   scale_fill_grey()
   
-######################################
-####### Here are your figures ########
-######################################
-
-# panel_a
-# panel_b
-
+# combine plots into a single image
 panel_a_b <- panel_a / panel_b
-# ggsave('./figures/figure_1.png', width=8, height=8, unit='in', dpi=300)
-
 
 
 

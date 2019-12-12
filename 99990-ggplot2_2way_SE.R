@@ -1,3 +1,6 @@
+
+## this script is meant to be sourced from other scripts ##
+
 ###########################################
 ####### Run code but do not modify ########
 ###########################################
@@ -43,14 +46,4 @@ figure_2 <- ggplot(dat1, aes(x = iv2, y = mean, group = iv1)) +
               apatheme +
               theme(legend.position = legend_loc) +
               scale_fill_grey()
-
-######################################
-####### Here are your figures ########
-######################################
-
-# figure_1
-# ggsave('./figures/figure_1.png', width=8, height=8, unit='in', dpi=300)
-
-
-
 
