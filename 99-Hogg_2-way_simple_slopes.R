@@ -17,7 +17,7 @@
 # rm(list = ls())
 update.packages(ask = FALSE, checkBuilt = TRUE)
 if(!require(pacman)){install.packages("pacman")}
-pacman::p_load(rio, sjstats) # this row is needed for plotting
+pacman::p_load(rio, sjstats) 
 
 ## load regression data
 
