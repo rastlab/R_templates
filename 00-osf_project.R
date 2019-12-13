@@ -7,8 +7,12 @@
 ########## load libraries ##########
 ####################################
 
-## update packages then install these packages if not yet installed
-if(!require(pacman)){install.packages("pacman")}
+## Install the required script packages if not yet installed
+
+# Install pacman & devtools packages if necessary
+if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
+if(!"devtools" %in% rownames(installed.packages())) install.packages("devtools")
+
 remotes::install_github("centerforopenscience/osfr")
 pacman::p_load(osfr)
 

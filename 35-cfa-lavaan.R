@@ -11,10 +11,11 @@
 ### Import data & load libraries ####
 #####################################
 
-## update packages then install these packages if not yet installed
-# rm(list = ls())
-update.packages(ask = FALSE, checkBuilt = TRUE)
-if(!require(pacman)){install.packages("pacman")}
+## Install the required script packages if not yet installed
+
+# Install pacman, jmv, & reghelper package if necessary
+if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
+
 pacman::p_load(rio, dplyr, lavaan)
 
 ## load data

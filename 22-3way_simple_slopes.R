@@ -13,12 +13,13 @@
 ### Import data & load libraries ####
 #####################################
 
-## update packages then install these packages if not yet installed
-# rm(list = ls())
-update.packages(ask = FALSE, checkBuilt = TRUE)
-if(!require(pacman)){install.packages("pacman")}
-if(!require(jmv)){install.packages("jmv")}
-if(!require(reghelper)){install.packages("reghelper")}
+## Install the required script packages if not yet installed
+
+# Install pacman, jmv, & reghelper package if necessary
+if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
+if(!"jmv" %in% rownames(installed.packages())) install.packages("jmv")
+if(!"reghelper" %in% rownames(installed.packages())) install.packages("reghelper")
+
 pacman::p_load(rio, pequod, jtools, interactions, 
                apaTables, stargazer, psych, tidyverse, 
                parameters, performance, effectsize,

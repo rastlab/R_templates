@@ -13,11 +13,12 @@
 ### Import data & load libraries ####
 #####################################
 
-## update packages then install these packages if not yet installed
-# rm(list = ls())
-update.packages(ask = FALSE, checkBuilt = TRUE)
-if(!require(pacman)){install.packages("pacman")}
-if(!require(jmv)){install.packages("jmv")}
+## Install the required script packages if not yet installed
+
+# Install pacman & jmv package if necessary
+if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
+if(!"jmv" %in% rownames(installed.packages())) install.packages("jmv")
+
 pacman::p_load(parallel, rio, psych, car, lsr, phia, tidyverse, parameters, 
                apaTables, patchwork)
 

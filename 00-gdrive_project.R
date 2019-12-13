@@ -7,8 +7,11 @@
 ########## load libraries ##########
 ####################################
 
-## update packages then install these packages if not yet installed
-if(!require(pacman)){install.packages("pacman")}
+## Install the required script packages if not yet installed
+
+# Install pacman package if necessary
+if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
+
 pacman::p_load(googledrive, rio, tidyverse)
 
 #####################################
