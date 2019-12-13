@@ -177,17 +177,21 @@ probe_interaction(step3.1,
 # (2) Excepl plotting points
 
 ## create simple slopes using 'pequod'
-model1 <- na.omit(lmres(dv ~ iv1 * iv2 * iv3, data=dat))
+model1 <- na.omit(lmres(dv ~ c_iv1 * c_iv2 * c_iv3, data = dat))
 
 ### iv1 as slope, iv2 and iv3 as moderator
-s_slopes1 <- na.omit(simpleSlope(model1, pred = "iv1", mod1 = "iv2", mod2 = "iv3"))
+s_slopes1 <- na.omit(simpleSlope(model1, pred = "c_iv1", 
+                                         mod1 = "c_iv2", 
+                                         mod2 = "c_iv3"))
 summary(s_slopes1)
 
 # generate simple slope points to plot manually in Excel
 s_slopes1$Points
 
 ## iv2 as slope, iv1 and iv3 as moderator
-s_slopes2 <- na.omit(simpleSlope(model1, pred = "iv2", mod1 = "iv1", mod2 = "iv3"))
+s_slopes2 <- na.omit(simpleSlope(model1, pred = "c_iv2", 
+                                         mod1 = "c_iv1", 
+                                         mod2 = "c_iv3"))
 summary(s_slopes2)
 
 # generate simple slope points to plot manually in Excel
@@ -195,7 +199,9 @@ s_slopes2$Points
 
 
 ## iv3 as slope, iv1 and iv2 as moderator
-s_slopes3 <- na.omit(simpleSlope(model1, pred = "iv3", mod1 = "iv1", mod2 = "iv2"))
+s_slopes3 <- na.omit(simpleSlope(model1, pred = "c_iv3", 
+                                         mod1 = "c_iv1", 
+                                         mod2 = "c_iv2"))
 summary(s_slopes3)
 
 # generate simple slope points to plot manually in Excel

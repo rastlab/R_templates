@@ -2,11 +2,6 @@
 ########### OSF Project Template ##########
 ###########################################
 
-#####
-# Date: TODAY'S DATE
-# By: *INSERT NAME HERE*
-# Description: PROJECT DISCRIPTION
-# Version of R used: CURRENT VERSION OF R
 
 ####################################
 ########## load libraries ##########
