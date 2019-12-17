@@ -19,7 +19,7 @@
 if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
 if(!"jmv" %in% rownames(installed.packages())) install.packages("jmv")
 if(!"reghelper" %in% rownames(installed.packages())) install.packages("reghelper")
-
+if(!"see" %in% rownames(installed.packages())) install.packages("see")
 
 pacman::p_load(rio, pequod, jtools, interactions, 
                apaTables, stargazer, psych, tidyverse, 
@@ -35,7 +35,7 @@ pacman::p_load(rio, pequod, jtools, interactions,
 # SPSS files can be buggy to import, especially factors and labels
 
 # the following command will open a dialog box and allow you to select the file you wish to laod
-dat <- import(file.choose())
+dat <- import(file.choose()) 
 
 
 # check to see that you loaded the correct dataset
@@ -101,10 +101,10 @@ check_collinearity(step2.1)
 
 # tests for outliers in model then iteratively removes outliers and re-runs the model
 # consider add "mcd" method to detect outliers (Mahalanobis et al., 2018)
-check_outliers(step2.1, method = c("cook", "zscore", "mahalanobis"))
+check_outliers(step2.1, method = c("cook", "mahalanobis"))
 
 # can also plot GLM assumptions
-plot(gvlma::gvlma(step2.1))
+see::check_model(step2.1)
 
 
 ## SPSS-like regression summary
@@ -129,6 +129,8 @@ reghelper::build_model(dv, c(c_iv1 + c_iv2),
 
 # step 1 betas
 sjstats::std_beta(step1.1)
+standardize_parameters(step1.1, method = "basic", ci = TRUE )
+parameters::ci(step1.1)
 
 # step 2 betas
 sjstats::std_beta(step2.1)

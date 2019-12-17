@@ -16,7 +16,7 @@
 
 # Install pacman package if necessary
 if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
-pacman::p_load(parallel, rio, psych, lubridate, tidyverse)
+pacman::p_load(parallel, rio, psych, lubridate, tidyverse, janitor)
 
 
 ## load data
@@ -28,7 +28,8 @@ pacman::p_load(parallel, rio, psych, lubridate, tidyverse)
 # SPSS files can be buggy to import, especially factors and labels
 
 # the following command will open a dialog box and allow you to select the file you wish to laod
-dat <- import(file.choose())
+dat <- import(file.choose()) %>%
+          clean_names() 
 
 # check to see that you loaded the correct dataset
 View(dat)
