@@ -133,14 +133,14 @@ reghelper::build_model(dv, c(c_iv1 + c_iv2),
                        c(c_iv1 * c_iv2 * c_iv3),
                        data=dat, model='lm') %>% summary()
 
-# step 1 betas
-sjstats::std_beta(step1.1)
+# step 1 betas & CIs
+model_parameters(step1.1, standardize = "basic")
 
-# step 2 betas
-sjstats::std_beta(step2.1)
+# step 2 betas & CIs
+model_parameters(step2.1, standardize = "basic")
 
-# step 3 betas
-sjstats::std_beta(step3.1)
+# step 3 betas & CIs
+model_parameters(step3.1, standardize = "basic")
 
 
 ######################################################################

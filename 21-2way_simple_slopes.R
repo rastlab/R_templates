@@ -104,7 +104,8 @@ check_collinearity(step2.1)
 check_outliers(step2.1, method = c("cook", "mahalanobis"))
 
 # can also plot GLM assumptions
-see::check_model(step2.1)
+performance::check_model(step1.1)
+performance::check_model(step2.1)
 
 
 ## SPSS-like regression summary
@@ -128,12 +129,10 @@ reghelper::build_model(dv, c(c_iv1 + c_iv2),
                        data=dat, model='lm') %>% summary()
 
 # step 1 betas
-sjstats::std_beta(step1.1)
-standardize_parameters(step1.1, method = "basic", ci = TRUE )
-parameters::ci(step1.1)
+model_parameters(step1.1, standardize = "basic")
 
 # step 2 betas
-sjstats::std_beta(step2.1)
+model_parameters(step2.1, standardize = "basic")
 
 
 ######################################################################
