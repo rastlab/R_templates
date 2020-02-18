@@ -16,7 +16,7 @@
 
 # Install pacman package if necessary
 if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
-pacman::p_load(parallel, rio, psych, lubridate, tidyverse, janitor)
+pacman::p_load(parallel, rio, psych, sjmisc, lubridate, tidyverse, janitor)
 
 
 ## load data
