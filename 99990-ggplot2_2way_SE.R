@@ -22,7 +22,10 @@ apatheme=theme_bw() +
         text=element_text(family='Times'))
 
 ### now the actual figure
-figure_1 <- ggplot(dat1, aes(x = iv1, y = mean, group = iv2)) +
+figure_1 <- dat1 %>%
+              mutate(iv1 = fct_reorder(iv1, desc(iv1)),
+                     iv2 = fct_reorder(iv2, desc(iv2))) %>%
+              ggplot(dat1, aes(x = iv1, y = mean, group = iv2)) +
               geom_bar(stat = "identity", position = "dodge", aes(fill = iv2)) +
               geom_errorbar(limits, position=dodge, width=0.25) +
               coord_cartesian(ylim=c(y_axis_low, y_axis_high)) +  # this is the range of the y-axis
@@ -35,7 +38,10 @@ figure_1 <- ggplot(dat1, aes(x = iv1, y = mean, group = iv2)) +
               scale_fill_grey()
 
 ### now the actual figure
-figure_2 <- ggplot(dat1, aes(x = iv2, y = mean, group = iv1)) +
+figure_2 <- dat1 %>%
+              mutate(iv1 = fct_reorder(iv1, desc(iv1)),
+                     iv2 = fct_reorder(iv2, desc(iv2))) %>%
+              ggplot(dat1, aes(x = iv2, y = mean, group = iv1)) +
               geom_bar(stat = "identity", position = "dodge", aes(fill = iv1)) +
               geom_errorbar(limits, position=dodge, width=0.25) +
               coord_cartesian(ylim=c(y_axis_low, y_axis_high)) +  # this is the range of the y-axis
