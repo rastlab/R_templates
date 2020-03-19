@@ -28,8 +28,8 @@ figure_1 <- ggplot(dat1, aes(x = iv1, y = mean, group = iv2)) +
               coord_cartesian(ylim=c(y_axis_low, y_axis_high)) +  # this is the range of the y-axis
               scale_y_continuous(breaks=seq(y_axis_low, y_axis_high, y_increment)) + # this is the increment ticks on the y-axis
               ylab(y_label) +
-              scale_x_discrete(mod_label, labels = mod_values) + 
-              guides(fill=guide_legend(title = x_label)) +
+              scale_x_discrete(x_label, labels = x_values) + 
+              guides(fill=guide_legend(title = mod_label)) +
               apatheme +
               theme(legend.position = legend_loc) +
               scale_fill_grey()
