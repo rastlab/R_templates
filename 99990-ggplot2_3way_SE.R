@@ -25,6 +25,8 @@ apatheme=theme_bw() +
 ### now the actual figure
 panel_a <- dat1 %>%
               filter(as.numeric(iv3) == 1) %>%
+              mutate(iv1 = fct_reorder(iv1, desc(iv1)),
+                     iv2 = fct_reorder(iv2, desc(iv2))) %>%
               ggplot(aes(x = iv1, y = mean, group = iv2)) +
                   geom_bar(stat = "identity", position = "dodge", aes(fill = iv2)) +
                   geom_errorbar(limits, position=dodge, width=0.25) +
@@ -40,6 +42,8 @@ panel_a <- dat1 %>%
 
 panel_b <- dat1 %>%
               filter(as.numeric(iv3) == 2) %>%
+              mutate(iv1 = fct_reorder(iv1, desc(iv1)),
+                     iv2 = fct_reorder(iv2, desc(iv2))) %>%
               ggplot(aes(x = iv1, y = mean, group = iv2)) +
                   geom_bar(stat = "identity", position = "dodge", aes(fill = iv2)) +
                   geom_errorbar(limits, position=dodge, width=0.25) +
