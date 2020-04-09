@@ -19,8 +19,8 @@
 if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
 if(!"remotes" %in% rownames(installed.packages())) install.packages("remotes")
 
-remotes::install_github("Lakens/ANOVApower")
-pacman::p_load(rio, ANOVApower)
+remotes::install_github("arcaldwell49/Superpower")
+pacman::p_load(Superpower)
 
 # NB: Alt + Shift + K --> will bring up keyboard shortcuts
 
