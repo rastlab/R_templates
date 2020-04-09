@@ -18,7 +18,7 @@
 # Install pacman, jmv, & reghelper package if necessary
 if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
 
-pacman::p_load(rio, pwr2ppl)
+pacman::p_load(pwr2ppl)
 
 # NB: Alt + Shift + K --> will bring up keyboard shortcuts
 
@@ -48,3 +48,4 @@ regintR2(R2Mod = model,
          nlow = low, 
          nhigh = high, 
          by = incre)
+
