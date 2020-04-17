@@ -18,7 +18,7 @@ As a side purpose, these templates were also written to help guide new R users t
 
 NB: although we wrote these scripts, sections or entire parts might be modified from existing code posted online (e.g., Stack overflow, R blogs) or based on feedback/workshops from colleagues (e.g., Chris Aberson at HSU). We tried to cite these online sources where applicable by providing the link to the source material.
 
-The GPL Lab regularly update the code and adds new templates as we run new analyses or find new methods/packages to simplify the analyses/code.
+The GPL Lab regularly updates the code and adds new templates as we run new analyses or find new methods/packages to simplify the analyses/code.
 
 If you have a template you want to add, feel free to send it to me. 
 If we want to add it after reviewing/testing it, we will put it into our preferred (opinioned) format then upload it and attribute it to you.
