@@ -6,7 +6,7 @@ then finally analyzing the data using ANOVA or regression with appropriate inter
 
 Templates are numbered sequentially, but are only meant to assist the user through analyses in a logical and structured manner.
 The sequential order does not imply the user to go through each template in sequence, again these are starting blocks for users.
-For instance, if one's data are already 'tidy' then skip the '00_dataset_prep_and_cleaning.R' script. 
+For instance, if one's data are already 'tidy' then skip the '01_dataset_prep_and_cleaning.R' script. 
 
 We've tried to automate as much as possible to keep user errors to a minimum. 
 We've also tried to keep as much as possible of the data output in R.
