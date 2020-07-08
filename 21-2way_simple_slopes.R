@@ -205,7 +205,7 @@ figure_1
 
 # if you are happy with figures, save them
 # can change dimensions, file type, and dpi as per journal requirement specifications
-ggsave('./figures/figure_1.png', panel_a_b, width = 8, height = 8, unit = 'in', dpi = 320)
+ggsave('./figures/figure_1.png', panel_1, width = 8, height = 8, unit = 'in', dpi = 320)
 
 
 #######################################
