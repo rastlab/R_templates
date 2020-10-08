@@ -126,7 +126,7 @@ jmv::linReg(data = dat,
 ##############################################################
 
 # hierarchical linear regression
-reghelper::build_model(dv, c(c_iv1 + c_iv2), 
+reghelper::build_model(dv, c(c_iv1 + c_iv2 + c_iv3), 
                        c(c_iv1 * c_iv2, 
                          c_iv1 * c_iv3, 
                          c_iv2 * c_iv3),
