@@ -58,9 +58,9 @@ dat %>%
   describe()
 
 ####### center and scale IVs
-dat$c_iv1 <- standardize(dat$iv1, two_sd = FALSE, force = TRUE)
-dat$c_iv2 <- standardize(dat$iv2, two_sd = FALSE, force = TRUE)
-dat$c_iv3 <- standardize(dat$iv3, two_sd = FALSE, force = TRUE)
+dat$c_iv1 <- effectsize::standardize(dat$iv1, two_sd = FALSE, force = TRUE)
+dat$c_iv2 <- effectsize::standardize(dat$iv2, two_sd = FALSE, force = TRUE)
+dat$c_iv3 <- effectsize::standardize(dat$iv3, two_sd = FALSE, force = TRUE)
 
 # verify centering
 dat %>%
