@@ -21,8 +21,9 @@ pacman::p_load(googledrive, rio, tidyverse)
 ## vignette for 'googledrive' here: https://googledrive.tidyverse.org/
 
 ## login to Google Drive
-drive_auth()
 
+# if using RStudio Server set use_oob = TRUE, if  using Rstudio locally you can set use_oob = FALSE
+drive_auth(use_oob = TRUE)
 
 ##########################################################################
 ########## locate files or folders in Google Drive #######################
