@@ -102,11 +102,9 @@ dat$gender <- factor(dat$gender, levels=c(1, 2), labels=c("Male", "Female"), exc
 dat$year <- factor(dat$year, levels=c(1, 2, 3, 4, 5), 
                   labels=c("First","Second", "Third","Fourth", "GradStudent"), exclude = NA) 
 
-# revise this to match your data
-dat$ethnicity <- factor(dat$ethnicity, levels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), 
-                       labels=c("Canadian","American", "British", "Chinese", "Dutch","French", 
-                                "German", "Irish", "Italian", "Native","Ukrainian", "Other"), 
-                       exclude = NA)
+dat$ethnicity <- factor(dat$ethnicity, levels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+                        labels=c(“Indigenous/First Nations”,“African”, “East Asian”, “South Asian”,        “European”,“Hispanic/Latin-American”, “Middle Eastern”, “Euro-North American”, “Pacific Islander”, “Other”),
+                        exclude = NA)
 
 
 ## check IVs to ensure recoding worked corrected for manipulations
