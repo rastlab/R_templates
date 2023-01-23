@@ -30,7 +30,7 @@ panel_a <- data_plot$interactplot$data %>%
                 ggplot(aes(x = z, y = y, group = modx_group)) +
                 geom_line(aes(color = modx_group,
                               linetype = modx_group),
-                          size = 1.25) +
+                          linewidth = 1.25) +
                 scale_y_continuous(limits = c(y_axis_low, y_axis_high),
                                    breaks = seq(y_axis_low, y_axis_high, y_increment)) + 
                 labs(subtitle = panel_a_label) +
@@ -58,7 +58,7 @@ panel_b <- data_plot$interactplot$data %>%
                 ggplot(aes(x = z, y = y, group = modx_group)) +
                 geom_line(aes(color = modx_group,
                               linetype = modx_group),
-                          size = 1.25) +
+                          linewidth = 1.25) +
                 scale_y_continuous(limits = c(y_axis_low, y_axis_high),
                                    breaks = seq(y_axis_low, y_axis_high, y_increment)) + 
                 labs(subtitle = panel_b_label) +
