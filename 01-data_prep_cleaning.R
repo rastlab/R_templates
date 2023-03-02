@@ -103,7 +103,7 @@ dat$year <- factor(dat$year, levels=c(1, 2, 3, 4, 5),
                   labels=c("First","Second", "Third","Fourth", "GradStudent"), exclude = NA) 
 
 dat$ethnicity <- factor(dat$ethnicity, levels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-                        labels=c(“Indigenous/First Nations”,“African”, “East Asian”, “South Asian”,        “European”,“Hispanic/Latin-American”, “Middle Eastern”, “Euro-North American”, “Pacific Islander”, “Other”),
+                        labels=c("Indigenous/First Nations", "African", "East Asian", "South Asian", "European", "Hispanic/Latin-American", "Middle Eastern", "Euro-North American", "Pacific Islander", "Other"),
                         exclude = NA)
 
 
