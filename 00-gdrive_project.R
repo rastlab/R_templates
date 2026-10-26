@@ -12,7 +12,7 @@
 # Install pacman package if necessary
 if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
 
-pacman::p_load(googledrive, rio, tidyverse)
+pacman::p_load(googledrive, dplyr, readr, here)
 
 #####################################
 ########## Google Drive #############
@@ -22,8 +22,10 @@ pacman::p_load(googledrive, rio, tidyverse)
 
 ## login to Google Drive
 
-# if using RStudio Server set use_oob = TRUE, if  using Rstudio locally you can set use_oob = FALSE
-drive_auth(use_oob = TRUE)
+# Authenticate with Google Drive.
+# Note: Google disabled Out-Of-Bounds (use_oob = TRUE) auth in 2022.
+# Default drive_auth() opens standard interactive OAuth in your browser.
+drive_auth()
 
 ##########################################################################
 ########## locate files or folders in Google Drive #######################
@@ -32,9 +34,11 @@ drive_auth(use_oob = TRUE)
 # show root folder directories
 drive_ls("~/")
 
-# if using Google Team Drives then use this commmand:
-team_drive_find()
+# if using Google Shared Drives then use this command:
+shared_drive_find()
 
+# Confirm that the parent folder is the one you expect before creating anything
+drive_get(as_id(parent_id))
 
 ##################################################################
 ############## create template in Google Drive ###################
@@ -76,22 +80,6 @@ registration_form <- drive_cp(as_id('14qNm5tLQhOrDs_Q-eh3e25hv4nXZVHBdbpsdVc9_Yw
                               path = project_reg,
                               name = "Pre-Registration of Project")
 
-
-## create list of the OSF project IDs for later reference
-
-project_info <- list()
-project_info$project     <- project
-project_info$project_lit <- project_lit
-project_info$project_mat <- project_mat
-project_info$project_doc <- project_doc
-project_info$project_ana <- project_ana 
-project_info$project_dat <- project_dat
-project_info$project_raw <- project_raw
-project_info$project_out <- project_out
-project_info$project_reg <- project_reg
-
-# verify IDs were correctly saved
-project_info
 
 # save Google Drive 'ids' to you can use them later if necessary
 if(!exists("./project_info")) {dir.create("./project_info")}    # this is where we will save our tables
