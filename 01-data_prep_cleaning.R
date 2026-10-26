@@ -16,7 +16,7 @@
 
 # Install pacman package if necessary
 if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
-pacman::p_load(parallel, rio, psych, sjmisc, lubridate, tidyverse, janitor)
+pacman::p_load(rio, psych, sjmisc, lubridate, tidyverse, janitor, here, fs)
 
 
 ## load data
@@ -44,7 +44,7 @@ glimpse(dat)
 ################################
 
 
-### remove non-reconsenting pparticipants, if needed
+### remove non-reconsenting participants, if needed
 
 # count how many participants did not provide reconsent
 sum(!is.na(dat$reconsent[dat$reconsent == 2]))
@@ -63,19 +63,27 @@ frq(dat$reconsent)
 
 ## Recode IV1 levels....high = 2, low = 1
 
-dat$iv1 <- with(dat, rowSums(cbind((iv1_high * 2), iv1_low), na.rm = T))
-dat$iv1[dat$iv1 == 0] <- NA
-dat$iv1
+dat <- dat %>%
+  mutate(
+    iv1 = case_when(
+      iv1_high == 1 ~ 2,
+      iv1_low  == 1 ~ 1,
+      TRUE     ~ NA_real_))
 
 ## Recode IV2 levels....high = 2, low = 1
 
-dat$iv2 <- with(dat, rowSums(cbind((iv2_high * 2), iv2_low), na.rm = T))
-dat$iv2[dat$iv2 == 0] <- NA
-dat$iv2
+dat <- dat %>%
+  mutate(
+    iv2 = case_when(
+      iv2_high == 1 ~ 2,
+      iv2_low  == 1 ~ 1,
+      TRUE     ~ NA_real_))
 
 # reverse code any items required:
 # example syntax is for a 1 to 9 scale (10 - x)
-dat$dvitem_r <- 10 - dat$dvitem
+dat <- dat %>%
+  mutate(dvitem_r = 10 - dvitem)
+
 dat$dvitem_r
 
 
@@ -87,7 +95,9 @@ sum(!is.na(dat$iv2_low))
 sum(!is.na(dat$iv1))
 sum(!is.na(dat$iv2))
 
-describe(select(dat, iv1_high, iv1_low, iv1, iv2_high, iv2_low, iv2))
+dat %>% 
+  select(iv1_high, iv1_low, iv1, iv2_high, iv2_low, iv2) %>% 
+  describe()
 
 ##################################################################
 ####### Adding labels and levels to categorical variables ########
@@ -96,19 +106,34 @@ describe(select(dat, iv1_high, iv1_low, iv1, iv2_high, iv2_low, iv2))
 # Set the variables to factors and labels, if experimental manipulations
 # if no conditions (e.g., a survey), then create labels and factor levels as need for ethnicity, year in school, etc.
 
-dat$iv1 <- factor(dat$iv1, levels=c(1, 2), labels=c("Low", "High"), exclude = NA)
-dat$iv2 <- factor(dat$iv2, levels=c(1, 2), labels=c("Low", "High"), exclude = NA)
-dat$gender <- factor(dat$gender, levels=c(1, 2), labels=c("Male", "Female"), exclude = NA) 
-dat$year <- factor(dat$year, levels=c(1, 2, 3, 4, 5), 
-                  labels=c("First","Second", "Third","Fourth", "GradStudent"), exclude = NA) 
+dat <- dat %>%
+  mutate(
+    iv1 = factor(iv1, levels = c(1, 2), labels = c("Low", "High")))
 
-dat$ethnicity <- factor(dat$ethnicity, levels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-                        labels=c(“Indigenous/First Nations”,“African”, “East Asian”, “South Asian”,        “European”,“Hispanic/Latin-American”, “Middle Eastern”, “Euro-North American”, “Pacific Islander”, “Other”),
-                        exclude = NA)
+dat <- dat %>%
+  mutate(
+    iv2 = factor(iv1, levels = c(1, 2), labels = c("Low", "High")))
+
+dat <- dat %>%
+  mutate(
+    gender = factor(gender, levels = c(1, 2), labels = c("Male", "Female")))
+
+dat <- dat %>%
+  mutate(
+    year = factor(year, levels = c(1, 2, 3, 4, 5), labels = c("First","Second", "Third","Fourth", "GradStudent")))
+
+dat <- dat %>%
+  mutate(
+    ethnicity = factor(ethnicity, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), labels = c(
+      "Indigenous/First Nations", "African", "East Asian", "South Asian", 
+      "European", "Hispanic/Latin-American", "Middle Eastern", 
+      "Euro-North American", "Pacific Islander", "Other")))
 
 
 ## check IVs to ensure recoding worked corrected for manipulations
-describe(select(dat, iv1, iv2))
+dat %>% 
+  select(iv1, iv2) %>% 
+  describe()
 
 #########################################
 ###### Recode manipulation timings ######
@@ -118,16 +143,25 @@ describe(select(dat, iv1, iv2))
 ## Recode manipulation timings based on default Qualtrics variable naming scheme
 
 
-dat$iv1_timing <- dat %>% 
-                        select(iv1_1_3, iv1_2_3) %>% 
-                        rowSums(na.rm = TRUE)
+dat <- dat %>%
+  mutate(
+    iv1_timing = ifelse(
+      if_all(c(iv1_1_3, iv1_2_3), is.na),
+      NA_real_,
+      rowSums(pick(iv1_1_3, iv1_2_3), na.rm = TRUE)))
 
-dat$iv2_timing <- dat %>% 
-                         select(iv2_1_3, iv2_2_3) %>% 
-                         rowSums(na.rm = TRUE)
+dat <- dat %>%
+  mutate(
+    iv2_timing = ifelse(
+      if_all(c(iv2_1_3, iv2_2_3), is.na),
+      NA_real_,
+      rowSums(pick(iv2_1_3, iv2_2_3), na.rm = TRUE)))
+
 
 # summary of page timings
-describe(select(dat, iv1_timing, iv2_timing))
+dat %>% 
+  select(iv1_timing, iv2_timing) %>% 
+  describe()
 
 
 ##########################
@@ -136,19 +170,28 @@ describe(select(dat, iv1_timing, iv2_timing))
 
 ## Create DVs
 
-dat$avg_dv1 <- dat %>% 
-                      select(dv1_1, dv1_2, dv1_3, dv1_4) %>% 
-                      rowMeans(na.rm = TRUE)
+dat <- dat %>%
+  mutate(
+    avg_dv1 = rowMeans(pick(dv1_1, dv1_2, dv1_3, dv1_4), na.rm = TRUE),
+    avg_dv1 = ifelse(is.nan(avg_dv1), NA_real_, avg_dv1))
 
-dat$avg_dv2 <- dat %>% 
-                      select(dv2_1, dv2_2, dv2_3, dv2_4) %>% 
-                      rowMeans(na.rm = TRUE)
+# could also shorten to this is every variable starts with same string
+dat <- dat %>%
+  mutate(
+    avg_dv1 = rowMeans(pick(starts_with("dv1_")), na.rm = TRUE),
+    avg_dv1 = ifelse(is.nan(avg_dv1), NA_real_, avg_dv1))
+
+dat <- dat %>%
+  mutate(
+    avg_dv2 = rowMeans(pick(dv2_1, dv2_2, dv2_3, dv2_4), na.rm = TRUE),
+    avg_dv2 = ifelse(is.nan(avg_dv2), NA_real_, avg_dv2))
 
 # NB: if your variables start with same characters, then could use the following to simplify:
 # dat$avg_dv1 <- dat %>% select(starts_with("dv1_")) %>% rowMeans(na.rm = TRUE)
 
 # if difference score is needed:
-dat$diff <- with(dat, avg_dv1 - avg_dv2)
+dat <- dat %>%
+  mutate(diff = avg_dv1 - avg_dv2)
   
 
 #######################################
@@ -174,8 +217,9 @@ table(dat$gender, dat$ethnicity)
 
 # descriptives of IVs and DVs
 
-describe(select(dat, iv1, iv2, avg_dv1, avg_dv2))
-
+dat %>% 
+  select(iv1, iv2, avg_dv1, avg_dv2) %>% 
+  describe()
 
 ########################################################################
 ############### Remove unwanted variables from dataset #################
@@ -196,26 +240,25 @@ glimpse(dat)
 ## the following commands create a coherent system for automating the thoughtless parts of a data analysis project
 ## It provides a log of your work in a clear file/folder hierarchy
 
-# replace PROJECT_NAME with your desire project name
-if(!exists("./PROJECT_NAME")) {dir.create("./PROJECT_NAME")}   # this is where we will save our entire project
-# setwd("./PROJECT_NAME/")       # this will set the working directory to your new project
+# replace PROJECT_NAME with your desire project nam
 
-# do not modify these lines
-if(!exists("./r")) {dir.create("./r")}              # this is where we will save our R scripts
-if(!exists("./data")) {dir.create("./data")}        # this is where we will save our datasets
-if(!exists("./data/raw_data")) {dir.create("./data/raw_data")}        # this is where we will save our datasets
-if(!exists("./doc")) {dir.create("./doc")}          # this is where we will save our manuscripts and reports
-if(!exists("./figures")) {dir.create("./figures")}  # this is where we will save our figures
-if(!exists("./tables")) {dir.create("./tables")}    # this is where we will save our tables
-if(!exists("./manuscript")) {dir.create("./manuscript")}    # this is where we will save our tables
-download.file(url = "https://raw.githubusercontent.com/rastlab/R_project_template/master/.gitignore", 
-              destfile = ".gitignore") # creates recommended .gitignore file
+project_name <- "PROJECT_NAME"
 
-# Save current workspace: 
-export(dat, "./data/00_data_cleaned.RData")
+# create standard subdirectories inside project directory
+fs::dir_create(fs::path(project_name, c(
+  "r",
+  "data/raw_data",
+  "doc",
+  "figures",
+  "tables",
+  "manuscript")))
 
-# save R data file as CSV
-export(dat, "./data/00_data_cleaned.csv")
+# download .gitignore directly into the target project folder
+download.file(
+  url = "https://raw.githubusercontent.com/rastlab/R_project_template/master/.gitignore", 
+  destfile = fs::path(project_name, ".gitignore"))
 
-# save R data file as SAV SPSS file
-export(dat, "./data/00_data_cleaned.sav")
+# Export cleaned dataset using fs::path
+export(dat, fs::path("data", "00_data_cleaned.rds")) # save in preferred R format
+export(dat, fs::path("data", "00_data_cleaned.csv")) # save as CSV
+export(dat, fs::path("data", "00_data_cleaned.sav")) # save as SAV SPSS file
