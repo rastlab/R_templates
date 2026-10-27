@@ -16,8 +16,7 @@
 ## Install the required script packages if not yet installed
 
 # Install pacman, jmv, & reghelper package if necessary
-if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
-
+if (!requireNamespace("pacman", quietly = TRUE)) {install.packages("pacman")}
 pacman::p_load(pwr2ppl)
 
 # NB: Alt + Shift + K --> will bring up keyboard shortcuts
@@ -28,24 +27,29 @@ pacman::p_load(pwr2ppl)
 
 # Model info to test power:
 
-model  <- .2379  # Estimated full model adj R2
-change <- .0466  # Estimated change in adj R2 added by interaction
-pred   <- 2      # Number of predictors, for a 2x2 study, this number = 2
-c.pred <- 1      # Number of predictors added with interaction. For 2x2, this number = 1
-low    <- 150    # Min sample size to test, change to be appropriate for your design
-high   <- 300    # Max sample size to test, change to be appropriate for your design
-incre  <- 10     # Interval increase in sample size to test, e.g., 280, 285, 290, 295
+# Model parameters
+r2_full      <- 0.2379  # R2Mod: Estimated full model R^2 (main effects + interaction)
+r2_change    <- 0.0466  # R2Ch:  Estimated R^2 change contributed by interaction term
+n_full_preds <- 3       # mod_pred: Total predictors in full model (2 main effects + 1 interaction = 3)
+n_ch_preds   <- 1       # ch_pred: Predictors added in interaction step (typically 1)
+alpha_level  <- 0.05    # alpha: Significance threshold (Type I error rate)
 
-#############################################
-###### RUN BUT DO NOT MODIFY!! ##############
-#############################################
+# Sample size evaluation range
+sample_low   <- 150     # nlow:  Minimum sample size to evaluate
+sample_high  <- 300     # nhigh: Maximum sample size to evaluate
+sample_step  <- 10      # by:    Increment step size (e.g., 150, 160, 170...)
 
-regintR2(R2Mod = model, 
-         R2Ch = change, 
-         mod_pred = pred, 
-         ch_pred = c.pred, 
-         alpha = 0.05,
-         nlow = low, 
-         nhigh = high, 
-         by = incre)
+#########################################################################
+###### 3. Execute Power Analysis (Run but do not modify) ################
+#########################################################################
+
+power_results <- pwr2ppl::regintR2(
+                    R2Mod    = r2_full,
+                    R2Ch     = r2_change,
+                    mod_pred = n_full_preds,
+                    ch_pred  = n_ch_preds,
+                    nlow     = sample_low,
+                    nhigh    = sample_high,
+                    by       = sample_step,
+                    alpha    = alpha_level)
 
