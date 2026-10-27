@@ -21,8 +21,8 @@ pacman::p_load(rio, psych, sjmisc, lubridate, tidyverse, janitor, here, fs)
 
 ## load data
 
-# RData files work the best in R. 
-# Try to only open RData files to avoid any issues.
+# RDS files work the best in R. 
+# Try to only open RData/RDS files to avoid any issues.
 # CSV works the next best in R. 
 # Try to only save and open CSV files to avoid any issue if you cannot load RData files.
 # SPSS files can be buggy to import, especially factors and labels
