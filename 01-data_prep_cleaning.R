@@ -15,7 +15,7 @@
 ## Install the required script packages if not yet installed
 
 # Install pacman package if necessary
-if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
+if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
 pacman::p_load(rio, psych, sjmisc, lubridate, tidyverse, janitor, here, fs)
 
 
