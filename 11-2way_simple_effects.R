@@ -15,17 +15,21 @@
 
 ## Install the required script packages if not yet installed
 
-# Install pacman & jmv package if necessary
-if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
-if(!"jmv" %in% rownames(installed.packages())) install.packages("jmv")
+# Install pacman package if necessary
+if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
 
-pacman::p_load(parallel, rio, psych, car, lsr, phia, tidyverse, parameters, apaTables)
+pacman::p_load(here, fs, rio, car, phia, tidyverse, parameters, jmv, emmeans, apaTables)
 
+
+# Ensure output directories exist
+fs::dir_create(here::here("data"))
+fs::dir_create(here::here("figures"))
+fs::dir_create(here::here("tables"))
 
 ## load data
 
-# RData files work the best in R. 
-# Try to only open RData files to avoid any issues.
+# RData/RDS files work the best in R. 
+# Try to only open RData/RDS files to avoid any issues.
 # CSV works the next best in R. 
 # Try to only save and open CSV files to avoid any issue if you cannot load RData files.
 # SPSS files can be buggy to import, especially factors and labels
@@ -54,9 +58,9 @@ options(contrasts = c("contr.helmert", "contr.poly"))
 ## ANOVA function 
 # simplified code to run ANOVAs on all DVs at once
 
-aov_models <- dat %>% 
-                     dplyr::select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
-                     map(~Anova(lm(. ~ iv1 * iv2, data = dat), type = 3))
+aov_models <- dat %>%
+                select(starts_with("avg_")) %>% # this line tells the map() only use your DVs (all start "avg_" in my datasets)
+                map(~ car::Anova(lm(.x ~ iv1 * iv2, data = dat), type = 3))
 
 aov_models 
 
@@ -74,11 +78,15 @@ model_parameters(model_1, eta_squared = "partial")
 ## descriptives based on condition 
 # note: na.omit() removes any NAs contained within each of the IVs
 
-(summarydat <- na.omit(dat %>%
-                         group_by(iv1, iv2) %>%
-                         summarise(N    = sum(!is.na(dv)),
-                                   mean = round(mean(dv, na.rm=TRUE), 2),
-                                   sd   = round(sd(dv, na.rm=TRUE), 2))))
+(summary_dat <- dat %>%
+                  drop_na(iv1, iv2, dv) %>%
+                  group_by(iv1, iv2) %>%
+                  summarise(
+                    N    = n(),
+                    mean = round(mean(dv, na.rm = TRUE), 2),
+                    sd   = round(sd(dv, na.rm = TRUE), 2),
+                    se   = round(sd / sqrt(N), 2),
+                    .groups = "drop"))
 
 # new way of Anova using 'jmv' package, closer to SPSS output
 # gives partial eta-squared and omega effect sizes in a nice table
@@ -175,10 +183,21 @@ figure_2
 
 # if you are happy with figures, save them
 # can change dimensions, file type, and dpi as per journal requirement specifications
-ggsave('./figures/figure_1.png', figure_1, width = 8, height = 6, unit = 'in', dpi = 320)
-ggsave('./figures/figure_2.png', figure_2, width = 8, height = 6, unit = 'in', dpi = 320)
+ggplot2::ggsave(
+            filename = here::here("figures", "figure_.png"),
+            plot = figure_1,
+            width = 8,
+            height = 6,
+            units = "in",
+            dpi = 320)
 
-
+ggplot2::ggsave(
+            filename = here::here("figures", "figure_2.png"),
+            plot = figure_1,
+            width = 8,
+            height = 6,
+            units = "in",
+            dpi = 320)
 
 #######################################
 ###### Create descriptives table ######
@@ -189,37 +208,45 @@ ggsave('./figures/figure_2.png', figure_2, width = 8, height = 6, unit = 'in', d
 # directly into your MS, presentation, or poster
 # we'll also remove NA values to make this simpler
 
-dat2 <- dat %>% dplyr::select(iv1, iv2, dv) %>% na.omit()
+dat2 <- dat %>% 
+          dplyr::select(iv1, iv2, dv) %>% 
+          drop_na()
 
 # can make multiple tables by changing 'table.number = X
-apa.2way.table(iv1, iv2, dv, data = dat2, landscape = TRUE, table.number = 1, filename="./tables/anova_table.doc")
+apa.2way.table(iv1, iv2, dv, 
+               data = dat2, 
+               landscape = TRUE, 
+               table.number = 1, 
+               filename = here::here("tables", "anova_table.doc"))
 
-apa.aov.table(modinter, conf.level = 0.9, type = 3,  table.number = 2, filename="./tables/anovasummary_table.doc")
+apa.aov.table(modinter, 
+              conf.level = 0.9, 
+              type = 3,  
+              table.number = 2, 
+              filename = here::here("tables", "anovasummary_table.doc"))
 
 # correlation matrix
 
 dat3 = na.omit(dat %>% 
                  dplyr::select(iv1, iv2, dv) %>% 
-                 rename(NEW_NAME_IV1 = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
-                        NEW_NAME_IV2 = iv2, 
+                 rename(NEW_NAME_IV1 = as.numeric(iv1), # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
+                        NEW_NAME_IV2 = as.numeric(iv2), 
                         NEW_NAME_DV = dv))
 
-dat3$NEW_NAME_IV1 <- as.numeric(dat3$NEW_NAME_IV1) # must change experimental variables (factors) into numeric values (intergers)
-dat3$NEW_NAME_IV2 <- as.numeric(dat3$NEW_NAME_IV2) # must change experimental variables (factors) into numeric values (intergers)
 
-apa.cor.table(dat3, show.conf.interval = FALSE, landscape = TRUE, table.number = 3, 
-              filename = "./tables/correlation_table.doc")
+apa.cor.table(dat3, 
+              show.conf.interval = FALSE, 
+              landscape = TRUE, 
+              table.number = 3, 
+              filename = here::here("tables", "correlation_table.doc"))
 
 #######################################
 ###### Saving Data and Workspace ######
 #######################################
 
 # Save current workspace: 
-export(dat, "./data/11_two_way_anova.RData")
-
-# save R data file as CSV
-export(dat, "./data/11_two_way_anova.csv")
-
-# save R data file as SAV SPSS file
-export(dat, "./data/11_two_way_anova.sav")
+rio::export(dat, here::here("data", "11_two_way_anova.RData"))
+rio::export(dat, here::here("data", "11_two_way_anova.rds"))
+rio::export(dat, here::here("data", "11_two_way_anova.csv"))
+rio::export(dat, here::here("data", "11_two_way_anova.sav"))
 
