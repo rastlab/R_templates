@@ -17,12 +17,12 @@
 # Install pacman package if necessary
 if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
 
-pacman::p_load(parallel, rio, tidyverse, car, psych, corrr, jmv, nFactors, parameters)
+pacman::p_load(here, rio, tidyverse, psych, corrr, correlation, parameters, performance, jmv)
 
 ## load data
 
-# RData files work the best in R. 
-# Try to only open RData files to avoid any issues.
+# RDS files work the best in R. 
+# Try to only open RData/RDS files to avoid any issues.
 # CSV works the next best in R. 
 # Try to only save and open CSV files to avoid any issue if you cannot load RData files.
 # SPSS files can be buggy to import, especially factors and labels
@@ -45,13 +45,17 @@ glimpse(dat)
 
 # Create dataframes that has only the relevant items for each scale
 
-dv1 <- dat %>% dplyr::select(dv1_1, dv1_2, dv1_3, dv1_4) %>% na.omit()
+dv1 <- dat %>% 
+  dplyr::select(dv1_1, dv1_2, dv1_3, dv1_4) %>% 
+  drop_na()
 
-dv2 <- dat %>% dplyr::select(dv2_1, dv2_2, dv2_3, dv2_4) %>% na.omit()
+dv2 <- dat %>% 
+  dplyr::select(dv2_1, dv2_2, dv2_3, dv2_4) %>% 
+  drop_na()
 
 ## could also use the following commands to simplify if appropriate
-# dv1 <- dat %>% select(starts_with("dv1_")) %>% na.omit()
-# dv2 <- dat %>% select(starts_with("dv2_")) %>% na.omit()
+# dv1 <- dat %>% select(starts_with("dv1_")) %>% drop_na()
+# dv2 <- dat %>% select(starts_with("dv2_")) %>% drop_na()
 
 ################################
 ###### Scale Descriptives ######
@@ -59,18 +63,18 @@ dv2 <- dat %>% dplyr::select(dv2_1, dv2_2, dv2_3, dv2_4) %>% na.omit()
 
 ### Descriptive stats on key variables
 
-describe(dv1)
-describe(dv2)
+dv1 %>% psych::describe()
+dv2 %>% psych::describe()
 
 ## summary table
 dat %>% 
        dplyr::select(avg_dv1, avg_dv2) %>% 
-       describe()
+       psych::describe()
 
 # could also shorten by writing:
 # dat %>% 
 #        dplyr::select(starts_with("avg_")) %>% 
-#        describe()
+#        psych::describe()
 
 #########################################
 ###### Inter-variable Correlations ######
@@ -78,18 +82,18 @@ dat %>%
 
 # Interscale correlation total
 dat %>%
-  dplyr::select(avg_dv1, avg_dv2) %>%    # Selects only variables/items for correlation table
-  correlate(use = "complete.obs") %>%    # Create correlation data frame (cor_df)
-  shave() %>%                            # only show bottom 'triangle' of output
-  fashion()                              # formats output to be more readable
+  dplyr::select(avg_dv1, avg_dv2) %>%                    # Selects only variables/items for correlation table
+  corrr::correlate(use = "pairwise.complete.obs") %>%    # Create correlation data frame (cor_df)
+  corrr::shave() %>%                                     # only show bottom 'triangle' of output
+  corrr::fashion()                                       # formats output to be more readable
 
 
 # could also shorten by writing:
 # dat %>%
 #       dplyr::select(starts_with("avg_")) %>%
-#       correlate(use = "complete.obs") %>%
-#       shave() %>%
-#       fashion()
+#       corrr::correlate(use = "pairwise.complete.obs")%>%
+#       corrr::shave() %>%
+#       corrr::fashion()
 
 # Correlation testing table for ALL DV correlations
 dat %>%
@@ -109,28 +113,28 @@ dat %>%
 # Calculate Cronbach's Alpha
 
 # alpha for scale, with item if deleted summary also
-reliability(dv1, alphaItems = TRUE)
+jmv::reliability(dv1, alphaItems = TRUE)
 
-reliability(dv2, alphaItems = TRUE)
+jmv::reliability(dv2, alphaItems = TRUE)
 
 ##############################
 ###### Factor Analysis #######
 ##############################
 
 # Check factor structure
-check_factorstructure(dv1)
+parameters::check_factorstructure(dv1)
 
-check_factorstructure(dv2)
+parameters::check_factorstructure(dv2)
 
 ### EFA 
 
 ## check number of factors
 
 # no rotation 
-n_factors(dv1, type = "FA", rotation = "none")
+parameters::n_factors(dv1, type = "FA", rotation = "none")
 
 # varimax rotation
-n_factors(dv1, type = "FA", rotation = "varimax")
+parameters::n_factors(dv1, type = "FA", rotation = "varimax")
 
 ## conduct EFA
 
@@ -139,8 +143,8 @@ n_factors(dv1, type = "FA", rotation = "varimax")
 # oblique: Promax", "promax", "oblimin", "simplimax", "bentlerQ, "geominQ" and "biquartimin" and "cluster"
 
 # no rotation
-fa(dv1, rotation = "none") %>% model_parameters(sort = TRUE, threshold = "max")
-
+psych::fa(dv1, rotation = "none") %>% 
+  parameters::model_parameters(sort = TRUE, threshold = "max")
 
 
 ### PCA
@@ -148,10 +152,10 @@ fa(dv1, rotation = "none") %>% model_parameters(sort = TRUE, threshold = "max")
 ## check number of factors
 
 # no rotation 
-n_factors(dv1, type = "PCA", rotation = "none")
+parameters::n_factors(dv1, type = "PCA", rotation = "none")
 
 # varimax rotation
-n_factors(dv1, type = "PCA", rotation = "varimax")
+parameters::n_factors(dv1, type = "PCA", rotation = "varimax")
 
 ## conduct EFA
 
@@ -160,7 +164,7 @@ n_factors(dv1, type = "PCA", rotation = "varimax")
 # Note: Rotate can be 'none', 'varimax' (default), 'quartimax', 'promax', 'oblimin', or 'simplimax'
 
 # no rotation 
-pca(dv1,
+jmv::pca(dv1,
          rotation = "none",
          nFactorMethod = "eigen",
          screePlot = TRUE,
@@ -169,7 +173,7 @@ pca(dv1,
          factorSummary = TRUE)
 
 # varimax rotation
-pca(dv1,
+jmv::pca(dv1,
          rotation = "varimax",
          nFactorMethod = "eigen",
          screePlot = TRUE,
@@ -179,7 +183,7 @@ pca(dv1,
 
 
 # can also conduct PCA another way to get different tables
-dv1_pca <- principal_components(dv1, rotation = "varimax", threshold = "max")
+dv1_pca <- parameters::principal_components(dv1, rotation = "varimax", threshold = "max")
 
 dv1_pca
 summary(dv1_pca)
