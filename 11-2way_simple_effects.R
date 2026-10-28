@@ -184,7 +184,7 @@ figure_2
 # if you are happy with figures, save them
 # can change dimensions, file type, and dpi as per journal requirement specifications
 ggplot2::ggsave(
-  filename = here::here("figures", "figure_.png"),
+  filename = here::here("figures", "figure_1.png"),
   plot = figure_1,
   width = 8,
   height = 6,
@@ -193,7 +193,7 @@ ggplot2::ggsave(
 
 ggplot2::ggsave(
   filename = here::here("figures", "figure_2.png"),
-  plot = figure_1,
+  plot = figure_2,
   width = 8,
   height = 6,
   units = "in",

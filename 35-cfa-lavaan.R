@@ -13,10 +13,17 @@
 
 ## Install the required script packages if not yet installed
 
-# Install pacman, jmv, & reghelper package if necessary
-if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
+if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
 
-pacman::p_load(rio, dplyr, lavaan)
+pacman::p_load(rio, tidyverse, effectsize, lavaan, janitor, here)
+
+## load data
+
+# RData/RDS files work the best in R. 
+# Try to only open RData/RDS files to avoid any issues.
+# CSV works the next best in R. 
+# Try to only save and open CSV files to avoid any issue if you cannot load RData/RDS files.
+# SPSS files can be buggy to import, especially factors and labels
 
 ## load data
 dat <- import(file.choose())
@@ -38,12 +45,12 @@ glimpse(dat)
 
 
 # create new dataframes for just the focal CFA
-dat1 = dat %>% 
+dat1 <- dat %>% 
               dplyr::select(item1, item2, item3, item4, item5)
 
 # create more dataframes if multiple CFAs
 
-dat2 = dat %>% 
+dat2 <- dat %>% 
               dplyr::select(item1, item2, item3, item4, item5, item6, item7, item8, item9, item10)
 
 
@@ -54,15 +61,17 @@ glimpse(dat2)
 
 #### lavaan ----
 
-## cereate models
+## create models
 
-# specify model
+# specify models
+# 5-Item Single-Factor Model (Items 1–5)
 five_item_model <-  ' factor1  =~ item1 + item2 + item3 + item4 + item5 '
 
+# 10-Items, Two-Factor Model
 two_factor_model <- ' factor1  =~ item1 + item2 + item3 + item4 + item5  
                       factor2  =~ item6 + item7 + item8 + item9 + item10 '
 
-
+# 10-Item Unidimensional (1-Factor) Model
 saturated_model <- ' factor1  =~ item1 + item2 + item3 + item4 + item5 +
                                  item6 + item7 + item8 + item9 + item10 '
 

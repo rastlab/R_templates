@@ -178,22 +178,31 @@ source("https://raw.githubusercontent.com/rastlab/R_templates/master/99990-ggplo
 #####################################
 
 # verify figures are consistent with condition means
-figure_1
-figure_2
+panel_a
+panel_b
+panel_a_b
 
 # if you are happy with figures, save them
 # can change dimensions, file type, and dpi as per journal requirement specifications
 ggplot2::ggsave(
-  filename = here::here("figures", "figure_.png"),
-  plot = figure_1,
+  filename = here::here("figures", "figure_1_a.png"),
+  plot = panel_a,
   width = 8,
   height = 6,
   units = "in",
   dpi = 320)
 
 ggplot2::ggsave(
-  filename = here::here("figures", "figure_2.png"),
-  plot = figure_1,
+  filename = here::here("figures", "figure_1_b.png"),
+  plot = panel_b,
+  width = 8,
+  height = 6,
+  units = "in",
+  dpi = 320)
+
+ggplot2::ggsave(
+  filename = here::here("figures", "figure_1.png"),
+  plot = panel_a_b,
   width = 8,
   height = 6,
   units = "in",

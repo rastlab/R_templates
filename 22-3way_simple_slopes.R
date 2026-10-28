@@ -15,16 +15,19 @@
 
 ## Install the required script packages if not yet installed
 
-# Install pacman, jmv, & reghelper package if necessary
-if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
-if(!"jmv" %in% rownames(installed.packages())) install.packages("jmv")
-if(!"reghelper" %in% rownames(installed.packages())) install.packages("reghelper")
-if(!"see" %in% rownames(installed.packages())) install.packages("see")
+# Install pacman package if necessary
+if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
 
 pacman::p_load(rio, pequod, jtools, interactions, 
                apaTables, stargazer, psych, tidyverse, 
                parameters, performance, effectsize,
+               jmv, reghelper, see, fs, here, pequod,
                janitor, ggstance, patchwork) # this row is needed for plotting
+
+# Ensure output directories exist
+fs::dir_create(here::here("data"))
+fs::dir_create(here::here("figures"))
+fs::dir_create(here::here("tables"))
 
 ## load data
 
@@ -55,7 +58,7 @@ glimpse(dat)
 
 dat %>%
   dplyr::select(iv1, iv2, iv3, dv) %>%
-  describe()
+  psych::describe()
 
 ####### center and scale IVs
 dat$c_iv1 <- effectsize::standardize(dat$iv1, two_sd = FALSE, force = TRUE)
@@ -65,7 +68,7 @@ dat$c_iv3 <- effectsize::standardize(dat$iv3, two_sd = FALSE, force = TRUE)
 # verify centering
 dat %>%
   dplyr::select(starts_with("c_")) %>%
-  describe()
+  psych::describe()
 
 ##############################
 ###### 3-way Regression ######
@@ -76,9 +79,9 @@ dat %>%
 ## regression function 
 # simplified code to run regressions on all DVs at once
 
-reg_models <- dat %>% 
-  dplyr::select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
-  map(~summ(lm(. ~ c_iv1 * c_iv2 * c_iv3, data = dat))) 
+reg_models <- dat %>%
+  select(starts_with("avg_")) %>%           # this line tells the map() only use your DVs (all start "avg_" in my datasets)
+  map(\(dv_var) jtools::summ(lm(dv_var ~ c_iv1 * c_iv2 * c_iv3, data = dat), digits = 2))
 
 reg_models 
 
@@ -87,22 +90,28 @@ step1.1 <- lm(dv ~ c_iv1 + c_iv2 + c_iv3, data=dat)
 step2.1 <- lm(dv ~ c_iv1 * c_iv2 + c_iv1 * c_iv3 + c_iv2 * c_iv3, data=dat)
 step3.1 <- lm(dv ~ c_iv1 * c_iv2 * c_iv3, data=dat)
 
+# Sequential ANOVA testing R-squared change (Step 1 vs 2, and Step 2 vs 3) in one table
+anova(step1.1, step2.1, step3.1)
+
+# Model fit comparison across all three steps
+performance::compare_performance(step1.1, step2.1, step3.1, rank = TRUE)
+
 ##  check GLM assumptions for:
 #heteroskedastic (error variance)
-check_heteroscedasticity(step3.1)
+performance::check_heteroscedasticity(step3.1)
 
 # autocorrelation (independence of errors)
-check_autocorrelation(step3.1)
+performance::check_autocorrelation(step3.1)
 
 # normality (normality of residuals)
-check_normality(step3.1)
+performance::check_normality(step3.1)
 
 # multicollinearity (predictor independence)
-check_collinearity(step3.1)
+performance::check_collinearity(step3.1)
 
 # tests for outliers in model then iteratively removes outliers and re-runs the model
 # consider add "mcd" method to detect outliers (Mahalanobis et al., 2018)
-check_outliers(step3.1, method = c("cook", "mahalanobis"))
+performance::check_outliers(step3.1, method = c("cook", "mahalanobis"))
 
 # can also plot GLM assumptions
 see::check_model(step3.1)
@@ -126,7 +135,8 @@ jmv::linReg(data = dat,
 ##############################################################
 
 # hierarchical linear regression
-reghelper::build_model(dv, c(c_iv1 + c_iv2 + c_iv3), 
+reghelper::build_model(dv, 
+                       c(c_iv1 + c_iv2 + c_iv3), 
                        c(c_iv1:c_iv2 + 
                          c_iv1:c_iv3 + 
                          c_iv2:c_iv3),
@@ -265,9 +275,29 @@ panel_a_b # don't worry about legend overlapping with figure, it'll fix when sav
 
 # if you are happy with figures, save them
 # can change dimensions, file type, and dpi as per journal requirement specifications
-ggsave('./figures/figure_1_a.png', panel_a, width = 8, height = 6, unit = 'in', dpi = 320)
-ggsave('./figures/figure_1_b.png', panel_b, width = 8, height = 6, unit = 'in', dpi = 320)
-ggsave('./figures/figure_1.png', panel_a_b, width = 8, height = 8, unit = 'in', dpi = 320)
+ggplot2::ggsave(
+  filename = here::here("figures", "figure_1_a.png"),
+  plot = panel_a,
+  width = 8,
+  height = 6,
+  units = "in",
+  dpi = 320)
+
+ggplot2::ggsave(
+  filename = here::here("figures", "figure_1_b.png"),
+  plot = panel_b,
+  width = 8,
+  height = 6,
+  units = "in",
+  dpi = 320)
+
+ggplot2::ggsave(
+  filename = here::here("figures", "figure_1.png"),
+  plot = panel_a_b,
+  width = 8,
+  height = 6,
+  units = "in",
+  dpi = 320)
 
 
 #######################################
@@ -294,12 +324,9 @@ apa.cor.table(dat3, filename = "./tables/correlation_table.doc", table.number = 
 #######################################
 ###### Saving Data and Workspace ######
 #######################################
+
 # Save current workspace: 
-export(dat, "./data/22_three_way_regression.RData")
-
-# save R data file as CSV
-export(dat, "./data/22_three_way_regression.csv")
-
-# save R data file as SAV SPSS file
-export(dat, "./data/22_three_way_regression.sav")
-
+rio::export(dat, fs::path("data", "22_two_way_regression.RData"))
+rio::export(dat, fs::path("data", "22_two_way_regression.rds")) # save in preferred R format
+rio::export(dat, fs::path("data", "22_two_way_regression.csv"))
+rio::export(dat, fs::path("data", "22_two_way_regression.sav"))

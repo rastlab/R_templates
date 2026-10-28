@@ -1,83 +1,89 @@
-
 ## this script is meant to be sourced from other scripts ##
 
 ###########################################
 ####### Run code but do not modify ########
 ###########################################
 
-# regression
-step3 <- lm(y ~ z * x * w, data=dat)
+# Fit 3-way regression model from dat (expects dat$y, dat$z, dat$x, dat$w)
+step3 <- lm(y ~ z * x * w, data = dat)
 
-# create figure
-data_plot <- probe_interaction(step3, 
-                               pred = z, 
-                               modx = x, 
-                               mod2 = w,
-                               modx.values = "plus-minus",
-                               mod2.values = "plus-minus")
+# Extract 3-way interaction probe data
+data_plot <- interactions::probe_interaction(
+  step3,
+  pred = z,
+  modx = x,
+  mod2 = w,
+  modx.values = "plus-minus",
+  mod2.values = "plus-minus")
 
-### tells R to provide a plot in APA style, figure is MS ready
-apatheme = theme_bw() +
-           theme(panel.grid.major=element_blank(),
-                 panel.grid.minor=element_blank(),
-                 panel.border=element_blank(),
-                 axis.line=element_line(),
-                 text=element_text(family='Times'))
+# APA Publication Theme
+apatheme <- theme_bw(base_family = "Times") +
+                theme(
+                  panel.grid.major = element_blank(),
+                  panel.grid.minor = element_blank(),
+                  panel.border = element_blank(),
+                  axis.line = element_line(),
+                  legend.position = legend_loc,
+                  legend.background = element_rect(fill = "transparent", color = NA))
 
-# create Panel A
-panel_a <- data_plot$interactplot$data %>%
-                filter(mod2_group == "Mean of w - 1 SD") %>%
-                ggplot(aes(x = z, y = y, group = modx_group)) +
-                geom_line(aes(color = modx_group,
-                              linetype = modx_group),
-                          linewidth = 1.25) +
-                scale_y_continuous(limits = c(y_axis_low, y_axis_high),
-                                   breaks = seq(y_axis_low, y_axis_high, y_increment)) + 
-                labs(subtitle = panel_a_label) +
-                ylab(y_label) +
-                xlab(z_label) +
-                scale_x_discrete(limits = z_range,
-                                 labels = z_values) +  
-                scale_linetype_manual(name = modx_label,
-                                      labels = modx_values,
-                                      values = line_types,
-                                      guide = guide_legend(reverse = TRUE)) +
-                scale_colour_manual(name = modx_label,
-                                    labels = modx_values,
-                                    values = line_colors,
-                                    guide = guide_legend(reverse = TRUE)) +
-                apatheme +
-                theme(legend.position = legend_loc) +
-                scale_fill_grey()
+# Extract underlying plot data frame
+plot_df <- data_plot$interactplot$data
 
-# ggsave('./figures/figure_1_panel_a.png', width=8, height=6, unit='in', dpi=300)
+# Panel A: Low Level of Secondary Moderator (-1 SD)
+panel_a <- plot_df %>%
+              dplyr::filter(stringr::str_detect(mod2_group, "- 1 SD|-1 SD")) %>%
+              ggplot(aes(x = z, y = y, group = modx_group)) +
+              geom_line(
+                aes(color = modx_group, linetype = modx_group),
+                linewidth = 1.25) +
+              scale_y_continuous(
+                limits = c(y_axis_low, y_axis_high),
+                breaks = seq(y_axis_low, y_axis_high, by = y_increment)) +
+              # Restricts x-axis limits and tick marks strictly to -1SD and +1SD
+              scale_x_continuous(
+                limits = z_range,
+                breaks = z_range,
+                labels = z_values) +
+              scale_linetype_manual(
+                name = modx_label,
+                labels = modx_values,
+                values = line_types,
+                guide = guide_legend(reverse = TRUE)) +
+              scale_colour_manual(
+                name = modx_label,
+                labels = modx_values,
+                values = line_colors,
+                guide = guide_legend(reverse = TRUE)) +
+              labs(x = z_label, y = y_label, subtitle = panel_a_label) +
+              apatheme
 
-# create Panel B
-panel_b <- data_plot$interactplot$data %>%
-                filter(mod2_group == "Mean of w + 1 SD") %>%
-                ggplot(aes(x = z, y = y, group = modx_group)) +
-                geom_line(aes(color = modx_group,
-                              linetype = modx_group),
-                          linewidth = 1.25) +
-                scale_y_continuous(limits = c(y_axis_low, y_axis_high),
-                                   breaks = seq(y_axis_low, y_axis_high, y_increment)) + 
-                labs(subtitle = panel_b_label) +
-                ylab(y_label) +
-                xlab(z_label) +
-                scale_x_discrete(limits = z_range,
-                                 labels = z_values) +  
-                scale_linetype_manual(name = modx_label,
-                                      labels = modx_values,
-                                      values = line_types,
-                                      guide = guide_legend(reverse = TRUE)) +
-                scale_colour_manual(name = modx_label,
-                                    labels = modx_values,
-                                    values = line_colors,
-                                    guide = guide_legend(reverse = TRUE)) +
-                apatheme +
-                theme(legend.position = legend_loc) +
-                scale_fill_grey()
+# Panel B: High Level of Secondary Moderator (+1 SD)
+panel_b <- plot_df %>%
+              dplyr::filter(stringr::str_detect(mod2_group, "\\+ 1 SD|\\+1 SD")) %>%
+              ggplot(aes(x = z, y = y, group = modx_group)) +
+              geom_line(
+                aes(color = modx_group, linetype = modx_group),
+                linewidth = 1.25) +
+              scale_y_continuous(
+                limits = c(y_axis_low, y_axis_high),
+                breaks = seq(y_axis_low, y_axis_high, by = y_increment)) +
+              # Restricts x-axis limits and tick marks strictly to -1SD and +1SD
+              scale_x_continuous(
+                limits = z_range,
+                breaks = z_range,
+                labels = z_values) +
+              scale_linetype_manual(
+                name = modx_label,
+                labels = modx_values,
+                values = line_types,
+                guide = guide_legend(reverse = TRUE)) +
+              scale_colour_manual(
+                name = modx_label,
+                labels = modx_values,
+                values = line_colors,
+                guide = guide_legend(reverse = TRUE)) +
+              labs(x = z_label, y = y_label, subtitle = panel_b_label) +
+              apatheme
 
-# combine plots into a single image
+# Combine panels into a stacked 2-panel figure via patchwork
 panel_a_b <- panel_a / panel_b
-

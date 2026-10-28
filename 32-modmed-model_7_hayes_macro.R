@@ -13,17 +13,17 @@
 
 ## Install the required script packages if not yet installed
 
-# Install pacman, jmv, & reghelper package if necessary
-if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
+# Install pacman package if necessary
+if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
 
-pacman::p_load(rio, dplyr, effectsize, lavaan)
+pacman::p_load(rio, tidyverse, effectsize, lavaan, janitor, here)
 
 ## load data
 
-# RData files work the best in R. 
-# Try to only open RData files to avoid any issues.
+# RData/RDS files work the best in R. 
+# Try to only open RData/RDS files to avoid any issues.
 # CSV works the next best in R. 
-# Try to only save and open CSV files to avoid any issue if you cannot load RData files.
+# Try to only save and open CSV files to avoid any issue if you cannot load RData/RDS files.
 # SPSS files can be buggy to import, especially factors and labels
 
 # the following command will open a dialog box and allow you to select the file you wish to laod
@@ -55,12 +55,13 @@ glimpse(dat1)
 # one you change iv1, iv2, iv3, and dv to your variables of interest, then run the subsequent code in order
 # we'll also remove NA values to make this simpler
 
-(dat1 = na.omit(dat %>% 
+(dat1 = dat %>% 
                  select(iv1, iv2, iv3, dv) %>% 
                  rename(x = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         w = iv2, 
                         m = iv3, 
-                        y = dv)))
+                        y = dv) %>%
+                 drop_na())
 
 ####### center and scale IVs
 dat1$cen_x <- standardize(dat1$x, two_sd = FALSE, force = TRUE) # main predictor
@@ -70,51 +71,82 @@ dat1$cen_m <- standardize(dat1$m, two_sd = FALSE, force = TRUE) # moderator 2
 # need to manually add interaction term for IV and Moderator
 dat1$cen_xw <- dat1$cen_x * dat1$cen_w
 
-# check dataset1 
+# Calculate sample SD of centered moderator W for conditional probing
+w_sd   <- sd(dat1$cen_w)
+w_low  <- -w_sd
+w_high <-  w_sd
+
+# Inspect clean dataset
 glimpse(dat1)
 
-# run modmed analysis ----
 
-# specify model
-hayes7 <- ' # regressions
-              cen_m ~ a1*cen_x
-              y ~ b1*cen_m
-              cen_m ~ a2*cen_w
-              cen_m ~ a3*cen_xw
-              y ~ cdash*cen_x
+#####################################
+### 3. Moderated Mediation Syntax ###
+#####################################
 
-            # index of moderated mediation
-              index.mod.med := a3*b1
+# Model 7 Syntax: Dynamic insertion of sample SD values for conditional indirect effects
+hayes_model7 <- paste0('
+  # Stage 1: Mediator model (X, W, and X*W predict M)
+  m ~ a1*cen_x + a2*cen_w + a3*cen_xw
 
-            # mean of centered moderator (for use in simple slopes)
-              cen_w ~ w.mean*1
+  # Stage 2: Outcome model (M and X predict Y)
+  y ~ b*m + c_prime*cen_x
 
-            # variance of centered moderator (for use in simple slopes)
-              cen_w ~~ w.var*cen_w
+  # Index of Moderated Mediation (a3 * b)
+  index_mod_med := a3 * b
 
-            # indirect effects conditional on moderator (a1 + a3*a2.value)*b1
-              indirect.SDbelow := a1*b1 + a3*-sqrt(w.var)*b1
-              indirect.mean := a1*b1 + a3*w.mean*b1
-              indirect.SDabove := a1*b1 + a3*sqrt(w.var)*b1'
+  # Conditional Indirect Effects at -1 SD, Mean (0), and +1 SD of Moderator W
+  ind_low  := (a1 + a3 * (', w_low,  ')) * b
+  ind_mean := (a1 + a3 * 0) * b
+  ind_high := (a1 + a3 * (', w_high, ')) * b
 
-# fit model
-# might take a minute or two to run depending on amount of resamples
-sem <- sem(model = hayes7,
-            data = dat1,
-            se = "bootstrap",
-            bootstrap = 1000)
+  # Direct Effect (c\')
+  direct := c_prime
 
-# fit measures
-# want to look at the 'Defined Parameters:' section
-summary(sem,
-        fit.measures = TRUE,
-        standardize = TRUE,
-        rsquare = TRUE)
+  # Conditional Total Effects
+  total_low  := direct + ind_low
+  total_mean := direct + ind_mean
+  total_high := direct + ind_high
+')
 
-# if you want bootstrapped parameter estimates
-# pay attention to lines 17, 18, 19, and 20 for the indirect effects and 'index of moderated mediation'
-parameterEstimates(sem,
-                   boot.ci.type = "bca.simple",
-                   level = .95, 
-                   ci = TRUE,
-                   standardized = FALSE)
+
+#####################################
+### 4. Model Estimation & Bootstrap #
+#####################################
+
+# Fit SEM model with 5,000 percentile bootstrap resamples (Hayes standard)
+set.seed(12345) # Seed for reproducible bootstrap CIs
+sem_fit <- sem(
+              model     = hayes_model7,
+              data      = dat1,
+              se        = "bootstrap",
+              bootstrap = 5000)
+
+
+#####################################
+### 5. Output & Parameter Summaries #
+#####################################
+
+# Complete model output with standardized parameters
+summary(sem_fit,
+          fit.measures = TRUE,
+          standardize  = TRUE,
+          rsquare      = TRUE)
+
+# Extract 95% Percentile Bootstrapped Confidence Intervals
+boot_results <- parameterEstimates(
+                    sem_fit,
+                    boot.ci.type = "perc", # Recommended for PROCESS/SEM indirect effects
+                    level        = 0.95,
+                    ci           = TRUE)
+
+# Clean summary table isolating defined parameters (Index & Conditional Effects)
+modmed_summary <- boot_results %>%
+                        filter(op == ":=") %>%
+                        select(lhs, label, est, se, z, pvalue, ci.lower, ci.upper)
+
+# View defined effects
+print(modmed_summary)
+
+# Export clean results to project tables folder
+rio::export(modmed_summary, here::here("tables", "model7_bootstrapped_results.csv"))

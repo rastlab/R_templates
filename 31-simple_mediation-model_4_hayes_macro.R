@@ -13,17 +13,17 @@
 
 ## Install the required script packages if not yet installed
 
-# Install pacman, jmv, & reghelper package if necessary
-if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
+# Install pacman package if necessary
+if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
 
-pacman::p_load(rio, dplyr, effectsize, lavaan)
+pacman::p_load(rio, tidyverse, effectsize, lavaan, janitor, here)
 
 ## load data
 
-# RData files work the best in R. 
-# Try to only open RData files to avoid any issues.
+# RData/RDS files work the best in R. 
+# Try to only open RData/RDS files to avoid any issues.
 # CSV works the next best in R. 
-# Try to only save and open CSV files to avoid any issue if you cannot load RData files.
+# Try to only save and open CSV files to avoid any issue if you cannot load RData/RDS files.
 # SPSS files can be buggy to import, especially factors and labels
 
 # the following command will open a dialog box and allow you to select the file you wish to laod
@@ -55,11 +55,12 @@ glimpse(dat)
 # one you change iv1, iv2, and dv to your variables of interest, then run the subsequent code in order
 # we'll also remove NA values to make this simpler
 
-(dat1 = na.omit(dat %>% 
+(dat1 = dat %>% 
                  select(iv1, iv2, dv) %>% 
                  rename(x = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         m = iv2, 
-                        y = dv)))
+                        y = dv) %>%
+                drop_na())
 
 ####### center and scale IVs
 dat1$cen_x <- standardize(dat1$x, two_sd = FALSE, force = TRUE) # main predictor
@@ -87,23 +88,28 @@ hayes4 <- ' # direct effect
 
 # fit model
 # might take a minute or two to run depending on amount of resamples
+set.seed(12345) # Set seed for reproducible bootstrap CIs
 sem <- sem(model = hayes4,
             data = dat1,
             se = "bootstrap",
-            bootstrap = 1000)
+            bootstrap = 5000)
 
 # fit measures
 # want to look at the 'Defined Parameters:' section
 summary(sem,
         fit.measures = TRUE,
-        standardize = TRUE,
-        rsquare = TRUE)
+        standardize  = TRUE,
+        rsquare      = TRUE)
 
 # if you want bootstrapped parameter estimates
 # pay attention to lines 7, 8, 9 (direct, indirect, total)
 
-parameterEstimates(sem,
-                   boot.ci.type = "bca.simple",
-                   level = .95,
-                   ci = TRUE,
-                   standardized = FALSE)
+boot_results <- parameterEstimates(sem,
+                                     boot.ci.type = "perc", # Percentile bootstrap CIs recommended by Hayes (2018/2022)
+                                     level = .95,
+                                     ci = TRUE,
+                                     standardized = FALSE)
+
+boot_results %>%
+          filter(op == ":=") %>%
+          select(lhs, label, est, se, z, pvalue, ci.lower, ci.upper)

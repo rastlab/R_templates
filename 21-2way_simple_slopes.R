@@ -15,23 +15,26 @@
 
 ## Install the required script packages if not yet installed
 
-# Install pacman, jmv, & reghelper package if necessary
-if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
-if(!"jmv" %in% rownames(installed.packages())) install.packages("jmv")
-if(!"reghelper" %in% rownames(installed.packages())) install.packages("reghelper")
-if(!"see" %in% rownames(installed.packages())) install.packages("see")
+# Install pacman package if necessary
+if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
 
 pacman::p_load(rio, pequod, jtools, interactions, 
                apaTables, stargazer, psych, tidyverse, 
                parameters, performance, effectsize,
+               jmv, reghelper, see, fs, here,
                janitor, ggstance, patchwork) # this row is needed for plotting
+
+# Ensure output directories exist
+fs::dir_create(here::here("data"))
+fs::dir_create(here::here("figures"))
+fs::dir_create(here::here("tables"))
 
 ## load data
 
-# RData files work the best in R. 
-# Try to only open RData files to avoid any issues.
+# RData/RDS files work the best in R. 
+# Try to only open RData/RDS files to avoid any issues.
 # CSV works the next best in R. 
-# Try to only save and open CSV files to avoid any issue if you cannot load RData files.
+# Try to only save and open CSV files to avoid any issue if you cannot load RData/RDS files.
 # SPSS files can be buggy to import, especially factors and labels
 
 # the following command will open a dialog box and allow you to select the file you wish to laod
@@ -55,7 +58,7 @@ glimpse(dat)
 
 dat %>%
       dplyr::select(iv1, iv2, dv) %>%
-      describe()
+      psych::describe()
 
 ####### center and scale IVs
 dat$c_iv1 <- effectsize::standardize(dat$iv1, two_sd = FALSE, force = TRUE)
@@ -64,7 +67,7 @@ dat$c_iv2 <- effectsize::standardize(dat$iv2, two_sd = FALSE, force = TRUE)
 # verify centering
 dat %>%
   dplyr::select(starts_with("c_")) %>%
-  describe()
+  psych::describe()
 
 
 ##############################
@@ -76,9 +79,9 @@ dat %>%
 ## regression function 
 # simplified code to run regressions on all DVs at once
 
-reg_models <- dat %>% 
-                     dplyr::select(starts_with("avg_")) %>%   # this line tells the map() only use your DVs (all start "avg_" in my datasets)
-                      map(~summ(lm(. ~ c_iv1 * c_iv2, data = dat))) 
+reg_models <- dat %>%
+                select(starts_with("avg_")) %>%           # this line tells the map() only use your DVs (all start "avg_" in my datasets)
+                map(\(dv_var) jtools::summ(lm(dv_var ~ c_iv1 * c_iv2, data = dat), digits = 2))
 
 reg_models 
 
@@ -86,22 +89,26 @@ reg_models
 step1.1 <- lm(dv ~ c_iv1 + c_iv2, data=dat)
 step2.1 <- lm(dv ~ c_iv1 * c_iv2, data=dat)
 
+# Test R-squared change between Step 1 and Step 2
+anova(step1.1, step2.1)
+performance::compare_performance(step1.1, step2.1, rank = TRUE)
+
 ##  check GLM assumptions for:
 #heteroskedastic (error variance)
-check_heteroscedasticity(step2.1)
+performance::check_heteroscedasticity(step2.1)
 
 # autocorrelation (independence of errors)
-check_autocorrelation(step2.1)
+performance::check_autocorrelation(step2.1)
 
 # normality (normality of residuals)
-check_normality(step2.1)
+performance::check_normality(step2.1)
 
 # multicollinearity (predictor independence)
-check_collinearity(step2.1)
+performance::check_collinearity(step2.1)
 
 # tests for outliers in model then iteratively removes outliers and re-runs the model
 # consider add "mcd" method to detect outliers (Mahalanobis et al., 2018)
-check_outliers(step2.1, method = c("cook", "mahalanobis"))
+performance::check_outliers(step2.1, method = c("cook", "mahalanobis"))
 
 # can also plot GLM assumptions
 performance::check_model(step1.1)
@@ -124,15 +131,17 @@ jmv::linReg(data = dat,
 ##############################################################
 
 # hierarchical linear regression
-reghelper::build_model(dv, c(c_iv1 + c_iv2), 
+reghelper::build_model(dv, 
+                       c(c_iv1 + c_iv2), 
                        c(c_iv1 * c_iv2), 
-                       data=dat, model='lm') %>% summary()
+                       data=dat, model='lm') %>% 
+                       summary()
 
 # step 1 betas
-model_parameters(step1.1, standardize = "basic")
+parameters::model_parameters(step1.1, standardize = "basic")
 
 # step 2 betas
-model_parameters(step2.1, standardize = "basic")
+parameters::model_parameters(step2.1, standardize = "basic")
 
 
 ######################################################################
@@ -173,8 +182,8 @@ dat$y <- dat$dv           # outcome variable here
 # change labels in quotes to be what you want them to be
 
 y_label        <- "dv_name"
-y_axis_high    <- 9.0                    # high descrete numeric value displayed on y-axis
-y_axis_low     <- 1.0                    # low descrete numeric value displayed on y-axis
+y_axis_high    <- 9.0                    # high discrete numeric value displayed on y-axis
+y_axis_low     <- 1.0                    # low discrete numeric value displayed on y-axis
 y_increment    <- 1.0                    # increments for y-axis
 z_label        <- "z_non-moderator_name" # X-axis variable (non-moderator)
 z_values       <- c("low", "high")       # non-moderator values
@@ -205,8 +214,13 @@ figure_1
 
 # if you are happy with figures, save them
 # can change dimensions, file type, and dpi as per journal requirement specifications
-ggsave('./figures/figure_1.png', panel_1, width = 8, height = 8, unit = 'in', dpi = 320)
-
+ggplot2::ggsave(
+  filename = here::here("figures", "figure_1.png"),
+  plot = figure_1,
+  width = 8,
+  height = 6,
+  units = "in",
+  dpi = 320)
 
 #######################################
 ###### Create descriptives table ######
@@ -219,6 +233,7 @@ ggsave('./figures/figure_1.png', panel_1, width = 8, height = 8, unit = 'in', dp
 
 dat3 = na.omit(dat %>% 
                  dplyr::select(iv1, iv2, dv) %>% 
+                 drop_na() %>%
                  rename(NEW_NAME_IV1 = iv1, # relabel whatever you want your variables to be named in the manuscript, cannot contain spaces though
                         NEW_NAME_IV2 = iv2, 
                         NEW_NAME_DV  = dv))
@@ -233,10 +248,7 @@ apa.cor.table(dat3, filename = "./tables/correlation_table.doc", table.number = 
 #######################################
 
 # Save current workspace: 
-export(dat, "./data/21_two_way_regression.RData")
-
-# save R data file as CSV
-export(dat, "./data/21_two_way_regression.csv")
-
-# save R data file as SAV SPSS file
-export(dat, "./data/21_two_way_regression.sav")
+rio::export(dat, fs::path("data", "21_two_way_regression.RData"))
+rio::export(dat, fs::path("data", "21_two_way_regression.rds")) # save in preferred R format
+rio::export(dat, fs::path("data", "21_two_way_regression.csv"))
+rio::export(dat, fs::path("data", "21_two_way_regression.sav"))
