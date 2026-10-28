@@ -15,8 +15,8 @@
 
 ## Install the required script packages if not yet installed
 
-# Install pacman, jmv, & reghelper package if necessary
-if(!"pacman" %in% rownames(installed.packages())) install.packages("pacman")
+# Install pacman package if necessary
+if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
 
 pacman::p_load(rio, sjstats) 
 
